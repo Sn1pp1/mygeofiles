@@ -58,34 +58,20 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          # 1. Создаем конфиг для сборщика GeoIP
-          cat <<EOF > geoip_config.json
-          {
-            "input": [
-              {
-                "type": "v2rayGeoIPDat",
-                "action": "add",
-                "args": {
-                  "uri": "data/geoip"
-                }
-              }
-            ],
-            "output": [
-              {
-                "type": "v2rayGeoIPDat",
-                "action": "output",
-                "args": {
-                  "outputDir": ".",
-                  "outputName": "geoip.dat"
-                }
-              }
-            ]
-          }
-          EOF
-
-          # 2. Устанавливаем и запускаем с указанием конфига
-          go install github.com/v2fly/geoip@latest
-          $(go env GOPATH)/bin/geoip -c geoip_config.json
+          # Используем альтернативный и очень простой инструмент для сборки
+          go install github.com/v2fly/geoip/cmd/prepare@latest
+          go install github.com/v2fly/geoip/cmd/generate@latest
+          
+          # Переносим данные в структуру, которую понимает этот инструмент
+          mkdir -p input
+          cp -r data/geoip/* input/
+          
+          # Запускаем сборку
+          $(go env GOPATH)/bin/prepare -dir input/ -out output_prepared
+          $(go env GOPATH)/bin/generate -input output_prepared -format dat -out .
+          
+          # Переименовываем результат, если нужно
+          mv geoip.dat_output.dat geoip.dat || true
 
       - name: Release DAT files
         uses: softprops/action-gh-release@v2
