@@ -49,7 +49,7 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          # 1. Создаем JSON конфиг для нового формата компилятора
+          # 1. Создаем JSON конфиг с исправленным параметром uri
           cat <<EOF > geoip_config.json
           {
             "input": [
@@ -57,8 +57,7 @@ jobs:
                 "type": "text",
                 "action": "add",
                 "args": {
-                  "name": "geoip",
-                  "dir": "data/geoip"
+                  "uri": "data/geoip"
                 }
               }
             ],
@@ -75,10 +74,10 @@ jobs:
           }
           EOF
 
-          # 2. Устанавливаем актуальную версию компилятора
+          # 2. Устанавливаем компилятор
           go install github.com/v2fly/geoip@latest
           
-          # 3. Запускаем сборку с использованием созданного конфига
+          # 3. Запускаем сборку
           $(go env GOPATH)/bin/geoip -c geoip_config.json
           
       - name: Release
