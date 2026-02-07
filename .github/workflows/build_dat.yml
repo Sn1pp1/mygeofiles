@@ -22,11 +22,69 @@ jobs:
         run: |
           bash <(curl -L https://sing-box.app/install.sh)
 
-      - name: Prepare Data
+      - name: Prepare Data (Direct Links)
         run: |
+          # --- СПИСОК ВАШИХ ССЫЛОК ---
+          # Вставьте сюда прямые ссылки на Raw-файлы (.json или .srs)
+          
+          GEOSITE_URLS=(
+            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/youtube.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/blocked%40ru.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/telegram.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/telegram.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/whatsapp.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/whatsapp.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/whatsapp-ads.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/whatsapp%40ads.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/whatsapp-ads.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/whatsapp%40ads.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/whatsapp-ads%40ads.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/whatsapp-ads%40ads.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/curseforge.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/curseforge.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-cn.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google%40cn.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/googlefcm.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-ads.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-cn.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google%40!cn.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google%40ads.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google%40cn.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/googlefcm.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-ads.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-play.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google%40!cn.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google%40ads.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-play.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-gemini.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/googlefcm%40!cn.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-ads%40ads.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-gemini.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-play%40cn.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-scholar.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/googlefcm%40!cn.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-ads%40ads.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-deepmind.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geosite/google-play%40cn.json"
+            # Добавляйте ссылки на домены сюда
+          )
+          
+          GEOIP_URLS=(
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geoip/blocked%40ru.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geoip/blocked-community%40ru.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geoip/telegram.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geoip/telegram.json"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geoip/google.srs"
+            "https://github.com/KaringX/karing-ruleset/blob/sing/geo/geoip/google.json"
+            # Добавляйте ссылки на IP сюда
+          )
+          # ---------------------------
+
           mkdir -p data/geosite data/geoip
           
-          # Создаем вспомогательный Python-скрипт во временном файле
+          # Python-парсер для обработки содержимого
           cat <<'EOF' > parser.py
           import json, sys, os
           def extract(obj, target_type):
@@ -44,56 +102,55 @@ jobs:
               elif isinstance(obj, list):
                   for item in obj: res.extend(extract(item, target_type))
               return res
-
           try:
-              target = sys.argv[1]
-              filename = sys.argv[2]
-              with open('temp.json', 'r') as f:
-                  data = json.load(f)
+              target, filename = sys.argv[1], sys.argv[2]
+              with open('temp.json', 'r') as f: data = json.load(f)
               results = extract(data, target)
               if results:
                   results = sorted(list(set(filter(None, results))))
                   with open(f'data/{target}/{filename}', 'a') as f_out:
                       f_out.write('\n'.join(results) + '\n')
-          except Exception as e:
-              print(f"Error: {e}")
+          except Exception as e: print(f"Error in {filename}: {e}")
           EOF
 
-          process_folder() {
-            local folder=$1
-            local target=$2
-            # GitHub API per_page=100 (если файлов больше 100, нужно несколько запросов)
-            # Для надежности берем сразу 1000 через API
-            curl -s "https://api.github.com/repos/KaringX/karing-ruleset/contents/$folder?ref=sing&per_page=1000" | \
-            jq -r '.[] | select(.name | (endswith(".json") or endswith(".srs"))) | .download_url + " " + .name' | \
-            while read -r url encoded_name; do
-              name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
-              fname=$(echo "${name%.*}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
+          process_links() {
+            local target=$1
+            shift
+            local links=("$@")
+            for url in "${links[@]}"; do
+              [ -z "$url" ] && continue
+              full_name=$(basename "$url")
+              # Очистка имени для тега в .dat (нижний регистр, @ в -)
+              fname=$(echo "${full_name%.*}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
               
+              echo "Downloading and processing: $full_name"
               curl -sL "$url" -o "temp_file"
-              if [[ "$name" == *.srs ]]; then
+              
+              if [[ "$full_name" == *.srs ]]; then
                 sing-box rule-set decompile "temp_file" -o "temp.json" &>/dev/null || cp "temp_file" "temp.json"
               else
                 mv "temp_file" "temp.json"
               fi
-
+              
               python3 parser.py "$target" "$fname"
-              echo "Done: $fname"
               rm -f temp.json temp_file
             done
           }
 
-          process_folder "geo/geosite" "geosite"
-          process_folder "geo/geoip" "geoip"
+          process_links "geosite" "${GEOSITE_URLS[@]}"
+          process_links "geoip" "${GEOIP_URLS[@]}"
 
       - name: Build geosite.dat
-        run: go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
+        run: |
+          go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
       - name: Build geoip.dat
         run: |
           cat <<EOF > geoip_config.json
-          {"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}],
-           "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}
+          {
+            "input": [{ "type": "text", "action": "add", "args": { "inputDir": "data/geoip" } }],
+            "output": [{ "type": "v2rayGeoIPDat", "action": "output", "args": { "outputDir": ".", "outputName": "geoip.dat" } }]
+          }
           EOF
           go install github.com/v2fly/geoip@latest
           $(go env GOPATH)/bin/geoip -c geoip_config.json
