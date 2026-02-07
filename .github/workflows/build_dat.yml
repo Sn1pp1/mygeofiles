@@ -126,7 +126,7 @@ jobs:
         run: |
           if [ -f "files/domains.txt" ]; then
             cp files/domains.txt data/geosite/domains
-            echo "✅ Файл domains найден и скопирован"
+            echo "✅ Файл domains.txt найден и скопирован"
           else
             echo "⚠️ Файл files/domains.txt НЕ найден!"
           fi
@@ -134,6 +134,12 @@ jobs:
 
       - name: Build geoip.dat
         run: |
+          if [ -f "files/ip.txt" ]; then
+            cp files/ip.txt data/geosite/ip
+            echo "✅ Файл ip.txt найден и скопирован"
+          else
+            echo "⚠️ Файл files/ip.txt НЕ найден!"
+          fi
           cat <<EOF > geoip_config.json
           {"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}],
            "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}
