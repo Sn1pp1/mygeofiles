@@ -26,7 +26,6 @@ jobs:
         run: |
           # --- СПИСОК ССЫЛОК (RAW ФОРМАТ) ---
           GEOSITE_URLS=(
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/blocked%40ru.srs"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/telegram.srs"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/telegram.json"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/whatsapp.srs"
@@ -113,8 +112,8 @@ jobs:
 
       - name: Build geosite.dat
         run: |
-          if [ -f "files/domains.txt" ]; then
-            cp files/domains.txt data/geosite/domains
+          if [ -f "files/ru-blocked" ]; then
+            cp files/ru-blocked.txt data/geosite/ru-blocked
             echo "✅ Файл mysite найден и скопирован"
           else
             echo "⚠️ Файл my_rules/mysite.txt НЕ найден!"
