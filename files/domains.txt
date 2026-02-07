@@ -53,7 +53,6 @@ iplist.opencck.org
 2022-11.fdxsgql-c-uw2-r1.cloudos.autodesk.com
 2048.acc-qa.autodesk.com
 2048.amp.dev.autodesk.com
-208_185_116_57.ra.roblox.com
 2account.sentry.io
 3.basecampapi.com
 3.preview.model.acc-qa.autodesk.com
@@ -70,10 +69,8 @@ iplist.opencck.org
 485d4a1b-6446-4a75-b6df-13f4e6fa9073.ddm.datum.autodesk.com
 5.preview.model.acc-qa.autodesk.com
 53.telegram.com
-555-173-403gv.video-ik-ok-ii.xyz
 5d7.sentry.io
 6.preview.model.acc-qa.autodesk.com
-64_124_125_40.sm.roblox.com
 7.preview.model.acc-qa.autodesk.com
 75d8c199-7c0c-4d1d-825e-3b28cb730f87.data.datum-staging.autodesk.com
 75d8c199-7c0c-4d1d-825e-3b28cb730f87.ddm.datum-staging.autodesk.com
