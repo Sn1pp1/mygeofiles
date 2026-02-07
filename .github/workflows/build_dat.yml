@@ -112,9 +112,12 @@ jobs:
 
       - name: Build geosite.dat
         run: |
-          # Добавляем ваш локальный файл в сборку
-          if [ -f "mysite.txt" ]; then
-            cp mysite.txt data/geosite/mysite
+          # Исправляем путь: берем файл из папки my_rules
+          if [ -f "my_rules/mysite.txt" ]; then
+            cp my_rules/mysite.txt data/geosite/mysite
+            echo "✅ Файл mysite найден и скопирован"
+          else
+            echo "⚠️ Файл my_rules/mysite.txt НЕ найден!"
           fi
           go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
