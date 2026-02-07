@@ -135,7 +135,7 @@ jobs:
       - name: Build geoip.dat
         run: |
           if [ -f "files/ip.txt" ]; then
-            cp files/ip.txt data/geosite/ip
+            cp files/ip.txt data/geoip/ip
             echo "✅ Файл ip.txt найден и скопирован"
           else
             echo "⚠️ Файл files/ip.txt НЕ найден!"
