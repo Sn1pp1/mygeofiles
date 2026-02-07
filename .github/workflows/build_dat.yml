@@ -112,13 +112,6 @@ jobs:
 
       - name: Build geosite.dat
         run: |
-          if [ -f "files/ru-blocked.txt" ]; then
-            cp files/ru-blocked.txt data/geosite/ru-blocked
-            echo "✅ Файл ru-blocked найден и скопирован"
-          else
-            echo "⚠️ Файл my_rules/ru-blocked.txt НЕ найден!"
-          fi
-          
           if [ -f "files/domain.txt" ]; then
             cp files/domain.txt data/geosite/domain
             echo "✅ Файл domains найден и скопирован"
