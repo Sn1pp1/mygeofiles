@@ -53,13 +53,39 @@ jobs:
 
       - name: Build geosite.dat
         run: |
-          # Используем актуальный бинарник
+          # Geosite собирается так же, как и раньше
           go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
       - name: Build geoip.dat
         run: |
+          # 1. Создаем конфиг для сборщика GeoIP
+          cat <<EOF > geoip_config.json
+          {
+            "input": [
+              {
+                "type": "v2rayGeoIPDat",
+                "action": "add",
+                "args": {
+                  "uri": "data/geoip"
+                }
+              }
+            ],
+            "output": [
+              {
+                "type": "v2rayGeoIPDat",
+                "action": "output",
+                "args": {
+                  "outputDir": ".",
+                  "outputName": "geoip.dat"
+                }
+              }
+            ]
+          }
+          EOF
+
+          # 2. Устанавливаем и запускаем с указанием конфига
           go install github.com/v2fly/geoip@latest
-          $(go env GOPATH)/bin/geoip --src=data/geoip --out=.
+          $(go env GOPATH)/bin/geoip -c geoip_config.json
 
       - name: Release DAT files
         uses: softprops/action-gh-release@v2
