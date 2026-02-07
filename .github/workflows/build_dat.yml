@@ -1,7 +1,7 @@
 name: Build Karing DAT Files
 on:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 */6 * * *' # Обновление каждые 6 часов
   workflow_dispatch:
 
 jobs:
@@ -62,11 +62,9 @@ jobs:
                           elif k == 'domain_regex':
                               for r in v:
                                   try:
-                                      # Проверка валидности регулярки перед добавлением
                                       re.compile(r)
                                       res.append('regexp:' + r)
                                   except re.error:
-                                      print(f"Skipping invalid regex: {r}")
                                       continue
                           else: res.extend(extract(v, target_type))
                       elif target_type == 'geoip':
@@ -88,7 +86,7 @@ jobs:
                           seen.add(r)
                   with open(f'data/{target}/{filename}', 'a', encoding='utf-8') as f_out:
                       f_out.write('\n'.join(clean_results) + '\n')
-          except Exception as e: print(f"Error: {e}")
+          except Exception: pass
           EOF
 
           process_links() {
@@ -124,12 +122,20 @@ jobs:
           go install github.com/v2fly/geoip@latest
           $(go env GOPATH)/bin/geoip -c geoip_config.json
 
+      - name: Generate SHA256
+        run: |
+          sha256sum geosite.dat > geosite.dat.sha256
+          sha256sum geoip.dat > geoip.dat.sha256
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
+          make_latest: true
           files: |
             geosite.dat
             geoip.dat
+            geosite.dat.sha256
+            geoip.dat.sha256
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
