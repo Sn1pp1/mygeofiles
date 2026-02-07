@@ -112,11 +112,11 @@ jobs:
 
       - name: Build geosite.dat
         run: |
-          if [ -f "files/domain.txt" ]; then
-            cp files/domain.txt data/geosite/domain
+          if [ -f "files/domains.txt" ]; then
+            cp files/domains.txt data/geosite/domains
             echo "✅ Файл domains найден и скопирован"
           else
-            echo "⚠️ Файл files/domain.txt НЕ найден!"
+            echo "⚠️ Файл files/domains.txt НЕ найден!"
           fi
           go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
