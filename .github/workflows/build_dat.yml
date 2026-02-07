@@ -1,8 +1,8 @@
 name: Build Karing DAT Files
 on:
   schedule:
-    - cron: '0 3 * * *'
-  workflow_dispatch:
+    - cron: '0 3 * * *' # Запуск каждый день в 03:00
+  workflow_dispatch: # Ручной запуск
 
 jobs:
   build:
@@ -18,46 +18,69 @@ jobs:
         with:
           go-version: '>=1.21'
 
+      - name: Install sing-box
+        run: |
+          bash <(curl -L https://sing-box.app/install.sh)
+
       - name: Prepare Data (JSON + SRS)
         run: |
-          # 1. Устанавливаем sing-box для декомпиляции .srs
-          bash <(curl -L https://sing-box.app/install.sh)
           mkdir -p data/geosite data/geoip
           
           download_and_process() {
             local folder=$1
             local target=$2
-            echo "Processing $folder..."
+            echo "--- Processing $folder ---"
             
-            curl -s "https://api.github.com/repos/KaringX/karing-ruleset/contents/$folder?ref=sing" | \
+            # Получаем до 1000 файлов из папки (пагинация)
+            curl -s "https://api.github.com/repos/KaringX/karing-ruleset/contents/$folder?ref=sing&per_page=1000" | \
             jq -r '.[] | select(.name | (endswith(".json") or endswith(".srs"))) | .download_url + " " + .name' | \
             while read -r url encoded_name; do
               decoded_name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
-              # Убираем расширение, меняем @ на -, переводим в нижний регистр
+              # Очистка имени: убираем расширение, @ -> -, нижний регистр
               filename=$(echo "${decoded_name%.*}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
               
               curl -sL "$url" -o "temp_file"
               
+              # Декомпиляция бинарных .srs в JSON
               if [[ "$decoded_name" == *.srs ]]; then
-                sing-box rule-set decompile "temp_file" -o "temp.json" 2>/dev/null || cp "temp_file" "temp.json"
+                sing-box rule-set decompile "temp_file" -o "temp.json" &>/dev/null || cp "temp_file" "temp.json"
               else
                 mv "temp_file" "temp.json"
               fi
 
-              # --- ВОТ ЭТОТ БЛОК МЫ ОБНОВИЛИ ДЛЯ ИСПРАВЛЕНИЯ ОШИБКИ С AMAZON ---
-              if [ "$target" == "geosite" ]; then
-                # Обычные домены
-                jq -r '.rules[]? | .domain_suffix[]?, .domain[]?' "temp.json" 2>/dev/null | sed '/^$/d' >> "data/geosite/$filename"
-                # Ключевые слова
-                jq -r '.rules[]? | .domain_keyword[]?' "temp.json" 2>/dev/null | sed '/^$/d' | sed 's/^/keyword:/' >> "data/geosite/$filename"
-                # Регулярные выражения (теперь с префиксом regexp:)
-                jq -r '.rules[]? | .domain_regex[]?' "temp.json" 2>/dev/null | sed '/^$/d' | sed 's/^/regexp:/' >> "data/geosite/$filename"
-              else
-                # IP адреса
-                jq -r '.rules[]? | .ip_cidr[]?' "temp.json" 2>/dev/null | sed '/^$/d' >> "data/geoip/$filename"
-              fi
-              # ----------------------------------------------------------------
-              
+              # Быстрый Python-парсер для огромных списков (100k+)
+              python3 -c "
+import json, os
+try:
+    with open('temp.json', 'r') as f:
+        data = json.load(f)
+    
+    def extract(obj, target_type):
+        res = []
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if target_type == 'geosite':
+                    if k in ['domain_suffix', 'domain']: res.extend(v)
+                    elif k == 'domain_keyword': res.extend(['keyword:' + x for x in v])
+                    elif k == 'domain_regex': res.extend(['regexp:' + x for x in v])
+                    else: res.extend(extract(v, target_type))
+                elif target_type == 'geoip':
+                    if k == 'ip_cidr': res.extend(v)
+                    else: res.extend(extract(v, target_type))
+        elif isinstance(obj, list):
+            for item in obj: res.extend(extract(item, target_type))
+        return res
+
+    results = extract(data, '$target')
+    if results:
+        # Убираем дубликаты и пустые строки
+        results = sorted(list(set(filter(None, results))))
+        with open('data/$target/$filename', 'a') as f_out:
+            f_out.write('\n'.join(results) + '\n')
+except Exception as e:
+    print(f'Error in $filename: {e}')
+"
+              echo "✅ Processed $filename: $(wc -l < "data/$target/$filename" 2>/dev/null || echo 0) lines"
               rm -f temp.json temp_file
             done
           }
@@ -71,37 +94,15 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          # 1. Оставляем ТОЛЬКО inputDir, как того требует строгий валидатор
           cat <<EOF > geoip_config.json
           {
-            "input": [
-              {
-                "type": "text",
-                "action": "add",
-                "args": {
-                  "inputDir": "data/geoip"
-                }
-              }
-            ],
-            "output": [
-              {
-                "type": "v2rayGeoIPDat",
-                "action": "output",
-                "args": {
-                  "outputDir": ".",
-                  "outputName": "geoip.dat"
-                }
-              }
-            ]
+            "input": [{ "type": "text", "action": "add", "args": { "inputDir": "data/geoip" } }],
+            "output": [{ "type": "v2rayGeoIPDat", "action": "output", "args": { "outputDir": ".", "outputName": "geoip.dat" } }]
           }
           EOF
-
-          # 2. Устанавливаем компилятор
           go install github.com/v2fly/geoip@latest
-          
-          # 3. Запускаем сборку
           $(go env GOPATH)/bin/geoip -c geoip_config.json
-          
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
