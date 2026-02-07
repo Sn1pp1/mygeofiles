@@ -18,30 +18,48 @@ jobs:
         with:
           go-version: '>=1.21'
 
-      - name: Prepare Data
+      - name: Install sing-box
+        run: |
+          bash <(curl -L https://sing-box.app/install.sh)
+
+      - name: Prepare Data (JSON + SRS)
         run: |
           mkdir -p data/geosite data/geoip
           
-          # Функция скачивания с очисткой имен
-          download_and_clean() {
+          download_and_process() {
             local folder=$1
             local target=$2
+            echo "Processing $folder..."
+            
+            # Получаем список всех файлов (и json и srs)
             curl -s "https://api.github.com/repos/KaringX/karing-ruleset/contents/$folder?ref=sing" | \
-            jq -r '.[] | select(.name | endswith(".json")) | .download_url + " " + .name' | \
+            jq -r '.[] | select(.name | (endswith(".json") or endswith(".srs"))) | .download_url + " " + .name' | \
             while read -r url encoded_name; do
-              name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
-              # Для совместимости с компилятором: только маленькие буквы, дефисы вместо @
-              filename=$(echo "${name%.json}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
+              decoded_name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
+              filename=$(echo "${decoded_name%.*}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
               
-              if [ "$target" == "geosite" ]; then
-                curl -sL "$url" | jq -r '.rules[0].domain_suffix[]?, .rules[0].domain[]?' | sed '/^$/d' > "data/geosite/$filename"
+              # Скачиваем файл
+              curl -sL "$url" -o "temp_file"
+              
+              # Если это .srs, декомпилируем его в JSON
+              if [[ "$decoded_name" == *.srs ]]; then
+                sing-box rule-set decompile "temp_file" -o "temp.json" 2>/dev/null || cp "temp_file" "temp.json"
               else
-                curl -sL "$url" | jq -r '.rules[0].ip_cidr[]?' | sed '/^$/d' > "data/geoip/$filename"
+                mv "temp_file" "temp.json"
               fi
+
+              # Извлекаем данные (учитываем, что в srs структура может быть чуть иной)
+              if [ "$target" == "geosite" ]; then
+                jq -r '.rules[]? | .domain_suffix[]?, .domain[]?, .domain_keyword[]?, .domain_regex[]?' "temp.json" 2>/dev/null | sed '/^$/d' >> "data/geosite/$filename"
+              else
+                jq -r '.rules[]? | .ip_cidr[]?' "temp.json" 2>/dev/null | sed '/^$/d' >> "data/geoip/$filename"
+              fi
+              rm -f temp.json temp_file
             done
           }
-          download_and_clean "geo/geosite" "geosite"
-          download_and_clean "geo/geoip" "geoip"
+
+          download_and_process "geo/geosite" "geosite"
+          download_and_process "geo/geoip" "geoip"
 
       - name: Build geosite.dat
         run: |
