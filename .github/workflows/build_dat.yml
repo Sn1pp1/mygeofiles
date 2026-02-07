@@ -25,22 +25,21 @@ jobs:
         run: |
           mkdir -p data/geosite data/geoip
           
-          # Функция для загрузки и очистки имен
           download_and_clean() {
             local folder=$1
             local target=$2
             echo "Processing $folder..."
             
-            # Получаем JSON со списком файлов и скачиваем их
             curl -s "https://api.github.com/repos/KaringX/karing-ruleset/contents/$folder?ref=sing" | \
             jq -r '.[] | select(.name | endswith(".json")) | .download_url + " " + .name' | \
             while read -r url encoded_name; do
-              # Декодируем %40 в @ и другие символы через python
-              name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
-              # Убираем расширение .json
-              filename="${name%.json}"
+              # 1. Декодируем URL (превращаем %40 в @)
+              decoded_name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
               
-              # Скачиваем и извлекаем данные
+              # 2. Заменяем @ на - (чтобы v2fly не ругался) и убираем .json
+              # Пример: ACER@CN.json -> ACER-CN
+              filename=$(echo "${decoded_name%.json}" | tr '@' '-')
+              
               if [ "$target" == "geosite" ]; then
                 curl -sL "$url" | jq -r '.rules[0].domain_suffix[]?, .rules[0].domain[]?' | sed '/^$/d' > "data/geosite/$filename"
               else
