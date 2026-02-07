@@ -1,4 +1,4 @@
-name: Build Karing DAT Files
+name: Build My DAT Files
 on:
   schedule:
     - cron: '0 */6 * * *' # Обновление каждые 6 часов
@@ -112,7 +112,6 @@ jobs:
 
       - name: Build geosite.dat
         run: |
-          # Исправляем путь: берем файл из папки my_rules
           if [ -f "files/domains.txt" ]; then
             cp files/domains.txt data/geosite/domains
             echo "✅ Файл mysite найден и скопирован"
