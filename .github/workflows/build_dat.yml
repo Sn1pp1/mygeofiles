@@ -1,8 +1,8 @@
 name: Build Karing DAT Files
 on:
   schedule:
-    - cron: '0 3 * * *' # Запуск каждый день в 03:00
-  workflow_dispatch: # Ручной запуск
+    - cron: '0 3 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -22,83 +22,78 @@ jobs:
         run: |
           bash <(curl -L https://sing-box.app/install.sh)
 
-      - name: Prepare Data (JSON + SRS)
+      - name: Prepare Data
         run: |
           mkdir -p data/geosite data/geoip
           
-          download_and_process() {
+          # Создаем вспомогательный Python-скрипт во временном файле
+          cat <<'EOF' > parser.py
+          import json, sys, os
+          def extract(obj, target_type):
+              res = []
+              if isinstance(obj, dict):
+                  for k, v in obj.items():
+                      if target_type == 'geosite':
+                          if k in ['domain_suffix', 'domain']: res.extend(v)
+                          elif k == 'domain_keyword': res.extend(['keyword:' + x for x in v])
+                          elif k == 'domain_regex': res.extend(['regexp:' + x for x in v])
+                          else: res.extend(extract(v, target_type))
+                      elif target_type == 'geoip':
+                          if k == 'ip_cidr': res.extend(v)
+                          else: res.extend(extract(v, target_type))
+              elif isinstance(obj, list):
+                  for item in obj: res.extend(extract(item, target_type))
+              return res
+
+          try:
+              target = sys.argv[1]
+              filename = sys.argv[2]
+              with open('temp.json', 'r') as f:
+                  data = json.load(f)
+              results = extract(data, target)
+              if results:
+                  results = sorted(list(set(filter(None, results))))
+                  with open(f'data/{target}/{filename}', 'a') as f_out:
+                      f_out.write('\n'.join(results) + '\n')
+          except Exception as e:
+              print(f"Error: {e}")
+          EOF
+
+          process_folder() {
             local folder=$1
             local target=$2
-            echo "--- Processing $folder ---"
-            
-            # Получаем до 1000 файлов из папки (пагинация)
+            # GitHub API per_page=100 (если файлов больше 100, нужно несколько запросов)
+            # Для надежности берем сразу 1000 через API
             curl -s "https://api.github.com/repos/KaringX/karing-ruleset/contents/$folder?ref=sing&per_page=1000" | \
             jq -r '.[] | select(.name | (endswith(".json") or endswith(".srs"))) | .download_url + " " + .name' | \
             while read -r url encoded_name; do
-              decoded_name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
-              # Очистка имени: убираем расширение, @ -> -, нижний регистр
-              filename=$(echo "${decoded_name%.*}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
+              name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
+              fname=$(echo "${name%.*}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
               
               curl -sL "$url" -o "temp_file"
-              
-              # Декомпиляция бинарных .srs в JSON
-              if [[ "$decoded_name" == *.srs ]]; then
+              if [[ "$name" == *.srs ]]; then
                 sing-box rule-set decompile "temp_file" -o "temp.json" &>/dev/null || cp "temp_file" "temp.json"
               else
                 mv "temp_file" "temp.json"
               fi
 
-              # Быстрый Python-парсер для огромных списков (100k+)
-              python3 -c "
-import json, os
-try:
-    with open('temp.json', 'r') as f:
-        data = json.load(f)
-    
-    def extract(obj, target_type):
-        res = []
-        if isinstance(obj, dict):
-            for k, v in obj.items():
-                if target_type == 'geosite':
-                    if k in ['domain_suffix', 'domain']: res.extend(v)
-                    elif k == 'domain_keyword': res.extend(['keyword:' + x for x in v])
-                    elif k == 'domain_regex': res.extend(['regexp:' + x for x in v])
-                    else: res.extend(extract(v, target_type))
-                elif target_type == 'geoip':
-                    if k == 'ip_cidr': res.extend(v)
-                    else: res.extend(extract(v, target_type))
-        elif isinstance(obj, list):
-            for item in obj: res.extend(extract(item, target_type))
-        return res
-
-    results = extract(data, '$target')
-    if results:
-        # Убираем дубликаты и пустые строки
-        results = sorted(list(set(filter(None, results))))
-        with open('data/$target/$filename', 'a') as f_out:
-            f_out.write('\n'.join(results) + '\n')
-except Exception as e:
-    print(f'Error in $filename: {e}')
-"
-              echo "✅ Processed $filename: $(wc -l < "data/$target/$filename" 2>/dev/null || echo 0) lines"
+              python3 parser.py "$target" "$fname"
+              echo "Done: $fname"
               rm -f temp.json temp_file
             done
           }
 
-          download_and_process "geo/geosite" "geosite"
-          download_and_process "geo/geoip" "geoip"
+          process_folder "geo/geosite" "geosite"
+          process_folder "geo/geoip" "geoip"
 
       - name: Build geosite.dat
-        run: |
-          go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
+        run: go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
       - name: Build geoip.dat
         run: |
           cat <<EOF > geoip_config.json
-          {
-            "input": [{ "type": "text", "action": "add", "args": { "inputDir": "data/geoip" } }],
-            "output": [{ "type": "v2rayGeoIPDat", "action": "output", "args": { "outputDir": ".", "outputName": "geoip.dat" } }]
-          }
+          {"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}],
+           "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}
           EOF
           go install github.com/v2fly/geoip@latest
           $(go env GOPATH)/bin/geoip -c geoip_config.json
