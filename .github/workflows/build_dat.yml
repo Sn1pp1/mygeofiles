@@ -39,13 +39,15 @@ jobs:
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/whatsapp-ads%40ads.json"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/curseforge.srs"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/curseforge.json"
+            "https://github.com/1andrevich/Re-filter-lists/releases/latest/download/ruleset-domain-refilter_domains.srs"
           )
           
           GEOIP_URLS=(
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geoip/blocked%40ru.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geoip/blocked-community%40ru.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geoip/telegram.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geoip/telegram.json"
+            "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked.srs"
+            "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked-community.srs"
+            "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/google.srs"
+            "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/telegram.srs"
+            "https://github.com/1andrevich/Re-filter-lists/releases/latest/download/ruleset-ip-refilter_ipsum.srs"
           )
 
           mkdir -p data/geosite data/geoip
