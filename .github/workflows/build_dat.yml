@@ -1,0 +1,69 @@
+name: Build Karing DAT Files
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '>=1.21'
+
+      - name: Install v2ray-rules-dat generator
+        run: go install github.com/v2fly/domain-list-community@latest
+
+      - name: Prepare Data
+        run: |
+          mkdir -p data/geoip data/geosite
+          
+          # Обработка Geosite (Домены)
+          echo "Fetching Geosite sources..."
+          files=$(curl -s "https://api.github.com/repos/KaringX/karing-ruleset/contents/geo/geosite?ref=sing" | jq -r '.[] | select(.name | endswith(".json")) | .download_url')
+          for url in $files; do
+            name=$(basename "$url" .json)
+            # Извлекаем только домены из JSON Sing-box и чистим их
+            curl -sL "$url" | jq -r '.rules[0].domain_suffix[]?, .rules[0].domain[]?' | sed '/^$/d' > "data/geosite/$name"
+          done
+
+          # Обработка GeoIP (IP-адреса)
+          echo "Fetching GeoIP sources..."
+          files=$(curl -s "https://api.github.com/repos/KaringX/karing-ruleset/contents/geo/geoip?ref=sing" | jq -r '.[] | select(.name | endswith(".json")) | .download_url')
+          for url in $files; do
+            name=$(basename "$url" .json)
+            # Извлекаем только IP-префиксы
+            curl -sL "$url" | jq -r '.rules[0].ip_cidr[]?' | sed '/^$/d' > "data/geoip/$name"
+          done
+
+      - name: Build geosite.dat
+        run: |
+          # Используем официальный компилятор v2fly
+          go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
+
+      - name: Build geoip.dat
+        run: |
+          # Для IP используем утилиту geoip-build (или аналог)
+          # Чтобы не усложнять, можно просто упаковать их, но стандарт требует бинарный формат
+          # Используем проверенный инструмент для сборки geoip.dat
+          go install github.com/v2fly/geoip@latest
+          geoip --src=data/geoip --out=.
+
+      - name: Release DAT files
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: "Karing DAT Rules"
+          files: |
+            geosite.dat
+            geoip.dat
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
