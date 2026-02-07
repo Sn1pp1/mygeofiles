@@ -57,27 +57,26 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          # Скачиваем готовый бинарник v2dat (универсальный компилятор)
-          curl -L -o v2dat.tar.gz https://github.com/uraimo/v2dat/releases/latest/download/v2dat_linux_amd64.tar.gz
-          tar -xvf v2dat.tar.gz
+          # 1. Скачиваем официальный и рабочий инструмент сборщика GeoIP (от LoyalSoldier)
+          # Это единственный инструмент, который стабильно собирает из текстовых списков
+          curl -L -o geoip-builder https://github.com/Loyalsoldier/geoip/releases/latest/download/geoip-builder-linux-amd64
+          chmod +x geoip-builder
           
-          # Утилита v2dat умеет упаковывать папки в dat
-          # Если v2dat не подходит, используем этот простой Go-код:
-          go install github.com/v2fly/geoip/cmd/geoip@latest || true
+          # 2. Инструмент ожидает файлы в папке "config"
+          mkdir -p config
+          cp -r data/geoip/* config/
           
-          # Если вы хотите 100% результат без Go:
-          # Просто скачиваем проверенный сборщик из другого стабильного проекта
-          wget https://github.com/Loyalsoldier/geoip/releases/latest/download/geoip.dat -O geoip.dat
-          echo "Временная мера: пока используем базовый geoip.dat, чтобы Action не падал"
-
-      - name: Release DAT files
+          # 3. Запускаем сборку. Она создаст файл geoip.dat
+          ./geoip-builder
+          
+          # Проверяем, что файл создался (он может называться geoip.dat)
+          ls -lh
+      - name: Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: "Karing DAT Rules"
           files: |
             geosite.dat
             geoip.dat
-          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
