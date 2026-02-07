@@ -116,7 +116,7 @@ jobs:
             cp files/domain.txt data/geosite/domain
             echo "✅ Файл domains найден и скопирован"
           else
-            echo "⚠️ Файл my_rules/domain.txt НЕ найден!"
+            echo "⚠️ Файл files/domain.txt НЕ найден!"
           fi
           go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
