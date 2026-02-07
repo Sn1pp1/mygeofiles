@@ -118,6 +118,7 @@ jobs:
           else
             echo "⚠️ Файл my_rules/ru-blocked.txt НЕ найден!"
           fi
+          
           if [ -f "files/domain.txt" ]; then
             cp files/domain.txt data/geosite/domain
             echo "✅ Файл domains найден и скопирован"
