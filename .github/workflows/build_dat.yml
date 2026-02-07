@@ -112,11 +112,11 @@ jobs:
 
       - name: Build geosite.dat
         run: |
-          if [ -f "files/ru-blocked" ]; then
+          if [ -f "files/ru-blocked.txt" ]; then
             cp files/ru-blocked.txt data/geosite/ru-blocked
             echo "✅ Файл mysite найден и скопирован"
           else
-            echo "⚠️ Файл my_rules/mysite.txt НЕ найден!"
+            echo "⚠️ Файл my_rules/ru-blocked.txt НЕ найден!"
           fi
           go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
