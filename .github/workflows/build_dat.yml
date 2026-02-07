@@ -18,12 +18,10 @@ jobs:
         with:
           go-version: '>=1.21'
 
-      - name: Install sing-box
-        run: |
-          bash <(curl -L https://sing-box.app/install.sh)
-
       - name: Prepare Data (JSON + SRS)
         run: |
+          # 1. Устанавливаем sing-box для декомпиляции .srs
+          bash <(curl -L https://sing-box.app/install.sh)
           mkdir -p data/geosite data/geoip
           
           download_and_process() {
@@ -31,29 +29,35 @@ jobs:
             local target=$2
             echo "Processing $folder..."
             
-            # Получаем список всех файлов (и json и srs)
             curl -s "https://api.github.com/repos/KaringX/karing-ruleset/contents/$folder?ref=sing" | \
             jq -r '.[] | select(.name | (endswith(".json") or endswith(".srs"))) | .download_url + " " + .name' | \
             while read -r url encoded_name; do
               decoded_name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
+              # Убираем расширение, меняем @ на -, переводим в нижний регистр
               filename=$(echo "${decoded_name%.*}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
               
-              # Скачиваем файл
               curl -sL "$url" -o "temp_file"
               
-              # Если это .srs, декомпилируем его в JSON
               if [[ "$decoded_name" == *.srs ]]; then
                 sing-box rule-set decompile "temp_file" -o "temp.json" 2>/dev/null || cp "temp_file" "temp.json"
               else
                 mv "temp_file" "temp.json"
               fi
 
-              # Извлекаем данные (учитываем, что в srs структура может быть чуть иной)
+              # --- ВОТ ЭТОТ БЛОК МЫ ОБНОВИЛИ ДЛЯ ИСПРАВЛЕНИЯ ОШИБКИ С AMAZON ---
               if [ "$target" == "geosite" ]; then
-                jq -r '.rules[]? | .domain_suffix[]?, .domain[]?, .domain_keyword[]?, .domain_regex[]?' "temp.json" 2>/dev/null | sed '/^$/d' >> "data/geosite/$filename"
+                # Обычные домены
+                jq -r '.rules[]? | .domain_suffix[]?, .domain[]?' "temp.json" 2>/dev/null | sed '/^$/d' >> "data/geosite/$filename"
+                # Ключевые слова
+                jq -r '.rules[]? | .domain_keyword[]?' "temp.json" 2>/dev/null | sed '/^$/d' | sed 's/^/keyword:/' >> "data/geosite/$filename"
+                # Регулярные выражения (теперь с префиксом regexp:)
+                jq -r '.rules[]? | .domain_regex[]?' "temp.json" 2>/dev/null | sed '/^$/d' | sed 's/^/regexp:/' >> "data/geosite/$filename"
               else
+                # IP адреса
                 jq -r '.rules[]? | .ip_cidr[]?' "temp.json" 2>/dev/null | sed '/^$/d' >> "data/geoip/$filename"
               fi
+              # ----------------------------------------------------------------
+              
               rm -f temp.json temp_file
             done
           }
