@@ -26,7 +26,6 @@ jobs:
         run: |
           # --- СПИСОК ССЫЛОК (RAW ФОРМАТ) ---
           GEOSITE_URLS=(
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/youtube.srs"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/blocked%40ru.srs"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/telegram.srs"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/telegram.json"
@@ -40,32 +39,6 @@ jobs:
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/whatsapp-ads%40ads.json"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/curseforge.srs"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/curseforge.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-cn.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google%40cn.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/googlefcm.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-ads.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-cn.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google%40!cn.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google%40ads.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google%40cn.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/googlefcm.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-ads.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-play.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google%40!cn.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google%40ads.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-play.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-gemini.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/googlefcm%40!cn.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-ads%40ads.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-gemini.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-play%40cn.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-scholar.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/googlefcm%40!cn.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-ads%40ads.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-deepmind.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/google-play%40cn.json"
           )
           
           GEOIP_URLS=(
@@ -73,8 +46,6 @@ jobs:
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geoip/blocked-community%40ru.srs"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geoip/telegram.srs"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geoip/telegram.json"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geoip/google.srs"
-            "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geoip/google.json"
           )
 
           mkdir -p data/geosite data/geoip
