@@ -98,13 +98,21 @@ jobs:
               return res
           try:
               target, filename = sys.argv[1], sys.argv[2]
-              with open('temp.json', 'r') as f: data = json.load(f)
+              with open('temp.json', 'r', encoding='utf-8') as f:
+                  data = json.load(f)
               results = extract(data, target)
               if results:
-                  results = sorted(list(set(filter(None, results))))
-                  with open(f'data/{target}/{filename}', 'a') as f_out:
-                      f_out.write('\n'.join(results) + '\n')
-          except Exception as e: print(f"Error in {filename}: {e}")
+                  # Удаляем дубликаты и пустые строки, сохраняя порядок
+                  seen = set()
+                  clean_results = []
+                  for r in results:
+                      if r and r not in seen:
+                          clean_results.append(r)
+                          seen.add(r)
+                  with open(f'data/{target}/{filename}', 'a', encoding='utf-8') as f_out:
+                      f_out.write('\n'.join(clean_results) + '\n')
+          except Exception as e:
+              print(f"Error in {filename}: {e}")
           EOF
 
           process_links() {
@@ -112,8 +120,10 @@ jobs:
             local links=("$@")
             for url in "${links[@]}"; do
               [ -z "$url" ] && continue
+              # Корректное извлечение имени файла с учетом URL-кодирования
               full_name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1].split('/')[-1]))" "$url")
               fname=$(echo "${full_name%.*}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
+              
               echo "Downloading: $full_name"
               if curl -sL --fail "$url" -o "temp_file"; then
                 if [[ "$full_name" == *.srs ]]; then
@@ -131,7 +141,6 @@ jobs:
 
           process_links "geosite" "${GEOSITE_URLS[@]}"
           process_links "geoip" "${GEOIP_URLS[@]}"
-
       - name: Build geosite.dat
         run: |
           go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
