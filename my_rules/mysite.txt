@@ -291,14 +291,12 @@ kotlinlang.org
 ktor.io
 myjetbrains.com
 talkingkotlin.com
-jetbrains@cdn
 1e100.net
 amazonaws.com
 cloudfront.net
 github.com
 googleusercontent.com
 ovh.net
-jetbrains@grazie.ai
 grazie.ai
 intellij.net
 jetbrains.ai
