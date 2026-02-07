@@ -123,6 +123,12 @@ jobs:
 
       - name: Build geoip.dat
         run: |
+          if [ -f "my_rules/myip.txt" ]; then
+            cp my_rules/myip.txt data/geoip/myip
+            echo "✅ Файл mysite найден и скопирован"
+          else
+            echo "⚠️ Файл my_rules/mysite.txt НЕ найден!"
+          fi
           cat <<EOF > geoip_config.json
           {"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}],
            "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}
