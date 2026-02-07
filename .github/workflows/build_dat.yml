@@ -80,7 +80,7 @@ jobs:
           mkdir -p data/geosite data/geoip
 
           cat <<'EOF' > parser.py
-          import json, sys, os
+          import json, sys, os, re
           def extract(obj, target_type):
               res = []
               if isinstance(obj, dict):
@@ -90,10 +90,13 @@ jobs:
                           elif k == 'domain_keyword': res.extend(['keyword:' + x for x in v])
                           elif k == 'domain_regex':
                               for r in v:
-                                  # Фильтрация битых регулярок
-                                  if r.endswith('\\') and not r.endswith('\\\\'): continue
-                                  if r.count('(') != r.count(')'): continue
-                                  res.append('regexp:' + r)
+                                  try:
+                                      # Проверка валидности регулярки перед добавлением
+                                      re.compile(r)
+                                      res.append('regexp:' + r)
+                                  except re.error:
+                                      print(f"Skipping invalid regex: {r}")
+                                      continue
                           else: res.extend(extract(v, target_type))
                       elif target_type == 'geoip':
                           if k == 'ip_cidr': res.extend(v)
