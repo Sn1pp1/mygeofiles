@@ -85,9 +85,6 @@ iplist.opencck.org
 90518f18-b4d4-4986-b296-6fc3773bb9b9.classlibrary.datum-staging.autodesk.com
 9jan.zet-flix.online
 9jan.zetflix-online.skin
-_8433._https.wt.kodik.biz
-_8436._https.wt.kodik.biz
-_domainkey.youtube.com
 a-api.anthropic.com
 a-api.dzcdn.net
 a-cdn-files.dzcdn.net
