@@ -114,26 +114,20 @@ jobs:
         run: |
           if [ -f "files/ru-blocked.txt" ]; then
             cp files/ru-blocked.txt data/geosite/ru-blocked
-            echo "✅ Файл mysite найден и скопирован"
+            echo "✅ Файл ru-blocked найден и скопирован"
           else
             echo "⚠️ Файл my_rules/ru-blocked.txt НЕ найден!"
           fi
           if [ -f "files/domain.txt" ]; then
             cp files/domain.txt data/geosite/domain
-            echo "✅ Файл mysite найден и скопирован"
+            echo "✅ Файл domains найден и скопирован"
           else
-            echo "⚠️ Файл my_rules/ru-blocked.txt НЕ найден!"
+            echo "⚠️ Файл my_rules/domain.txt НЕ найден!"
           fi
           go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
       - name: Build geoip.dat
         run: |
-          #if [ -f "files/ip.txt" ]; then
-          #  cp files/ip.txt data/geoip/ip
-          #  echo "✅ Файл mysite найден и скопирован"
-          #else
-          #  echo "⚠️ Файл my_rules/mysite.txt НЕ найден!"
-          #fi
           cat <<EOF > geoip_config.json
           {"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}],
            "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}
