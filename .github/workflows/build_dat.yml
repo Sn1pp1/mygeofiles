@@ -22,19 +22,20 @@ jobs:
         run: |
           mkdir -p data/geosite data/geoip
           
+          # Функция скачивания с очисткой имен
           download_and_clean() {
             local folder=$1
             local target=$2
             curl -s "https://api.github.com/repos/KaringX/karing-ruleset/contents/$folder?ref=sing" | \
             jq -r '.[] | select(.name | endswith(".json")) | .download_url + " " + .name' | \
             while read -r url encoded_name; do
-              decoded_name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
-              filename=$(echo "${decoded_name%.json}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
+              name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))" "$encoded_name")
+              # Для совместимости с компилятором: только маленькие буквы, дефисы вместо @
+              filename=$(echo "${name%.json}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
               
               if [ "$target" == "geosite" ]; then
                 curl -sL "$url" | jq -r '.rules[0].domain_suffix[]?, .rules[0].domain[]?' | sed '/^$/d' > "data/geosite/$filename"
               else
-                # Для IP убираем возможные комментарии и пустые строки
                 curl -sL "$url" | jq -r '.rules[0].ip_cidr[]?' | sed '/^$/d' > "data/geoip/$filename"
               fi
             done
@@ -46,36 +47,16 @@ jobs:
         run: |
           go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
-      - name: Build geoip.dat (Pure Python)
+      - name: Build geoip.dat
         run: |
-          cat <<EOF > build_geoip.py
-          import os, struct
-          from ipaddress import ip_network
-
-          def build_geoip(input_dir, output_file):
-              # Упрощенная структура V2Ray GeoIP DAT
-              with open(output_file, 'wb') as f:
-                  for filename in os.listdir(input_dir):
-                      tag = filename.upper()
-                      networks = []
-                      with open(os.path.join(input_dir, filename), 'r') as lines:
-                          for line in lines:
-                              try:
-                                  networks.append(ip_network(line.strip()))
-                              except: continue
-                      if not networks: continue
-                      
-                      # Записываем формат (очень упрощенно для совместимости)
-                      # В реальности лучше использовать готовые библиотеки, 
-                      # но для большинства клиентов достаточно текстового набора CIDR
-                      # Поэтому мы используем v2ray-extra компилятор через npx
-                      pass
-
-          EOF
-          # Но чтобы не изобретать велосипед на Python, используем npx (Node.js есть везде)
-          # Это самый стабильный способ на сегодняшний день
-          npx @v2fly/v2ray-extra build ip -i data/geoip -o geoip.dat
-
+          # Используем компилятор geoip из репозитория v2fly, который работает по принципу доменного
+          go install github.com/v2fly/geoip@latest
+          # Нам нужно просто запустить его на папке. 
+          # Если go install капризничает, используем прямую сборку:
+          git clone https://github.com/v2fly/geoip.git geoip_src
+          cd geoip_src
+          go run ./ --src=../data/geoip --out=../
+          
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
