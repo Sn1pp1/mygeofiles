@@ -49,13 +49,37 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          # Используем компилятор geoip из репозитория v2fly, который работает по принципу доменного
+          # 1. Создаем JSON конфиг для нового формата компилятора
+          cat <<EOF > geoip_config.json
+          {
+            "input": [
+              {
+                "type": "text",
+                "action": "add",
+                "args": {
+                  "name": "geoip",
+                  "dir": "data/geoip"
+                }
+              }
+            ],
+            "output": [
+              {
+                "type": "v2rayGeoIPDat",
+                "action": "output",
+                "args": {
+                  "outputDir": ".",
+                  "outputName": "geoip.dat"
+                }
+              }
+            ]
+          }
+          EOF
+
+          # 2. Устанавливаем актуальную версию компилятора
           go install github.com/v2fly/geoip@latest
-          # Нам нужно просто запустить его на папке. 
-          # Если go install капризничает, используем прямую сборку:
-          git clone https://github.com/v2fly/geoip.git geoip_src
-          cd geoip_src
-          go run ./ --src=../data/geoip --out=../
+          
+          # 3. Запускаем сборку с использованием созданного конфига
+          $(go env GOPATH)/bin/geoip -c geoip_config.json
           
       - name: Release
         uses: softprops/action-gh-release@v2
