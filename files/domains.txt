@@ -2,6 +2,7 @@ kpapp.link
 api.srvkp.com
 digital-cdn.net
 api.ios-kp.store
+m.pushbr.com
 usher.ttvnw.net
 gql.twitch.tv
 nortoncdn.com
