@@ -111,7 +111,12 @@ jobs:
           process_links "geoip" "${GEOIP_URLS[@]}"
 
       - name: Build geosite.dat
-        run: go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
+        run: |
+          # Добавляем ваш локальный файл в сборку
+          if [ -f "mysite.txt" ]; then
+            cp mysite.txt data/geosite/mysite
+          fi
+          go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
       - name: Build geoip.dat
         run: |
