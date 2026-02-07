@@ -17,3 +17,5 @@ uistats.com
 boberlogs.top
 telepost.me
 tampermonkey.net
+userscript.zone
+openuserjs.org
