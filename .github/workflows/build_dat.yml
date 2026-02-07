@@ -49,7 +49,7 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          # 1. Создаем JSON конфиг, покрывающий все возможные варианты параметров
+          # 1. Оставляем ТОЛЬКО inputDir, как того требует строгий валидатор
           cat <<EOF > geoip_config.json
           {
             "input": [
@@ -57,9 +57,7 @@ jobs:
                 "type": "text",
                 "action": "add",
                 "args": {
-                  "inputDir": "data/geoip",
-                  "uri": "data/geoip",
-                  "name": "geoip"
+                  "inputDir": "data/geoip"
                 }
               }
             ],
