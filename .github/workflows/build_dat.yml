@@ -39,7 +39,6 @@ jobs:
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/whatsapp-ads%40ads.json"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/curseforge.srs"
             "https://raw.githubusercontent.com/KaringX/karing-ruleset/sing/geo/geosite/curseforge.json"
-            "https://github.com/1andrevich/Re-filter-lists/releases/latest/download/ruleset-domain-refilter_domains.srs"
           )
           
           GEOIP_URLS=(
