@@ -17,6 +17,7 @@ gvt1.com
 avastcdn.com
 avast.com
 avast.ru
+avastdns.com
 avg.com
 avcdn.net
 ff.avast.com
