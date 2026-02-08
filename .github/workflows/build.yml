@@ -1,4 +1,4 @@
-name: Build My DAT Files
+name: Build My dat Files
 on:
   schedule:
     - cron: '0 */6 * * *' # Обновление каждые 6 часов
