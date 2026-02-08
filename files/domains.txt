@@ -26,6 +26,8 @@ telepost.me
 tampermonkey.net
 userscript.zone
 openuserjs.org
+curseforge.com
+forgecdn.net
 iplist.opencck.org
 10minutemail.com
 1337x.to
@@ -59,7 +61,6 @@ autocad.com
 autodesk.ae
 autodesk.be
 autodesk.com
-autodesk.com 
 autodesk.eu
 autodesk.net
 autodesk360.com
@@ -220,7 +221,6 @@ grazie.ai
 grok.com
 gstatic.com
 gulagu.net
-gvt1.com
 hacksawgaming.com
 hdrezka.ac
 hdrezka.ag
@@ -842,3 +842,5 @@ zetflix.app
 zetimage.net
 znanija.com
 zona.media
+graph.whatsapp.com
+graph.whatsapp.net
