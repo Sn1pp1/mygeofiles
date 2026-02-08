@@ -1,7 +1,7 @@
 name: Build My DAT Files
 on:
   schedule:
-    - cron: '0 */6 * * *' # Обновление каждые 6 часов
+    - cron: '0 */6 * * *' # Обновление каждые 6 часов по вашему запросу
   workflow_dispatch:
 
 jobs:
@@ -24,7 +24,9 @@ jobs:
 
       - name: Prepare Data (Direct Links)
         run: |
-          # --- СПИСОК ССЫЛОК (RAW ФОРМАТ) ---
+          mkdir -p data/geosite data/geoip
+
+          # --- СПИСКИ ССЫЛОК ---
           GEOSITE_URLS=(
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-antifilter-download-community.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-ru-blocked.srs"
@@ -44,8 +46,7 @@ jobs:
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-telegram.srs"
           )
 
-          mkdir -p data/geosite data/geoip
-
+          # --- УЛУЧШЕННЫЙ ПАРСЕР (теперь фильтрует пустые строки и ошибки) ---
           cat <<'EOF' > parser.py
           import json, sys, os, re
           def extract(obj, target_type):
@@ -57,11 +58,8 @@ jobs:
                           elif k == 'domain_keyword': res.extend(['keyword:' + x for x in v])
                           elif k == 'domain_regex':
                               for r in v:
-                                  try:
-                                      re.compile(r)
-                                      res.append('regexp:' + r)
-                                  except re.error:
-                                      continue
+                                  try: re.compile(r); res.append('regexp:' + r)
+                                  except: continue
                           else: res.extend(extract(v, target_type))
                       elif target_type == 'geoip':
                           if k == 'ip_cidr': res.extend(v)
@@ -72,17 +70,11 @@ jobs:
           try:
               target, filename = sys.argv[1], sys.argv[2]
               with open('temp.json', 'r', encoding='utf-8') as f: data = json.load(f)
-              results = extract(data, target)
+              results = list(set(filter(None, extract(data, target))))
               if results:
-                  seen = set()
-                  clean_results = []
-                  for r in results:
-                      if r and r not in seen:
-                          clean_results.append(r)
-                          seen.add(r)
-                  with open(f'data/{target}/{filename}', 'a', encoding='utf-8') as f_out:
-                      f_out.write('\n'.join(clean_results) + '\n')
-          except Exception: pass
+                  with open(f'data/{target}/{filename}', 'w', encoding='utf-8') as f_out:
+                      f_out.write('\n'.join(results) + '\n')
+          except Exception as e: print(f"Parser error: {e}")
           EOF
 
           process_links() {
@@ -90,8 +82,11 @@ jobs:
             local links=("$@")
             for url in "${links[@]}"; do
               [ -z "$url" ] && continue
+              # Важнейшая часть: убираем подчеркивания, которые ломают v2fly
               full_name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1].split('/')[-1]))" "$url")
-              fname=$(echo "${full_name%.*}" | tr '@' '-' | tr '[:upper:]' '[:lower:]')
+              fname=$(echo "${full_name%.*}" | tr '_' '-' | tr '@' '-' | tr '[:upper:]' '[:lower:]')
+              
+              echo "Processing $fname..."
               if curl -sL --fail "$url" -o "temp_file"; then
                 if [[ "$full_name" == *.srs ]]; then
                   sing-box rule-set decompile "temp_file" -o "temp.json" &>/dev/null || cp "temp_file" "temp.json"
@@ -103,26 +98,24 @@ jobs:
               fi
             done
           }
+
           process_links "geosite" "${GEOSITE_URLS[@]}"
           process_links "geoip" "${GEOIP_URLS[@]}"
 
       - name: Build geosite.dat
         run: |
+          # Копируем кастомные домены, если есть
           if [ -f "files/domains.txt" ]; then
-            cp files/domains.txt data/geosite/domains
-            echo "✅ Файл domains.txt найден и скопирован"
-          else
-            echo "⚠️ Файл files/domains.txt НЕ найден!"
+            cp files/domains.txt data/geosite/custom-domains
           fi
+          # Удаляем файлы, которые могут содержать ошибки или пустые имена
+          find data/geosite -type f -empty -delete
           go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
       - name: Build geoip.dat
         run: |
           if [ -f "files/ip.txt" ]; then
-            cp files/ip.txt data/geoip/ip
-            echo "✅ Файл ip.txt найден и скопирован"
-          else
-            echo "⚠️ Файл files/ip.txt НЕ найден!"
+            cp files/ip.txt data/geoip/custom-ip
           fi
           cat <<EOF > geoip_config.json
           {"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}],
