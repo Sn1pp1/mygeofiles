@@ -26,37 +26,12 @@ jobs:
         run: |
           # --- СПИСОК ССЫЛОК (RAW ФОРМАТ) ---
           GEOSITE_URLS=(
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-telegram.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-whatsapp.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-whatsapp-ads.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-whatsapp@ads.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-whatsapp-ads@ads.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-curseforge.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-ads.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-ads@ads.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-deepmind.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-gemini.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-play.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-play@cn.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-registry-tld.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-registry.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-scholar.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-trust-services.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-trust-services@cn.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google@!cn.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google@ads.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google@cn.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-googlefcm.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-googlefcm@!cn.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-antifilter-download-community.srs"
           )
           
           GEOIP_URLS=(
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked.srs"
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked-community.srs"
-            "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/google.srs"
-            "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/telegram.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-re-filter.srs"
           )
 
