@@ -28,12 +28,20 @@ jobs:
           GEOSITE_URLS=(
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-antifilter-download-community.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-ru-blocked.srs"
+            "https://github.com/itdoginfo/allow-domains/releases/latest/download/russia_inside.srs"
+            "https://github.com/itdoginfo/allow-domains/releases/latest/download/geoblock.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-telegram.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-whatsapp.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-play.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-gemini.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-deepmind.srs"
           )
           
           GEOIP_URLS=(
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked.srs"
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked-community.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-re-filter.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-telegram.srs"
           )
 
           mkdir -p data/geosite data/geoip
