@@ -27,6 +27,7 @@ jobs:
           # --- СПИСОК ССЫЛОК (RAW ФОРМАТ) ---
           GEOSITE_URLS=(
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-antifilter-download-community.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-ru-blocked.srs"
           )
           
           GEOIP_URLS=(
