@@ -127,6 +127,8 @@ openuserjs.org
 curseforge.com
 forgecdn.net
 iplist.opencck.org
+gstatic.com
+googleapis.com
 lh3.googleusercontent.com
 i.ytimg.com
 ytimg.l.google.com
@@ -335,17 +337,10 @@ discordapp.io
 discordcdn.com
 full:discord-attachments-uploads-prd.storage.googleapis.com
 full:hammerandchisel.ssl.zendesk.com
-gstatic.com
-googleapis.com
-msn.com
 edge.microsoft.com
 copilot.microsoft.com
 events.data.microsoft.com
 mobile.events.data.microsoft.com
-girlfriendsfilmsnews.com
-gametoparmsnews.ru
-momsnaked.net
-msnho.com
 0.preview.model.acc-qa.autodesk.com
 000-255.sentry.io
 0011.sentry.io
