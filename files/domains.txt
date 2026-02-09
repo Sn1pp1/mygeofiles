@@ -337,3 +337,4 @@ full:discord-attachments-uploads-prd.storage.googleapis.com
 full:hammerandchisel.ssl.zendesk.com
 gstatic.com
 googleapis.com
+msn.com
