@@ -33,6 +33,9 @@ license.avira.com
 api.myavira.com
 my.avira.com
 pwnedpasswords.com
+avira-vpn.com
+phantom.avira-vpn.com
+api.phantom.avira-vpn.com
 update.eset.com
 eset.systems
 ds.eset.com
