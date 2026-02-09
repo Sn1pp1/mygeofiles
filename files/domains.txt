@@ -346,7 +346,6 @@ girlfriendsfilmsnews.com
 gametoparmsnews.ru
 momsnaked.net
 msnho.com
-live.mercijmsnap.com
 0.preview.model.acc-qa.autodesk.com
 000-255.sentry.io
 0011.sentry.io
@@ -363,13 +362,11 @@ live.mercijmsnap.com
 1.preview.model.acc-qa.autodesk.com
 1.ra.roblox.com
 101-100.sentry.io
-10minutemail.com
 11030.sentry.io
 113.sentry.io
 1187013846746005515.discordsays.com
 123seva.sentry.io
 123traffic.sentry.io
-1337x.to
 14361390-4f1e-4013-8002-964c109f7c4d.data.datum-staging.autodesk.com
 14361390-4f1e-4013-8002-964c109f7c4d.ddm.datum-staging.autodesk.com
 178.238.223.35.bc.googleusercontent.com
@@ -1240,7 +1237,6 @@ agentassist-dev.autodesk.com
 agentassist-stg.autodesk.com
 agentassist.autodesk.com
 agents.i.perplexity.ai
-agents.media
 agentshub.autodesk.com
 agentura.ru
 agi-v2.perplexity.ai
@@ -1484,17 +1480,13 @@ android.help.formit.autodesk.com
 android.prod.cloud.netflix.com
 android.prod.ftl.netflix.com
 android13.appboot.netflix.com
-anidub.com
 anidub.pro
-anilibria.tv
-animego.org
 animevost.org
 ann.telegram.com
 ansync.deezer.com
 anteros.femeretes.org
 anteros.stream.voidboost.cc
 antheminc.telegram.com
-anthropic.com
 anticheat.roblox.com
 antizapret.prostovpn.org
 anycad-c-uw2.qa.ft.autodesk.com
@@ -2128,7 +2120,6 @@ api.int-gmf.autodesk.com
 api.int-manage.autodesk.com
 api.int.emu.autodesk.com
 api.integration.viber.com
-api.jetbrains.ai
 api.jirastg.autodesk.com
 api.kitt-dev.autodesk.com
 api.kitt.autodesk.com
@@ -2493,7 +2484,6 @@ api.telemetry.pre-alpha.stargate.autodesk.com
 api.test.emphub.autodesk.com
 api.test.secdash.autodesk.com
 api.test.trustdash.autodesk.com
-api.themoviedb.org
 api.tiktok.com
 api.tiktokv.com
 api.tmdb.org
@@ -3414,7 +3404,6 @@ att.telegram.com
 attachment.fbsbx.com
 attachments-backup.f95zone.to
 attachments-tmp.f95zone.to
-attachments.f95zone.to
 attachments.fss-c-uw2.cloudos.autodesk.com
 attachments2.f95zone.to
 attend.autodesk.com
@@ -3600,7 +3589,6 @@ autoconfig.api.jetbrains.com
 autoconfig.telegram.com
 autodesk.ae
 autodesk.be
-autodesk.com
 autodesk.eu
 autodesk.net
 autodesk.pubnubapi.com
@@ -3747,7 +3735,6 @@ b4.eu.autodesk.com
 baator.femeretes.org
 baator.stream.voidboost.cc
 babka.zello.com
-babook.org
 backend-alb.ngappmkt-c-uw2.cloudos.autodesk.com
 backend-alb.ngappmkt-p-ue1.cloudos.autodesk.com
 backend-alb.ngappmkt-s-ue1.cloudos.autodesk.com
@@ -3805,11 +3792,8 @@ batch.dev.fhq.autodesk.com
 batch.fhq.autodesk.com
 batch.stg.eu.fhq.autodesk.com
 batch.stg.fhq.autodesk.com
-bato.to
 baxalta.telegram.com
 baxter.telegram.com
-bbc.com
-bbci.co.uk
 bbs.femeretes.org
 bbs.stream.voidboost.cc
 bbs.telegram.com
@@ -3953,12 +3937,10 @@ beeg.com
 beehive-stage.autodesk.com
 beehive-ta.autodesk.com
 beehive.autodesk.com
-bellingcat.com
 benefits.autodesk.com
 berkshirehathaway.telegram.com
 bestbuy.telegram.com
 bestchange.net
-bestchange.ru
 beta-area.autodesk.com
 beta-fpwd.zello.com
 beta-svcwebhooks.hawkeye.autodesk.com
@@ -4421,10 +4403,7 @@ bono.metabrainz.org
 booking.telegram.com
 bookings.telegram.com
 bookmarks.telegram.com
-booktracker.org
 boomi.bizsys.whoop.com
-booth.pm
-booth.pximg.net
 boothbtest.autodesk.com
 bootstrap.prd-chef-server.autodesk.com
 borgwarner.telegram.com
@@ -5237,7 +5216,6 @@ candle-pfr-ue2.api.autodesk.com
 candle-s-as2.api.autodesk.com
 candle-s-ue1.api.autodesk.com
 candle-sfr-ue2.api.autodesk.com
-canva.com
 canvaz.scdn.co
 capabilities.autodesk.com
 capability-aware.ds-dev.autodesk.com
@@ -5459,7 +5437,6 @@ cdn.us.oss-staging.api.autodesk.com
 cdn.us.oss-stg.api.autodesk.com
 cdn.us.oss.api.autodesk.com
 cdn.viber.com
-cdn.web-platform.io
 cdn.whatsapp.net
 cdn.zapier.com
 cdn1.cdn-telegram.org
@@ -5493,7 +5470,6 @@ cdn7.patreon.com
 cdn7.reddxxx.com
 cdn77-pic.xnxx-cdn.com
 cdn77-pic.xvideos-cdn.com
-cdninstagram.com
 cdns-assets.dzcdn.net
 cdns-content.dzcdn.net
 cdns-files.dzcdn.net
@@ -5605,7 +5581,6 @@ chatbot.naukri.com
 chatbots.vercel.zapier.com
 chatclient-mobile.naukri.com
 chatclient.naukri.com
-chatgpt.com
 chatlogs.metabrainz.org
 checkout-api-ue1.checkoutservice-qa.autodesk.com
 checkout-api.checkoutservice-qa.autodesk.com
@@ -5626,8 +5601,6 @@ chef.a360.autodesk.com
 chenn2.api.dev.dc.autodesk.com
 chenn2.artifacts.dev.informeddesign.autodesk.com
 chenn2.bcd-artifacts.dev.informeddesign.autodesk.com
-cherta.media
-chess.com
 chevron.telegram.com
 chi1.statping.aws.robloxlabs.com
 chi1traffic.statping.aws.robloxlabs.com
@@ -5659,7 +5632,6 @@ civilcommunity.autodesk.com
 civility.roblox.com
 clark-associates-zq.sentry.io
 classic.thetruestory.news
-claude.ai
 claudeusercontent.com
 clearance.deepl.com
 cli.dev.v3.clouddna.autodesk.com
@@ -5787,7 +5759,6 @@ collaborator.scs-test.autodesk.com
 collector.metricpipeline.autodesk.com
 collectors.release-calendar-dev.autodesk.com
 collectors.release-calendar.autodesk.com
-colta.ru
 com.api.roblox.com
 com.dev.autodesk.com
 com.stg.autodesk.com
@@ -6347,7 +6318,6 @@ crm-api.sfdc-dev.autodesk.com
 crm.telegram.com
 crocodile.zello.com
 crompt-website.reshci-c-uw2.cloudos.autodesk.com
-crunchyroll.com
 cryptobosscasino.com
 cs-case-api.sfdc-dev.autodesk.com
 cs-case-api.sfdc-int.autodesk.com
@@ -6502,7 +6472,6 @@ cssak.roblox.com
 csscha.telegram.com
 cssdashboard.autodesk.com
 cssdashboard.healthhub.autodesk.com
-csskor.ill.in.ua
 cssproxy.telegram.com
 ct-giphy.sc-cdn.net
 ct.canva.com
@@ -6512,7 +6481,6 @@ cube.roblox.com
 cur.autodesk.com
 curators-framer-prod.perplexity.ai
 curl-prod.deezer.com
-currenttime.tv
 curriculum.autodesk.com
 curstg.autodesk.com
 customer-compliance.autodesk.com
@@ -6621,7 +6589,6 @@ damassets-stg.autodesk.com
 damassets.autodesk.com
 dana.telegram.com
 danaher.telegram.com
-danbooru.donmai.us
 daramalive.life
 darksky-portal-alb.sdss-c-uw2.cloudos.autodesk.com
 darksky-portal-alb.sdss-p-ue1.cloudos.autodesk.com
@@ -6923,8 +6890,6 @@ deckard-dev.autodesk.com
 deckard-stg.autodesk.com
 deckard.autodesk.com
 dedka.zello.com
-deepl.com
-deezer.com
 default.telegram.com
 default.workers.cribl.autodesk.com
 deferred-chat.x.ai
@@ -7209,7 +7174,6 @@ devforum-staging.robloxlabs.com
 devforum.roblox.com
 devforum.sitetest1.robloxlabs.com
 devforum.sitetest3.robloxlabs.com
-deviantart.com
 devinsights.autodesk.com
 devops-sls-api-node.innocos3-c-uw2.autodesk.com
 devops-sls-api-python.innocos3-c-uw2.autodesk.com
@@ -7282,7 +7246,6 @@ disambiguate.ds-stg.autodesk.com
 disambiguate.ds.autodesk.com
 disambiguate.ml.dhx.autodesk.com
 disboard.org
-discord-attachments-uploads-prd.storage.googleapis.com
 discord.center
 discord.me
 discord.modrinth.com
@@ -7520,7 +7483,6 @@ domtar.telegram.com
 donate.ovdinfo.legal
 donations.api.signal.org
 donations.api.staging.signal.org
-doramy.club
 dot-com-preview.whoop.com
 dot.alaska.autodesk.com
 dot.arizona.autodesk.com
@@ -7658,7 +7620,6 @@ downloads.navasto-stg.autodesk.com
 downloads.navasto.autodesk.com
 downloads.ngappmkt-c-uw2.cloudos.autodesk.com
 dox.grammarly.com
-doxa.team
 dp-kb-assistant.catalog-p-ue1.cloudos.autodesk.com
 dp-kb-assistant.catalog-s-ue1.cloudos.autodesk.com
 dp-url-assistant.catalog-c-uw2.cloudos.autodesk.com
@@ -7830,7 +7791,6 @@ duolingo-achievements-prod.duolingo.com
 duolingo-leaderboards-prod.duolingo.com
 duolingo.com
 dupont.telegram.com
-dw.com
 dwfcommunity.autodesk.com
 dwg.autodesk.com
 dwghistory-staging.autocad.com
@@ -7972,7 +7932,6 @@ echo.getsentry.net
 echo.naukri.com
 echo.release-calendar-dev.autodesk.com
 echo.release-calendar.autodesk.com
-echofm.online
 eclipse.femeretes.org
 eclipse.stream.voidboost.cc
 ecmfin.autodesk.com
@@ -8203,7 +8162,6 @@ eisapps-stg-captcha-vip.autodesk.com
 eisapps-stg.autodesk.com
 eisapps.autodesk.com
 eisoperations-status.autodesk.com
-ej.ru
 eks-argocd.b360-staging.autodesk.com
 eks-argocd.b360-staging.eu.autodesk.com
 eks-dashboard.b360-qa.autodesk.com
@@ -8220,7 +8178,6 @@ elc.autodesk.com
 elcompanies.telegram.com
 element.jetbrains.space
 eleven-public-cdn.elevenlabs.io
-elevenlabs.io
 eligibility-panelresearch.googlevideo.com
 eligibility.learningtools.autodesk.com
 elitesolutions.whoop.com
@@ -8600,7 +8557,6 @@ eu.viewer-staging.autodesk.com
 eu.viewer.autodesk.com
 eu1.make.com
 eu2.make.com
-euronews.com
 europe-west1-gcp.api.snapchat.com
 euwmedia.fmxp1-1.fna.whatsapp.net
 ev-ph.rdtcdn.com
@@ -8887,7 +8843,6 @@ fabdm-gd.autodesk.com
 fabdm-stg-cm.autodesk.com
 fabdm-stg-gd.autodesk.com
 fabric-web-dev.autocad.com
-facebook.com
 facebook.com.es
 facebook.com.vn
 facebook.fr
@@ -8918,10 +8873,8 @@ faq.f95zone.to
 faq.telegram.com
 faq.whatsapp.com
 faqs.telegram.com
-fast.com
 fast.viber.com
 fastly.cedit-dev-waf.autodesk.com
-fastpic.org
 fastpic.ru
 fastporndelivery.hqporner.com
 fatl1-2.fna.whatsapp.net
@@ -8933,17 +8886,14 @@ faw-https-lb.faw-s-ue1.cloudos.autodesk.com
 fawz1-1.fna.whatsapp.net
 fax.telegram.com
 faye-v2.shikimori.one
-fb.com
 fb.me
 fb.telegram.com
-fbcdn.net
 fbey10-1.fna.whatsapp.net
 fbga1-3.fna.whatsapp.net
 fbgw23-1.fna.whatsapp.net
 fbgw25-1.fna.whatsapp.net
 fbkk7-3.fna.whatsapp.net
 fbos1-2.fna.whatsapp.net
-fbsbx.com
 fcai4-1.fna.whatsapp.net
 fcgk13-1.fna.whatsapp.net
 fcgk7-1.fna.whatsapp.net
@@ -9183,7 +9133,6 @@ fi.youtube.com
 fiba.ads.autodesk.com
 fiber.femeretes.org
 fiber.stream.voidboost.cc
-ficbook.net
 field.b360-qa.autodesk.com
 field.b360-staging.autodesk.com
 field.b360-staging.eu.autodesk.com
@@ -9215,9 +9164,6 @@ files.themoviedb.org
 files.tmdb.org
 filestg.naukri.com
 filevalidation.naukri.com
-filmitorrent.net
-filmix.biz
-filmix.fm
 fin-mcp-dev.autodesk.com
 finance.cashapp.autodesk.com
 finance.commissionsgrossup.autodesk.com
@@ -10291,7 +10237,6 @@ ge.jetbrains.com
 gear.duolingo.com
 gecko16-platform-ycru.tiktokv.com
 geico.my.sentry.io
-gelbooru.com
 gen.jut.su
 genai.autoreport-dev.entsearch-dev.aws.autodesk.com
 genbi-api-dev.autodesk.com
@@ -10315,7 +10260,6 @@ geo2.datalore.jetbrains.com
 geofilters-api.snapchat.com
 geofilters-community-api.snapchat.com
 geofilters.snapchat.com
-geolocation.onetrust.com
 germany.mybenefits.autodesk.com
 get-contextual-price.ddwsdev.autodesk.com
 get-contextual-price.ddwsint.autodesk.com
@@ -10397,7 +10341,6 @@ gold.zello.com
 golden.roblox.com
 goldengate.grammarly.com
 goldmansachs.my.sentry.io
-golosameriki.com
 gooblox.com
 goodyear.telegram.com
 google.telegram.com
@@ -10470,7 +10413,6 @@ grc.amps-p-ue1.cloudos.autodesk.com
 grc.amps-s-ue1.cloudos.autodesk.com
 greece.autodesk.com
 green.femeretes.org
-grok.com
 grok.x.ai
 groove.snapchat.com
 group-vb.cdn.integration.viber.com
@@ -10531,7 +10473,6 @@ guirguj.inventor.dev.dc.autodesk.com
 guirguj.mid-edit-form.dev.dc.autodesk.com
 guirguj.revit-update-content.dev.dc.autodesk.com
 guirguj.revit.dev.dc.autodesk.com
-gulagu.net
 gutierl.api.dev.dc.autodesk.com
 gutierl.artifacts.dev.informeddesign.autodesk.com
 gutierl.bcd-artifacts.dev.informeddesign.autodesk.com
@@ -10594,8 +10535,6 @@ hazel.legacy.nodes.modrinth.com
 hbadmin.telegram.com
 hcahealthcare.telegram.com
 hcp.telegram.com
-hdrezka.ac
-hdrezka.ag
 hdrezka.cm
 hds-api-dev-ext.hds-c-uw2-a1.cloudos.autodesk.com
 hds-api-dev.hds-c-uw2-a1.cloudos.autodesk.com
@@ -10715,7 +10654,6 @@ hlsvod.dw.com
 holding.telegram.com
 hollyfrontier.telegram.com
 holod.global.ssl.fastly.net
-holod.media
 home.deepl.com
 home.telegram.com
 homepod.deezer.com
@@ -11112,7 +11050,6 @@ houston.astro-prd.adp.autodesk.com
 houston.astro-stg.adp.autodesk.com
 hp.telegram.com
 hq.telegram.com
-hqporner.com
 hr.telegram.com
 hronos.cloud.kodik-storage.com
 hrw.org
@@ -11523,7 +11460,6 @@ ie.youtube.com
 ielp.telegram.com
 ifcvlsvc-backend-alb.ifcvlsvc-c-uw2.cloudos.autodesk.com
 ifcvlsvc-frontend-alb.ifcvlsvc-c-uw2.cloudos.autodesk.com
-ig.me
 iheartmedia.telegram.com
 ihub.autodesk.com
 iiqmonitors-stg.autodesk.com
@@ -11552,7 +11488,6 @@ image.raas-stg-emea.autodesk.com
 image.raas-stg.autodesk.com
 image.rendering.360.autodesk.com
 image.rendering.360.irl.autodesk.com
-image.tmdb.org
 images-ext-1.discordapp.net
 images-ext-2.discordapp.net
 images-ext-3.discordapp.net
@@ -11608,7 +11543,6 @@ imgen.x.ai
 imgs.telegram.com
 imp.pixiv.net
 impactdesignhub-test.autodesk.com
-important-stories.com
 impression.autodesk.com
 in-product-agent-action.ds-dev.autodesk.com
 in-product-agent.ds-dev.autodesk.com
@@ -11986,7 +11920,6 @@ instagram-p42-shv-02-ort2.fbcdn.net
 instagram-p42-shv-02-xsp1.fbcdn.net
 instagram-pp-shv-01-lga3.fbcdn.net
 instagram.c10r.instagram.com
-instagram.com
 instagram.fbeg10-1.fna.fbcdn.net
 instagram.fhel5-1.fna.fbcdn.net
 instagram.frix7-1.fna.fbcdn.net
@@ -12909,11 +12842,9 @@ issues2bcf-alb.bimngi-p-ew1.cloudos.autodesk.com
 issues2bcf-alb.bimngi-p-ue1.cloudos.autodesk.com
 issues2bcf-alb.bimngi-s-ew1.cloudos.autodesk.com
 issues2bcf-alb.bimngi-s-ue1.cloudos.autodesk.com
-istories.media
 it.telegram.com
 it.youtube.com
 ita-free.www.deepl.com
-itch.io
 itch.zone
 itemcatalog.api.sd.autodesk.com
 itemcatalog.api.sddev.autodesk.com
@@ -13377,13 +13308,11 @@ jenkins.prd-chef-server.autodesk.com
 jenkins.preprod-mgmt.sentry.io
 jenkins.zello.com
 jetarchive.jetbrains.com
-jetbrains.com
 jetbrains.com.cn
 jetbrains.dev
 jetbrains.net
 jetbrains.org
 jetbrains.ru
-jetbrains.space
 jetbrains.team
 jetpeople.jetbrains.com
 jf.x.ai
@@ -13396,7 +13325,6 @@ jiragpt.fusmltrn-p-ue1.cloudos.autodesk.com
 jirastg.autodesk.com
 jll.telegram.com
 jltutors.patreon.com
-jnn-pa.googleapis.com
 job-manager.fpccomp-c-uw2.cloudos.autodesk.com
 job-manager.fpccomp-p-as2.cloudos.autodesk.com
 job-manager.fpccomp-p-ew1-test.cloudos.autodesk.com
@@ -13465,17 +13393,13 @@ jupiter.femeretes.org
 jupiter.stream.voidboost.cc
 jupiter.telegram.com
 justtoplay.jetbrains.space
-jut.su
 jz-dogfood-demo.ampsdemo-c-uw2.cloudos.autodesk.com
 kafka-ui.srch-c-uw2-d3.cloudos.autodesk.com
 kafka-ui.srch-s-ue1-s3.cloudos.autodesk.com
 kaios-fallback.whatsapp.net
 kangaroo.zello.com
-kara.su
-kasparov.ru
 katon.jut.su
 kauai.autodesk.com
-kavkaz-uzel.eu
 kb.telegram.com
 kc3.connect.garmin.com
 keeperautomator.autodesk.com
@@ -13507,12 +13431,8 @@ kibana.us2.make.com
 kibana.we.make.com
 kids.youtube.com
 kindermorgan.telegram.com
-kino.pub
 kinobase.org
-kinovod.net
 kinovod.pro
-kinozal.me
-kinozal.tv
 kit-staging.snapchat.com
 kit.snapchat.com
 kitbash-alb.kitbash-c-uw2.cloudos.autodesk.com
@@ -13533,7 +13453,6 @@ kodik.info
 kodikapi.com
 kodikdb.com
 konica.autodesk.com
-korrespondent.net
 kotl.in
 kotlinconf.com
 kotlinlang.org
@@ -13544,7 +13463,6 @@ kp.services.autodesk.com
 kphelloworld.cedit-c-uw2.cloudos.autodesk.com
 kplat-csa-poc.kplat-c-uw2.cloudos.autodesk.com
 kr.youtube.com
-krymr.com
 krypton.zello.com
 kt.signal.org
 kt.staging.signal.org
@@ -13870,12 +13788,10 @@ lime.legacy.nodes.modrinth.com
 linden.legacy.nodes.modrinth.com
 link-clicks.dzcdn.net
 link.snapchat.com
-linkedin.com
 links.email.trainingpeaks.com
 links.patreon.com
 links.strava.com
 links.telegram.com
-linktr.ee
 lipsium.femeretes.org
 lipsium.stream.voidboost.cc
 lists-main-ue1.learn-one-stg.autodesk.com
@@ -14039,7 +13955,6 @@ looker.getsentry.net
 loop-dev.make.com
 loop.make.com
 lostfilm.run
-lostfilm.tv
 lostfilm.win
 louvre.femeretes.org
 louvre.stream.voidboost.cc
@@ -14537,7 +14452,6 @@ mainapi.unificmb-s-uw2.cloudos.autodesk.com
 maintenance-gold-99.roblox.com
 maintenance.roblox.com
 make-web-utils.make.com
-make.com
 makeanything.autodesk.com
 makenotion.zendesk.com
 making.duolingo.com
@@ -14561,8 +14475,6 @@ management.c4r-s-ue1.cloudos.autodesk.com
 managevps.telegram.com
 manageyourdomain.telegram.com
 manchester.telegram.com
-mangahub.ru
-mangapark.net
 manifest.delivery.autodesk.com
 manifest.googlevideo.com
 manifest.manifest-c-uw2.cloudos.autodesk.com
@@ -15864,8 +15776,6 @@ media.viber.com
 media.whatsapp.com
 mediacdn.naukri.com
 mediajune.fvga1-1.fna.whatsapp.net
-mediazona.ca
-medium.com
 medm-mcp.emsinf-c-uw2.cloudos.autodesk.com
 medm-mcp.flowai-c-uw2.cloudos.autodesk.com
 medm-perf-sgl.medata-s-ue1-pf.cloudos.autodesk.com
@@ -15887,7 +15797,6 @@ medm-v2.medata-p-ue1-test.cloudos.autodesk.com
 medm-v2.medata-p-ue1.cloudos.autodesk.com
 medm-v2.medata-s-ue1-test.cloudos.autodesk.com
 medm-v2.medata-s-ue1.cloudos.autodesk.com
-meduza.io
 mee6.xyz
 meetings.b360-qa.autodesk.com
 meetings.b360-staging.autodesk.com
@@ -16449,7 +16358,6 @@ model15.skyscraper-staging.autodesk.com
 model15.skyscraper.autodesk.com
 moderation-files.modrinth.com
 modify.telegram.com
-modrinth.com
 modrinth.gg
 modulesdownload.autodesk.com
 mohawkind.telegram.com
@@ -16625,7 +16533,6 @@ monoceros.femeretes.org
 monoceros.stream.voidboost.cc
 mosaic.autodesk.com
 mosaicco.telegram.com
-moscowtimes.ru
 motiongraphics.autodesk.com
 motorolasolutions.telegram.com
 motsupport.autodesk.com
@@ -16717,15 +16624,12 @@ mundo-figma.sentry.io
 mundoaec.autodesk.com
 munin.telegram.com
 murphyusa.telegram.com
-muscdn.com
 musemuse.cn
 music.roblox.com
 music.sitetest1.robloxlabs.com
 music.sitetest3.robloxlabs.com
 music.telegram.com
 music.youtube.com
-musical.ly
-musicbrainz.org
 mvm-20240424.snapchat.com
 mvm.mvm-20240424.snapchat.com
 mvm.snapchat.com
@@ -16777,7 +16681,6 @@ mydesk.autodesk.com
 mydevices.autodesk.com
 mydomain.telegram.com
 mygallery-stage-api.autodesk.com
-myjetbrains.com
 myshare.autodesk.com
 mysite.telegram.com
 mysql3.telegram.com
@@ -16842,7 +16745,6 @@ naumova1.revit-update-content.dev.dc.autodesk.com
 naumova1.revit.dev.dc.autodesk.com
 naumova1.verify-family.dev.dc.autodesk.com
 nav.files.bbci.co.uk
-navalny.com
 navasto-access-alb.navcloud-c-uw2.cloudos.autodesk.com
 navasto-access-alb.navcloud-p-ue1.cloudos.autodesk.com
 navasto-access-alb.navcloud-s-uw2.cloudos.autodesk.com
@@ -16863,10 +16765,7 @@ neon.telegram.com
 neon.zello.com
 net.telegram.com
 netcom-gw.telegram.com
-netflix.ca
-netflix.com
 netflix.com.au
-netflix.net
 netflix.telegram.com
 netflixdnstest1.com
 netflixdnstest10.com
@@ -16878,9 +16777,7 @@ netflixdnstest6.com
 netflixdnstest7.com
 netflixdnstest8.com
 netflixdnstest9.com
-netflixinvestor.com
 netflixstudios.com
-netflixtechblog.com
 network-visual-dev.i.perplexity.ai
 network.telegram.com
 networks.telegram.com
@@ -17125,7 +17022,6 @@ newsgroups.telegram.com
 newsite.telegram.com
 newsletter.duolingo.com
 newstudio.tv
-newtimes.ru
 nexlt-plus-alb.alqm-c-uw2-qa.cloudos.autodesk.com
 nexlt-plus-alb.alqm-c-uw2.cloudos.autodesk.com
 nexlt-plus-alb.alqm-s-uw2-qa.cloudos.autodesk.com
@@ -17157,12 +17053,6 @@ nf.dev.ft.autodesk.com
 nf.prd.ft.autodesk.com
 nf.stg.eu.ft.autodesk.com
 nf.stg.ft.autodesk.com
-nflxext.com
-nflximg.com
-nflximg.net
-nflxsearch.net
-nflxso.net
-nflxvideo.net
 ngcsp-api.sfdc-dev.autodesk.com
 ngcsp-api.sfdc-stg.autodesk.com
 ngenix.assets.service.jetbrains.space
@@ -17219,8 +17109,6 @@ nmedia.fssa13-1.fna.whatsapp.net
 nmedia.ftpe4-1.fna.whatsapp.net
 nmedia.fykz1-1.fna.whatsapp.net
 nmedia.fzty2-1.fna.whatsapp.net
-nnmclub.to
-nnmstatic.win
 no.youtube.com
 noc-vo.viber.com
 nodes.modrinth.com
@@ -17229,7 +17117,6 @@ noinsight.naukri.com
 nonpo.approvers-dev.autodesk.com
 nonsense.patreon.com
 northropgrumman.telegram.com
-notepad-plus-plus.org
 notifi-c-uw2.api.autodesk.com
 notifi-ewt-c-uw2.api.autodesk.com
 notifi-ewt-s-ue1.api.autodesk.com
@@ -17276,13 +17163,9 @@ notifications.roblox.com
 notifications.stg.fusionapi.autodesk.com
 notifications.us-east-2.api.autodesk.com
 notify.roblox.com
-notion-emojis.s3-us-west-2.amazonaws.com
 notion-media.com
 notion.ai
-notion.com
 notion.dev
-notion.site
-notion.so
 notionup.com
 notionusercontent.com
 nov.telegram.com
@@ -17290,8 +17173,6 @@ nova-stg.autodesk.com
 nova.autodesk.com
 nova.femeretes.org
 novapc.autodesk.com
-novayagazeta.eu
-novayagazeta.ru
 novel.pixiv.net
 np.naukimg.com
 np.rendering.360.autodesk.com
@@ -18356,7 +18237,6 @@ o97821.ingest.sentry.io
 o983271.ingest.sentry.io
 o994785.ingest.sentry.io
 oahu.autodesk.com
-oaistatic.com
 oauth.account.jetbrains.com
 oauth.approvals-dev.autodesk.com
 oauth.approvals-stg.autodesk.com
@@ -18501,7 +18381,6 @@ open.patreon.com
 open.sentry.io
 open.spotify.com
 open.stealth.si
-openai.com
 openai.fund
 openai.org
 openapi.tidal.com
@@ -18624,9 +18503,7 @@ otw.autodesk.com
 ou.telegram.com
 outcomes-explorer-stg.autodesk.com
 outcomes-explorer.autodesk.com
-ovd.info
 ovdinfo.legal
-ovdinfo.org
 overage.wallet.autodesk.com
 overage.walletdev.autodesk.com
 overage.walletint.autodesk.com
@@ -18706,7 +18583,6 @@ pano.rendering.360.irl.autodesk.com
 pantheon-media.fotp1-1.fna.whatsapp.net
 pantheon-ra.roblox.com
 paperagency.team
-paperpaper.ru
 papersupport.ru
 papi.deezer.com
 parameters-service.acc-qa.autodesk.com
@@ -18783,7 +18659,6 @@ patelv2.inventor.dev.dc.autodesk.com
 patelv2.mid-edit-form.dev.dc.autodesk.com
 patelv2.revit-update-content.dev.dc.autodesk.com
 patelv2.revit.dev.dc.autodesk.com
-patreon.com
 paul.telegram.com
 pay.deezer.com
 pay.roblox.com
@@ -19175,7 +19050,6 @@ polaris.femeretes.org
 polaris.stream.voidboost.cc
 policies.pixiv.net
 policies.rbxcdn.com
-polit.ru
 politemail.autodesk.com
 polls.roblox.com
 pomegranate.legacy.nodes.modrinth.com
@@ -19189,8 +19063,6 @@ pop.naukri.com
 pop.telegram.com
 poplar.legacy.nodes.modrinth.com
 popwebmail.telegram.com
-pornhub.com
-pornolab.net
 portainer.beeble.com
 portal.raas-c-uw2-np-test.cloudos.autodesk.com
 portal.raas-c-uw2-np.cloudos.autodesk.com
@@ -19605,7 +19477,6 @@ production.telegram.com
 productmanagers-prod-framer.perplexity.ai
 products.telegram.com
 productupdates.naukri.com
-proekt.media
 profile-security-dev.autodesk.com
 profile-security-stg.autodesk.com
 profile-security.autodesk.com
@@ -19665,12 +19536,10 @@ promotions.ddwsint.autodesk.com
 promotions.ddwsstg.autodesk.com
 promotions.roblox.com
 promptfoundry.kitt-dev.autodesk.com
-prostovpn.org
 protactinium.cloud.kodik-storage.com
 proton-me.cdn.prismic.io
 proton-multi.telegram.com
 proton.femeretes.org
-proton.me
 proton.stream.voidboost.cc
 proton.telegram.com
 protonmail.com
@@ -20063,7 +19932,6 @@ quic-tiktok-core-proxy-i18n-gcpva.byteoversea.net
 quic-tiktok-proxy-i18n-gcpva.byteoversea.net
 quiver.legacy.nodes.modrinth.com
 quiz.directory
-quora.com
 quote-internal.ddws.autodesk.com
 quote-internal.ddwsdev.autodesk.com
 quote-internal.ddwsint.autodesk.com
@@ -28217,7 +28085,6 @@ raas-file.autodesk.com
 raas2.autodesk.com
 raasbeta.autodesk.com
 radio.svoboda.org
-radiosvoboda.org
 radium.femeretes.org
 radium.stream.voidboost.cc
 radon.zello.com
@@ -28358,14 +28225,11 @@ redash.getsentry.net
 redash.goldmansachs.getsentry.net
 redash.ly.getsentry.net
 redash.s4s.getsentry.net
-reddxxx.com
-redgifs.com
 redirector.c.youtube.com
 redirector.googlevideo.com
 redlib.fmhy.net
 redshift.autodesk.com
 redtube.com
-refactoring.guru
 refeducation.autodesk.com
 refeduevaluation.autodesk.com
 referenceapp.sharedviewspanel-dev.autodesk.com
@@ -28552,7 +28416,6 @@ result.rendering.360.irl.autodesk.com
 resume.naukri.com
 resumepedia.naukri.com
 resumeservices.naukri.com
-returnyoutubedislikeapi.com
 reviewcerts.wht-dev.autodesk.com
 reviewcerts.wht-int.autodesk.com
 reviewcerts.wht-stg.autodesk.com
@@ -28594,9 +28457,6 @@ rewarded-video.roblox.com
 rewarded-video.sitetest1.robloxlabs.com
 rewarded-video.sitetest3.robloxlabs.com
 reynoldsamerican.telegram.com
-rezka.ag
-rezka.my
-rezkify.com
 rfis-testbed.b360-dev.autodesk.com
 rfis-testbed.b360-qa.autodesk.com
 rfis-testbed.b360-staging.autodesk.com
@@ -30836,7 +30696,6 @@ ru.youtube.com
 rubber.legacy.nodes.modrinth.com
 ruhlaender.jetbrains.space
 rulate.ru
-rule34.xxx
 run.testa.getsentry.net
 runner-alb.oss-c-uw2.cloudos.autodesk.com
 runner-alb.oss-p-an1.cloudos.autodesk.com
@@ -31520,14 +31379,7 @@ russia9830.discord.gg
 russia9872.discord.gg
 russia9942.discord.gg
 russia9955.discord.gg
-rustorka.com
-rutor.info
-rutor.is
-rutor.org
-rutracker.net
-rutracker.org
 rutracker.ru
-rutracker.wiki
 rutrk.org
 rvtcfg-dev.autodesk.com
 rvtcfg-staging.autodesk.com
@@ -32264,12 +32116,9 @@ self-hosted.getsentry.net
 self.events.data.microsoft.com
 selfservice.healthhub.autodesk.com
 selfservice.telegram.com
-semnasem.org
 sentimentanalysis-alb.reshcbd-c-uw2.cloudos.autodesk.com
 sentry-cdn.com
 sentry.beeble.com
-sentry.dev
-sentry.io
 sentry.my.sentry.io
 sentry.tvrain.tv
 sentry.zona.media
@@ -32507,7 +32356,6 @@ signal.art
 signal.group
 signal.link
 signal.me
-signal.org
 signal.tube
 signaler-pa.youtube.com
 signalr.vapor.autodesk.com
@@ -33059,7 +32907,6 @@ snapshot-i2i.pdmsinf-c-uw2.cloudos.autodesk.com
 snapshot-i2xl.pdmsinf-c-uw2.cloudos.autodesk.com
 snc1.statping.aws.robloxlabs.com
 snd.sc
-sndcdn.com
 snmp.telegram.com
 snowapi.opshub.autodesk.com
 snowapi.opshubstg.autodesk.com
@@ -33785,7 +33632,6 @@ sonicautomotive.telegram.com
 sonos-queue-bridge.deezer.com
 soundas-test-disabled.wonkaecs-c-uw2.cloudos.autodesk.com
 soundas-test-enabled.wonkaecs-c-uw2.cloudos.autodesk.com
-soundcloud.com
 south-apac.autodesk.com
 south-east-europe.autodesk.com
 south-korea1000.discord.gg
@@ -34001,7 +33847,6 @@ sport.unian.net
 sportsbrandsvpn.internal.trainingpeaks.com
 spoti.fi
 spotify-everywhere.com
-spotify.com
 spotify.design
 spotify.fls.jetbrains.com
 spotifycdn.com
@@ -34518,7 +34363,6 @@ storybook.mfe.profile-stg.autodesk.com
 storybook.mfe.profile.autodesk.com
 storybook.userprofile-smart-components-stg.autodesk.com
 stratifydoc.autodesk.com
-strava.com
 stream.deezer.com
 stream.naukri.com
 stream.telegram.com
@@ -34617,7 +34461,6 @@ suggest.perplexity.ai
 suggestlg.naukimg.com
 suggestlg.naukri.com
 suggestor.naukri.com
-suggestqueries.google.com
 summarization.ds-dev.autodesk.com
 summarization.ds-stg.autodesk.com
 summarization.ds.autodesk.com
@@ -34710,7 +34553,6 @@ svc.hawkeye.autodesk.com
 svc.metaflow.blank.autodesk.com
 svcwebhooks.hawkeye-eu.autodesk.com
 svcwebhooks.hawkeye.autodesk.com
-svoboda.org
 svr2.reflector.signal.org
 svr2.signal.org
 svr2.staging.reflector.signal.org
@@ -34916,7 +34758,6 @@ syslog.workers.cribl.autodesk.com
 systemrp.roblox.com
 t-ru.org
 t-s.news
-t.co
 t.email.roblox.com
 t.me
 t.scdn.co
@@ -35072,7 +34913,6 @@ tax.tt-stg.autodesk.com
 tax.tt.autodesk.com
 taxonomy-content.advisor.autodesk.com
 taxonomy-suggest.naukri.com
-tayga.info
 tc.v11.cache1.c.youtube.com
 tc.v13.cache1.c.youtube.com
 tc.v14.cache1.c.youtube.com
@@ -35312,16 +35152,10 @@ tg-api.xstask-s-uw2.cloudos.autodesk.com
 tg.dev
 thallium.femeretes.org
 thallium.stream.voidboost.cc
-the-village.ru
 thefacebook.com
-theins.press
-theins.ru
 thelocker.whoop.com
 themes.api.roblox.com
-themoviedb.org
-thepiratebay.org
 thermofisher.telegram.com
-thetruestory.news
 think-aloud.reshci-c-uw2.cloudos.autodesk.com
 thirdparty-public-apps-media.canva-apps.com
 thisis-images.spotifycdn.com
@@ -35368,18 +35202,13 @@ tiger.telegram.com
 tiktok-lb-alisg.byteoversea.net
 tiktok-lb-maliva.byteoversea.net
 tiktok-platform-lb-alisg.byteoversea.net
-tiktok.com
 tiktokcdn-in.com
-tiktokcdn-us.com
 tiktokcdn-us.com.atomile.com
-tiktokcdn.com
 tiktokcdn.com.atomile.com
 tiktokcdn.com.c.bytetcdn.com
 tiktokcdn.com.c.worldfcdn.com
 tiktokcdn.com.rocket-cdn.com
-tiktokd.org
 tiktokglobalshop.com
-tiktokv.com
 tiktokv.com.c.worldfcdn.com
 tiktokv.com.c.worldfcdn2.com
 tiktokw.eu
@@ -35409,7 +35238,6 @@ tls.dev-zes-base.zello.com
 tls.zello.com
 tls.zes-base.zello.com
 tls.zes-cert-test.zello.com
-tmdb.org
 tmp-enhancer.bim360iq-c-uw2.cloudos.autodesk.com
 tmp-enhancer.bim360iq-p-ew1.cloudos.autodesk.com
 tmp-enhancer.bim360iq-p-ue1.cloudos.autodesk.com
@@ -35645,18 +35473,12 @@ turkey-rp.roblox.com
 turkey.autodesk.com
 turn.viber.com
 turn3.voip.signal.org
-tuta.com
-tutanota.com
 tutorials.telegram.com
 tv.telegram.com
 tv.youtube.com
 tv2.deezer.com
-tvrain.ru
 tw.youtube.com
 twc.telegram.com
-tweetdeck.com
-twimg.com
-twitter.com
 two.telegram.com
 twostepverification.helphub.autodesk.com
 tx.me
@@ -37312,7 +37134,6 @@ v-k-fallback.whatsapp.net
 v-k.whatsapp.net
 v.fastpic.org
 v.telegram.com
-v.vrv.co
 v.whatsapp.com
 v.whatsapp.net
 v1.cache1.c.youtube.com
@@ -37429,7 +37250,6 @@ verify.naukri.com
 veritivcorp.telegram.com
 verizon.telegram.com
 versioncompatibility.api.roblox.com
-verstka.media
 vertexgenai-dev.autodesk.com
 vertexgenai.autodesk.com
 vertexgenainp.autodesk.com
@@ -37454,7 +37274,6 @@ vgadminv3-stg.autodesk.com
 vgadminv3.autodesk.com
 viacom.telegram.com
 viber.co
-viber.com
 viber.me
 viberout-calls.staging.viber.com
 viberout-lp.viber.com
@@ -37519,16 +37338,13 @@ vm.telegram.com
 vmscanus.naukri.com
 vmware.telegram.com
 vnc.telegram.com
-vndb.org
 vocd.autodesk.com
 vod.telegram.com
 vodev.autodesk.com
 voice.roblox.com
-voidboost.cc
 volunteer.telegram.com
 vomcontrolboard-dev.autodesk.com
 vomcontrolboard.autodesk.com
-vot-tak.tv
 vp.cdn.viber.com
 vp.externulls.com
 vpn-alb.uam-c-uw2.cloudos.autodesk.com
@@ -37635,7 +37451,6 @@ w8.web.whatsapp.com
 w81530a9f1kxhogkgd-gm3dgmbvgq2timrx.snr.whatsapp.net
 w9.api.tuta.com
 w9.web.whatsapp.com
-wa.me
 wa1.ocsweb.autodesk.com
 wa9842a181-ha4tonzvha4dmob.snr.whatsapp.net
 wallet.autodesk.com
@@ -38796,10 +38611,8 @@ whatsapp-plus.info
 whatsapp-plus.me
 whatsapp-plus.net
 whatsapp.cc
-whatsapp.com
 whatsapp.fbsbx.com
 whatsapp.info
-whatsapp.net
 whatsapp.org
 whatsapp.tv
 whatsappbrand.com
@@ -39682,7 +39495,6 @@ www8.telegram.com
 wwwl.whatsapp.com
 wwww.telegram.com
 wyndhamworldwide.telegram.com
-x.com
 x.hentaichan.live
 x.telegram.com
 xapa-mcp-server.xapaeng-p-ue1.cloudos.autodesk.com
@@ -39692,13 +39504,9 @@ xcp.telegram.com
 xdrive.delivery.autodesk.com
 xenon.zello.com
 xerox.telegram.com
-xhamster.com
-xhamsterlive.com
 xm-cyber.sentry.io
 xml.telegram.com
 xn--www-rp0a.roblox.com
-xnxx-ru.com
-xnxx.com
 xpo.telegram.com
 xrfawcos.informeddesign.autodesk.com
 xrfawcos.stg.informeddesign.autodesk.com
@@ -39708,8 +39516,6 @@ xss.staging.ems.autodesk.com
 xsssvc.shotxss-c-uw2.cloudos.autodesk.com
 xsssvc.shotxss-p-ue1.cloudos.autodesk.com
 xsssvc.shotxss-s-ue1.cloudos.autodesk.com
-xv-ru.com
-xvideos.com
 xww.roblox.com
 xx-fbcdn-shv-01-amt2.fbcdn.net
 xx-fbcdn-shv-01-any2.fbcdn.net
@@ -39789,7 +39595,6 @@ yt.i.perplexity.ai
 yt1.googleusercontent.com
 yt2.googleusercontent.com
 yt3.ggpht.com
-yt3.googleusercontent.com
 yt4.ggpht.com
 yttrium.femeretes.org
 yummyanime.tv
@@ -39799,7 +39604,6 @@ za.youtube.com
 zabbix.b360-qa.autodesk.com
 zabbix.telegram.com
 zapier-deployment.com
-zapier.com
 zeflix.online
 zello.com
 zelloserver65.zello.com
@@ -39825,4 +39629,3 @@ zltest.ampsdemo-c-uw2.cloudos.autodesk.com
 znanija.com
 zoho.viber.com
 zombie.duolingo.com
-zona.media
