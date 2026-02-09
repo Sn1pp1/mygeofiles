@@ -32,6 +32,7 @@ cloud.avira.com
 license.avira.com
 api.myavira.com
 my.avira.com
+pwnedpasswords.com
 update.eset.com
 eset.systems
 ds.eset.com
