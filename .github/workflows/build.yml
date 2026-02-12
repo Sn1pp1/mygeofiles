@@ -42,7 +42,6 @@ jobs:
           )
           
           GEOIP_URLS=(
-            "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ip.txt"
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked.srs"
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked-community.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-telegram.srs"
