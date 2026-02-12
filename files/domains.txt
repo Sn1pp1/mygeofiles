@@ -127,6 +127,7 @@ openuserjs.org
 curseforge.com
 forgecdn.net
 iplist.opencck.org
+browserleaks.com
 gstatic.com
 googleapis.com
 lh3.googleusercontent.com
