@@ -30,6 +30,8 @@ jobs:
           # --- СПИСКИ ССЫЛОК ---
           GEOSITE_URLS=(
             "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domains.txt"
+            "https://github.com/itdoginfo/allow-domains/releases/latest/download/russia_inside.srs"
+            "https://github.com/itdoginfo/allow-domains/releases/latest/download/geoblock.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-antifilter-download-community.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-ru-blocked.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-telegram.srs"
