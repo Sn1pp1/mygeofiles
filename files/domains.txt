@@ -5,6 +5,8 @@ api.ios-kp.store
 m.pushbr.com
 usher.ttvnw.net
 gql.twitch.tv
+mobatek.net
+mobaxterm.mobatek.net
 nortoncdn.com
 norton.com
 nortonlifelock.com
