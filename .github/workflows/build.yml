@@ -97,7 +97,6 @@ jobs:
                   sing-box rule-set decompile "temp_file" -o "temp.json" &>/dev/null
                   python3 parser.py "$target" "$fname"
                 elif [[ "$full_name" == *.txt || "$full_name" == *.lst ]]; then
-                  # Очистка TXT: убираем комментарии, пробелы и пустые строки
                   grep -v '^#' "temp_file" | sed 's/[[:space:]]//g' | grep -v '^$' > "data/$target/$fname"
                 else
                   mv "temp_file" "temp.json"
@@ -130,6 +129,15 @@ jobs:
         run: |
           sha256sum geosite.dat > geosite.dat.sha256
           sha256sum geoip.dat > geoip.dat.sha256
+
+      # --- НОВЫЙ ШАГ ДЛЯ РАБОТЫ JSDELIVR ---
+      - name: Push Files to Branch
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
+          git commit -m "Update dat files (automated): $(date -u)" || echo "No changes to commit"
+          git push
 
       - name: Release
         uses: softprops/action-gh-release@v2
