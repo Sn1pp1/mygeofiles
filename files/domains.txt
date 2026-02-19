@@ -5,6 +5,7 @@ api.ios-kp.store
 m.pushbr.com
 usher.ttvnw.net
 gql.twitch.tv
+geekuninstaller.com
 mobatek.net
 mobaxterm.mobatek.net
 nortoncdn.com
