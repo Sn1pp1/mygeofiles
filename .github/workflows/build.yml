@@ -33,7 +33,6 @@ jobs:
             "https://github.com/itdoginfo/allow-domains/releases/latest/download/russia_inside.srs"
             "https://github.com/itdoginfo/allow-domains/releases/latest/download/geoblock.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-antifilter-download-community.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-ru-blocked.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-telegram.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-whatsapp.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-play.srs"
@@ -89,9 +88,13 @@ jobs:
               [ -z "$url" ] && continue
               
               full_name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1].split('/')[-1]))" "$url")
-              fname=$(echo "${full_name%.*}" | tr '_' '-' | tr '@' '-' | tr '[:upper:]' '[:lower:]')
               
-              echo "Downloading $full_name..."
+              # Очистка имени от префиксов и лишних символов
+              fname=$(echo "${full_name%.*}" | tr '_' '-' | tr '@' '-' | tr '[:upper:]' '[:lower:]')
+              fname=${fname#geosite-} # Убираем geosite-
+              fname=${fname#geoip-}   # Убираем geoip-
+              
+              echo "Downloading $full_name -> saved as $fname"
               if curl -sL --fail "$url" -o "temp_file"; then
                 if [[ "$full_name" == *.srs ]]; then
                   sing-box rule-set decompile "temp_file" -o "temp.json" &>/dev/null
@@ -110,14 +113,26 @@ jobs:
           process_links "geosite" "${GEOSITE_URLS[@]}"
           process_links "geoip" "${GEOIP_URLS[@]}"
 
+      - name: Check Structure and Cleanup
+        run: |
+          # Удаляем пустые файлы, если они есть
+          find data -type f -empty -delete
+          
+          echo "### Final categories for geosite.dat:"
+          ls data/geosite
+          echo "---"
+          echo "### Final categories for geoip.dat:"
+          ls data/geoip
+          
+          # Простейшая проверка: если папки пусты, прервать билд
+          if [ -z "$(ls -A data/geosite)" ]; then echo "Error: No geosite data!"; exit 1; fi
+
       - name: Build geosite.dat
         run: |
-          find data/geosite -type f -empty -delete
           go run github.com/v2fly/domain-list-community@latest --datapath=data/geosite --outputname=geosite.dat
 
       - name: Build geoip.dat
         run: |
-          find data/geoip -type f -empty -delete
           cat <<EOF > geoip_config.json
           {"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}],
            "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}
@@ -130,13 +145,12 @@ jobs:
           sha256sum geosite.dat > geosite.dat.sha256
           sha256sum geoip.dat > geoip.dat.sha256
 
-      # --- НОВЫЙ ШАГ ДЛЯ РАБОТЫ JSDELIVR ---
       - name: Push Files to Branch
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
-          git commit -m "Update dat files (automated): $(date -u)" || echo "No changes to commit"
+          git commit -m "Update dat files: $(date -u)" || echo "No changes to commit"
           git push
 
       - name: Release
