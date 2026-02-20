@@ -29,7 +29,7 @@ jobs:
 
           # --- СПИСКИ ССЫЛОК ---
           GEOSITE_URLS=(
-            "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domains.txt"
+            "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
             "https://github.com/itdoginfo/allow-domains/releases/latest/download/russia_inside.srs"
             "https://github.com/itdoginfo/allow-domains/releases/latest/download/geoblock.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-antifilter-download-community.srs"
@@ -40,12 +40,16 @@ jobs:
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-deepmind.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-youtube.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-discord.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-private.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-win-spy.srs"
+            
           )
           
           GEOIP_URLS=(
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked.srs"
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked-community.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-telegram.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-private.srs"
           )
 
           # --- УНИВЕРСАЛЬНЫЙ ПАРСЕР JSON/SRS ---
