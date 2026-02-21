@@ -5,6 +5,7 @@ api.ios-kp.store
 m.pushbr.com
 usher.ttvnw.net
 gql.twitch.tv
+render.com
 utils.docs.rw
 happ.su
 geekuninstaller.com
