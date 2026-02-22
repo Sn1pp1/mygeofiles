@@ -5,6 +5,7 @@ api.ios-kp.store
 m.pushbr.com
 usher.ttvnw.net
 gql.twitch.tv
+cron-job.org
 happ-proxy.com
 render.com
 utils.docs.rw
