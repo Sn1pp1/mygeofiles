@@ -79,9 +79,9 @@ def build_category(name, config):
     print(f"\n📦 Building '{name}'...")
     all_items = set()
     
-    # Geosite файлы — БЕЗ расширения .txt
+    # Geosite файлы — файлы НАПРЯМУЮ в папке data (без подпапок!)
     for cat in config.get("geosite", []):
-        url = f"{GEOSITE_BASE}/{cat}/{cat}"  # Нет .txt!
+        url = f"{GEOSITE_BASE}/{cat}"  # Просто файл в data/
         try:
             items = download_text(url)
             if items:
@@ -92,9 +92,9 @@ def build_category(name, config):
         except Exception as e:
             print(f"    ⚠ {cat}: {e}")
     
-    # GeoIP файлы — С расширением .txt
+    # GeoIP файлы — с расширением .txt
     for cat in config.get("geoip", []):
-        url = f"{GEOIP_BASE}/{cat}.txt"  # Есть .txt!
+        url = f"{GEOIP_BASE}/{cat}.txt"
         try:
             items = download_text(url)
             all_items.update(items)
@@ -117,9 +117,8 @@ def build_category(name, config):
         print(f"  ✅ Created {srs_path.name} ({srs_path.stat().st_size} bytes)")
         return True
     return False
-
 def main():
-    print("🚀 RoscomVPN SRS Builder")
+    print("🚀 Sing-box SRS Builder")
     OUTPUT_DIR.mkdir(exist_ok=True)
     
     sources = load_sources()
