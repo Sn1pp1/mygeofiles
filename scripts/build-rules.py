@@ -79,15 +79,30 @@ def build_category(name, config):
     print(f"\n📦 Building '{name}'...")
     all_items = set()
     
+    # Geosite файлы — правильный URL (без подпапок)
     for cat in config.get("geosite", []):
-        url = f"{GEOSITE_BASE}/{cat}/{cat}.txt"
-        try:
-            items = download_text(url)
-            all_items.update(items)
-            print(f"    + {cat}: {len(items)} items")
-        except Exception as e:
-            print(f"    ⚠ {cat}: {e}")
+        # Пробуем несколько вариантов URL
+        urls_to_try = [
+            f"{GEOSITE_BASE}/{cat}.txt",
+            f"{GEOSITE_BASE}/geosite-{cat}.txt",
+        ]
+        
+        downloaded = False
+        for url in urls_to_try:
+            try:
+                items = download_text(url)
+                if items:
+                    all_items.update(items)
+                    print(f"    + {cat}: {len(items)} items (from {url})")
+                    downloaded = True
+                    break
+            except Exception as e:
+                continue
+        
+        if not downloaded:
+            print(f"    ⚠ {cat}: Not found in any location")
     
+    # GeoIP файлы
     for cat in config.get("geoip", []):
         url = f"{GEOIP_BASE}/{cat}.txt"
         try:
