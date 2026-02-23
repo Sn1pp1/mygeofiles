@@ -63,6 +63,10 @@
     {
       "type": "direct",
       "tag": "direct"
+    },
+    {
+      "type": "block",
+      "tag": "block"
     }
   ],
   "route": {
@@ -72,6 +76,20 @@
         "type": "remote",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/games.srs",
+        "download_detour": "proxy"
+      },
+      {
+        "tag": "rcv-block",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/block.srs",
+        "download_detour": "proxy"
+      },
+      {
+        "tag": "rcv-direct",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct.srs",
         "download_detour": "proxy"
       }
     ],
@@ -86,6 +104,14 @@
       },
       {
         "rule_set": "my-games-rules",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": "rcv-block",
+        "outbound": "block"
+      },
+      {
+        "rule_set": "rcv-direct",
         "outbound": "direct"
       },
       {
