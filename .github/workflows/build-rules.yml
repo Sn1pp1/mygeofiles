@@ -1,1 +1,38 @@
+name: Build SB SRS
 
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Install sing-box CLI
+        run: |
+          wget -q https://github.com/SagerNet/sing-box/releases/download/v1.10.3/sing-box_1.10.3_linux_amd64.tar.gz
+          tar -xzf sing-box_1.10.3_linux_amd64.tar.gz
+          sudo install sing-box_1.10.3_linux_amd64/sing-box /usr/local/bin/sing-box
+          sing-box version
+
+      - name: Build SRS files
+        run: python scripts/build-rules.py
+
+      - name: Commit and push
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'Auto-update SRS from RoscomVPN'
+          file_pattern: 'files/*.srs'
+          branch: main
