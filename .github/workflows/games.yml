@@ -2,22 +2,28 @@ name: Update games Rule-Set
 on:
   push:
     paths:
-      - 'files/games.json' # Следим за изменениями в этой папке
+      - 'files/games.json'
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
       - name: Compile SRS
         run: |
           curl -Lo sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v1.8.10/sing-box-1.8.10-linux-amd64.tar.gz
           tar -xzf sing-box.tar.gz
           # Компилируем из папки files в папку files
           ./sing-box-*/sing-box rule-set compile files/games.json -o files/games.srs
+          # ОЧИЩАЕМ временные файлы
+          rm -rf sing-box-*
+          rm -f sing-box.tar.gz
+      
       - name: Deploy
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add files/games.srs
-          git commit -m "Update binary rules in files/"
+          git commit -m "Update binary rules in files/" || echo "No changes to commit"
           git push
