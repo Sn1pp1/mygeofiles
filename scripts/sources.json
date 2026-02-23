@@ -1,1 +1,29 @@
-
+{
+  "block": {
+    "geosite": [
+      "win-spy",
+      "torrent",
+      "category-ads"
+    ]
+  },
+  "direct": {
+    "geosite": [
+      "category-ru",
+      "microsoft",
+      "apple",
+      "google-play",
+      "epicgames",
+      "riot",
+      "escapefromtarkov",
+      "steam",
+      "twitch",
+      "pinterest",
+      "faceit",
+      "private"
+    ],
+    "geoip": [
+      "direct",
+      "private"
+    ]
+  }
+}
