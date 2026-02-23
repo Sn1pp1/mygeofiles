@@ -18,7 +18,11 @@
         "playbattlegrounds.com",
         "tarkov.com",
         "escapefromtarkov.com",
-        "warthunder.com"
+        "warthunder.com",
+        "wargaming.net",
+        "minecraft.net",
+        "bungie.net",
+        "pathofexile.com"
       ],
       "domain_suffix": [
         "dota2.com",
@@ -55,7 +59,13 @@
         "easyanticheat.net",
         "battleye.com",
         "equ8-anticheat.com",
-        "nprotect.com"
+        "nprotect.com",
+        "riotcdn.net",
+        "valorant.com",
+        "leagueoflegends.com",
+        "mojang.com",
+        "playfabapi.com",
+        "square-enix.com"
       ],
       "domain_keyword": [
         "steamserver",
@@ -70,7 +80,9 @@
         "warthunder",
         "gaijin",
         "rockstar",
-        "tarkov"
+        "tarkov",
+        "riot",
+        "wargaming"
       ],
       "process_name": [
         "stray.exe",
@@ -108,10 +120,18 @@
         "origin.exe",
         "ea.exe",
         "ubisoftconnect.exe",
-        "rockstar-games-launcher.exe"
+        "rockstar-games-launcher.exe",
+        "VALORANT-Win64-Shipping.exe",
+        "LeagueClient.exe",
+        "League of Legends.exe",
+        "worldoftanks.exe",
+        "destiny2.exe",
+        "PathOfExile_x64.exe",
+        "Palworld-Win64-Shipping.exe",
+        "RustClient.exe",
+        "DeadByDaylight-Win64-Shipping.exe",
+        "vgk.sys"
       ]
     }
   ]
 }
-
-
