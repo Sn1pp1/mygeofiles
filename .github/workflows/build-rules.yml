@@ -22,12 +22,11 @@ jobs:
 
       - name: Install sing-box CLI
         run: |
-          # Скачиваем последнюю стабильную версию
-          SING_BOX_VERSION="v1.10.0"
-          wget https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_VERSION}/sing-box_${SING_BOX_VERSION#v}_linux_amd64.tar.gz
-          tar -xzf sing-box_${SING_BOX_VERSION#v}_linux_amd64.tar.gz
-          sudo install sing-box_${SING_BOX_VERSION#v}_linux_amd64/sing-box /usr/local/bin/sing-box
-          rm -rf sing-box_*
+          # Используем стабильную версию 1.9.0
+          wget https://github.com/SagerNet/sing-box/releases/download/v1.9.0/sing-box-1.9.0-linux-amd64.tar.gz
+          tar -xzf sing-box-1.9.0-linux-amd64.tar.gz
+          sudo install sing-box-1.9.0-linux-amd64/sing-box /usr/local/bin/sing-box
+          rm -rf sing-box-*
           sing-box version
 
       - name: Build SRS files
