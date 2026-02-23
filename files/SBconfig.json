@@ -6,16 +6,6 @@
   "dns": {
     "servers": [
       {
-        "tag": "dns-remote",
-        "address": "https://1.1.1.1/dns-query",
-        "detour": "proxy"
-      },
-      {
-        "tag": "dns-remote-backup",
-        "address": "https://8.8.8.8/dns-query",
-        "detour": "proxy"
-      },
-      {
         "tag": "dns-direct",
         "address": "https://1.1.1.1/dns-query",
         "detour": "direct"
@@ -24,6 +14,16 @@
         "tag": "dns-direct-backup",
         "address": "https://8.8.8.8/dns-query",
         "detour": "direct"
+      },
+      {
+        "tag": "dns-remote",
+        "address": "https://1.1.1.1/dns-query",
+        "detour": "proxy"
+      },
+      {
+        "tag": "dns-remote-backup",
+        "address": "https://8.8.8.8/dns-query",
+        "detour": "proxy"
       }
     ],
     "rules": [
@@ -76,6 +76,10 @@
       }
     ],
     "rules": [
+      {
+        "domain_suffix": [".ru", ".su", ".рф", ".xn--p1ai"],
+        "outbound": "direct"
+      },
       {
         "protocol": "dns",
         "action": "hijack-dns"
