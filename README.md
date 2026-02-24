@@ -130,13 +130,6 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
   "route": {
     "rule_set": [
       {
-        "tag": "games-rules",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/games.srs",
-        "download_detour": "proxy"
-      },
-      {
         "tag": "block-rules",
         "type": "remote",
         "format": "binary",
@@ -149,27 +142,34 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
         "format": "binary",
         "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct.srs",
         "download_detour": "proxy"
+      },
+      {
+        "tag": "games-rules",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/games.srs",
+        "download_detour": "proxy"
       }
     ],
     "rules": [
-      {
-        "domain_suffix": [".ru", ".su", ".рф", ".xn--p1ai"],
-        "outbound": "direct"
-      },
       {
         "protocol": "dns",
         "action": "hijack-dns"
       },
       {
-        "rule_set": "my-games-rules",
-        "outbound": "direct"
-      },
-      {
-        "rule_set": "rcv-block",
+        "rule_set": "block-rules",
         "outbound": "block"
       },
       {
-        "rule_set": "rcv-direct",
+        "domain_suffix": [".ru", ".su", ".рф", ".xn--p1ai"],
+        "outbound": "direct"
+      },
+      {
+        "rule_set": "games-rules",
+        "outbound": "direct"
+      },
+      {
+        "rule_set": "direct-rules",
         "outbound": "direct"
       },
       {
