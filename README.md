@@ -130,21 +130,21 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
   "route": {
     "rule_set": [
       {
-        "tag": "my-games-rules",
+        "tag": "games-rules",
         "type": "remote",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/games.srs",
         "download_detour": "proxy"
       },
       {
-        "tag": "rcv-block",
+        "tag": "block-rules",
         "type": "remote",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/block.srs",
         "download_detour": "proxy"
       },
       {
-        "tag": "rcv-direct",
+        "tag": "direct-rules",
         "type": "remote",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct.srs",
