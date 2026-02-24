@@ -5,6 +5,8 @@ api.ios-kp.store
 m.pushbr.com
 usher.ttvnw.net
 gql.twitch.tv
+dnsleaktest.com
+dnsperf.com
 tracklock.gg
 cron-job.org
 happ-proxy.com
