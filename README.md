@@ -214,17 +214,17 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
 
 **📥 block.srs**
 ```text
-https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/block.srs
+https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/block.srs
 ```
 
 **📥 direct.srs**
 ```text
-https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/direct.srs
+https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct.srs
 ```
 
 **📥 games.srs**
 ```text
-https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/games.srs
+https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/games.srs
 ```
 ---
 
