@@ -31,7 +31,7 @@ https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat
 
 ---
 
-### 🚀 jsDelivr CDN
+### jsDelivr CDN
 
 **📥 geosite.dat**
 ```text
