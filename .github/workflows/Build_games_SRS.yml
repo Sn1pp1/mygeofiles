@@ -1,4 +1,4 @@
-name: Update games Rule-Set
+name: Build games SRS
 on:
   push:
     paths:
