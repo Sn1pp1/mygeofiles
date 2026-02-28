@@ -19,7 +19,8 @@
       "twitch",
       "pinterest",
       "faceit",
-      "private"
+      "private",
+      "origin"
     ],
     "geoip": [
       "direct",
