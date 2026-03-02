@@ -42,7 +42,7 @@ jobs:
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-discord.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-private.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-win-spy.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/category-geoblock-ru"
+            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-geoblock-ru.srs"
             
           )
           
