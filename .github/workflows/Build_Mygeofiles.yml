@@ -44,6 +44,7 @@ jobs:
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-win-spy.srs"
             "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-geoblock-ru.srs"
             "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
+            "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/ooni_domains.lst"
             
           )
           
