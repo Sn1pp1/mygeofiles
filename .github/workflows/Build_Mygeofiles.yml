@@ -5,9 +5,8 @@ on:
   workflow_dispatch:
 
 env:
-  # Глобальные переменные
   GO_VERSION: '1.22'
-  SING_BOX_VERSION: '1.10.3'
+  SING_BOX_VERSION: '1.11.0'  # Обновляем до последней версии
   MAX_ARTIFACT_SIZE_MB: 50
   DEBUG: ${{ secrets.DEBUG_MODE }}
 
@@ -19,9 +18,6 @@ jobs:
     strategy:
       fail-fast: true
     steps:
-      # ============================================
-      # 🔧 SETUP & CACHING
-      # ============================================
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -44,7 +40,7 @@ jobs:
             ${{ runner.os }}-go-
 
       # ============================================
-      # 🔧 INSTALL SING-BOX
+      # 🔧 INSTALL SING-BOX (LATEST)
       # ============================================
       - name: Install sing-box
         run: |
@@ -53,44 +49,36 @@ jobs:
           SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
           DOWNLOADED=false
           
-          if curl -sL --fail --connect-timeout 15 --retry 2 \
+          # Пробуем разные форматы URL
+          for format in \
             "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz" \
-            -o sing-box.tar.gz 2>/dev/null; then
-            echo "✅ Downloaded (new format)"
-            DOWNLOADED=true
-          elif curl -sL --fail --connect-timeout 15 --retry 2 \
-            "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box_${SING_BOX_VERSION}_linux_amd64.tar.gz" \
-            -o sing-box.tar.gz 2>/dev/null; then
-            echo "✅ Downloaded (old format)"
-            DOWNLOADED=true
-          fi
-          
-          if [ "$DOWNLOADED" = true ]; then
-            if file sing-box.tar.gz | grep -qE "gzip|tar"; then
-              tar xzf sing-box.tar.gz
-              SINGBOX_BIN=$(find . -name "sing-box" -type f 2>/dev/null | head -1)
-              
-              if [ -n "$SINGBOX_BIN" ]; then
-                echo "✅ Found sing-box at: $SINGBOX_BIN"
-                cp "$SINGBOX_BIN" /usr/local/bin/sing-box
-                chmod +x /usr/local/bin/sing-box
-                echo "✅ sing-box installed successfully"
-                sing-box version
-              else
-                echo "❌ sing-box binary not found in archive"
-                exit 1
-              fi
-              
-              rm -rf sing-box.tar.gz $(tar tzf sing-box.tar.gz | head -1 | cut -f1 -d"/") 2>/dev/null || true
-            else
-              echo "❌ Downloaded file is not a valid archive"
-              exit 1
+            "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box_${SING_BOX_VERSION}_linux_amd64.tar.gz"; do
+            if curl -sL --fail --connect-timeout 15 --retry 2 "$format" -o sing-box.tar.gz 2>/dev/null; then
+              echo "✅ Downloaded from: $format"
+              DOWNLOADED=true
+              break
             fi
+          done
+          
+          if [ "$DOWNLOADED" = true ] && file sing-box.tar.gz | grep -qE "gzip|tar"; then
+            tar xzf sing-box.tar.gz
+            SINGBOX_BIN=$(find . -name "sing-box" -type f 2>/dev/null | head -1)
+            
+            if [ -n "$SINGBOX_BIN" ]; then
+              cp "$SINGBOX_BIN" /usr/local/bin/sing-box
+              chmod +x /usr/local/bin/sing-box
+              echo "✅ sing-box installed"
+              sing-box version
+            else
+              echo "❌ Binary not found, using go install"
+              go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
+              ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
+            fi
+            rm -rf sing-box.tar.gz 2>/dev/null || true
           else
-            echo "⚠️  Download failed, trying go install..."
+            echo "⚠️  Using go install as fallback"
             go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
             ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
-            echo "✅ sing-box installed via go"
             sing-box version
           fi
 
@@ -100,27 +88,21 @@ jobs:
           path: /usr/local/bin/sing-box
           key: ${{ runner.os }}-singbox-${{ env.SING_BOX_VERSION }}
 
-      # ============================================
-      # 📋 LOGGING & DEBUG
-      # ============================================
       - name: Setup debug logging
         run: |
           echo "🔧 RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
           echo "🔧 RUN_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
-          echo "🔧 REPOSITORY=${{ github.repository }}" >> $GITHUB_ENV
-          echo "🔧 COMMIT_SHA=${{ github.sha }}" >> $GITHUB_ENV
           if [ "${{ env.DEBUG }}" = "true" ]; then
             set -x
           fi
 
       # ============================================
-      # 📦 PREPARE DATA WITH RETRIES
+      # 📦 PREPARE DATA WITH BETTER ERROR HANDLING
       # ============================================
       - name: Prepare Data
         run: |
           mkdir -p data/geosite data/geoip
 
-          # --- ФУНКЦИЯ ЗАГРУЗКИ С РЕТРАЯМИ ---
           download_with_retry() {
             local url=$1; local dest=$2; local max=3
             url=$(echo "$url" | xargs)
@@ -136,7 +118,7 @@ jobs:
             return 1
           }
 
-          # --- СПИСКИ ССЫЛОК ---
+          # --- ИСТОЧНИКИ С АЛЬТЕРНАТИВАМИ ---
           GEOSITE_URLS=(
             "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
             "https://github.com/itdoginfo/allow-domains/releases/latest/download/russia_inside.srs"
@@ -161,7 +143,6 @@ jobs:
             "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/meta.lst"
           )
 
-          # --- PYTHON ПАРСЕР ---
           cat <<'EOF' > parser.py
           import json, sys, os, re
           def extract(obj, target_type):
@@ -190,10 +171,10 @@ jobs:
               if results:
                   with open(f'data/{target}/{filename}', 'w', encoding='utf-8') as f_out:
                       f_out.write('\n'.join(results) + '\n')
+                  print(f"✅ Parsed {len(results)} rules")
           except Exception as e: print(f"Parser error: {e}")
           EOF
 
-          # --- ОБРАБОТКА ССЫЛОК ---
           process_links() {
             local target=$1; shift
             local links=("$@")
@@ -207,10 +188,21 @@ jobs:
               echo "⬇️  $full_name → $fname"
               if download_with_retry "$url" "temp_file"; then
                 if [[ "$full_name" == *.srs ]]; then
-                  sing-box rule-set decompile "temp_file" -o "temp.json" &>/dev/null || { echo "⚠️  Failed to decompile $fname"; continue; }
+                  echo "   🔧 Attempting to decompile..."
+                  # Показываем ошибку для отладки
+                  if ! DECOMPILE_OUTPUT=$(sing-box rule-set decompile "temp_file" -o "temp.json" 2>&1); then
+                    echo "   ⚠️  Decompile failed: $DECOMPILE_OUTPUT"
+                    echo "   📄 Checking file type:"
+                    file temp_file
+                    echo "   📦 First 100 bytes (hex):"
+                    xxd -l 100 temp_file | head -5
+                    continue
+                  fi
                   python3 parser.py "$target" "$fname"
                 elif [[ "$full_name" == *.txt || "$full_name" == *.lst ]]; then
                   grep -v '^#' "temp_file" | sed 's/[[:space:]]//g' | grep -v '^$' > "data/$target/$fname" || true
+                  count=$(wc -l < "data/$target/$fname")
+                  echo "   ✅ Saved $count entries"
                 else
                   mv "temp_file" "temp.json"
                   python3 parser.py "$target" "$fname"
@@ -230,22 +222,20 @@ jobs:
           process_links "geoip" "${GEOIP_URLS[@]}" || echo "⚠️  Some geoip downloads failed"
 
       # ============================================
-      # ✅ VALIDATION & CLEANUP (SOFT)
+      # ✅ VALIDATION & CLEANUP
       # ============================================
       - name: Validate and Cleanup
         run: |
           find data -type f -empty -delete
           
-          echo "🔍 Validating files (soft check)..."
           echo "📊 Final categories:"
           echo "   • geosite: $(ls -1 data/geosite 2>/dev/null | wc -l) files"
           echo "   • geoip: $(ls -1 data/geoip 2>/dev/null | wc -l) files"
           
-          # Показываем содержимое для отладки
           echo "📁 Geosite files:"
-          ls -1 data/geosite 2>/dev/null | head -5 || echo "   (none)"
+          ls -1 data/geosite 2>/dev/null || echo "   (none)"
           echo "📁 Geoip files:"
-          ls -1 data/geoip 2>/dev/null | head -5 || echo "   (none)"
+          ls -1 data/geoip 2>/dev/null || echo "   (none)"
           
           if [ -z "$(ls -A data/geosite 2>/dev/null)" ]; then
             echo "❌ Error: No geosite data generated!"
@@ -253,7 +243,7 @@ jobs:
           fi
 
       # ============================================
-      # 🔨 BUILD ARTIFACTS (USE LATEST)
+      # 🔨 BUILD ARTIFACTS
       # ============================================
       - name: Build geosite.dat
         run: |
