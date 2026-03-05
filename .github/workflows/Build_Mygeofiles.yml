@@ -43,11 +43,45 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Install sing-box (fixed version)
+      # ============================================
+      # 🔧 INSTALL SING-BOX (FIXED)
+      # ============================================
+      - name: Install sing-box
         run: |
-          curl -L https://github.com/SagerNet/sing-box/releases/download/v${{ env.SING_BOX_VERSION }}/sing-box_${{ env.SING_BOX_VERSION }}_linux_amd64.tar.gz | \
-          sudo tar xz -C /usr/local/bin sing-box
-          sing-box version
+          echo "📦 Installing sing-box v${{ env.SING_BOX_VERSION }}..."
+          
+          # Пробуем несколько вариантов URL
+          SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
+          DOWNLOADED=false
+          
+          # Вариант 1: Новый формат имени файла
+          if curl -sL --fail --connect-timeout 15 --retry 2 \
+            "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz" \
+            -o sing-box.tar.gz 2>/dev/null; then
+            echo "✅ Downloaded (new format)"
+            DOWNLOADED=true
+          # Вариант 2: Старый формат имени файла  
+          elif curl -sL --fail --connect-timeout 15 --retry 2 \
+            "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box_${SING_BOX_VERSION}_linux_amd64.tar.gz" \
+            -o sing-box.tar.gz 2>/dev/null; then
+            echo "✅ Downloaded (old format)"
+            DOWNLOADED=true
+          fi
+          
+          # Проверяем что скачался валидный архив
+          if [ "$DOWNLOADED" = true ] && file sing-box.tar.gz | grep -qE "gzip|tar"; then
+            tar xzf sing-box.tar.gz -C /usr/local/bin sing-box
+            chmod +x /usr/local/bin/sing-box
+            rm -f sing-box.tar.gz
+            echo "✅ sing-box installed successfully"
+            sing-box version
+          else
+            echo "⚠️  Download failed or invalid archive, trying go install..."
+            go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
+            ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
+            echo "✅ sing-box installed via go"
+            sing-box version
+          fi
 
       - name: Cache sing-box binary
         uses: actions/cache@v4
