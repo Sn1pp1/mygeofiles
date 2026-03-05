@@ -50,17 +50,15 @@ jobs:
         run: |
           echo "📦 Installing sing-box v${{ env.SING_BOX_VERSION }}..."
           
-          # Пробуем несколько вариантов URL
           SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
           DOWNLOADED=false
           
-          # Вариант 1: Новый формат имени файла
+          # Пробуем скачать с разными форматами имен
           if curl -sL --fail --connect-timeout 15 --retry 2 \
             "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz" \
             -o sing-box.tar.gz 2>/dev/null; then
             echo "✅ Downloaded (new format)"
             DOWNLOADED=true
-          # Вариант 2: Старый формат имени файла  
           elif curl -sL --fail --connect-timeout 15 --retry 2 \
             "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box_${SING_BOX_VERSION}_linux_amd64.tar.gz" \
             -o sing-box.tar.gz 2>/dev/null; then
@@ -68,15 +66,36 @@ jobs:
             DOWNLOADED=true
           fi
           
-          # Проверяем что скачался валидный архив
-          if [ "$DOWNLOADED" = true ] && file sing-box.tar.gz | grep -qE "gzip|tar"; then
-            tar xzf sing-box.tar.gz -C /usr/local/bin sing-box
-            chmod +x /usr/local/bin/sing-box
-            rm -f sing-box.tar.gz
-            echo "✅ sing-box installed successfully"
-            sing-box version
+          if [ "$DOWNLOADED" = true ]; then
+            # Проверяем что это валидный архив
+            if file sing-box.tar.gz | grep -qE "gzip|tar"; then
+              # Распаковываем ВСЁ содержимое архива
+              tar xzf sing-box.tar.gz
+              
+              # Ищем бинарник sing-box
+              SINGBOX_BIN=$(find . -name "sing-box" -type f 2>/dev/null | head -1)
+              
+              if [ -n "$SINGBOX_BIN" ]; then
+                echo "✅ Found sing-box at: $SINGBOX_BIN"
+                cp "$SINGBOX_BIN" /usr/local/bin/sing-box
+                chmod +x /usr/local/bin/sing-box
+                echo "✅ sing-box installed successfully"
+                sing-box version
+              else
+                echo "❌ sing-box binary not found in archive"
+                echo "Archive contents:"
+                tar tzf sing-box.tar.gz
+                exit 1
+              fi
+              
+              # Чистим
+              rm -rf sing-box.tar.gz $(tar tzf sing-box.tar.gz | head -1 | cut -f1 -d"/")
+            else
+              echo "❌ Downloaded file is not a valid archive"
+              exit 1
+            fi
           else
-            echo "⚠️  Download failed or invalid archive, trying go install..."
+            echo "⚠️  Download failed, trying go install..."
             go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
             ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
             echo "✅ sing-box installed via go"
