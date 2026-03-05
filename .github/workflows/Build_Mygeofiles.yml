@@ -38,25 +38,10 @@ jobs:
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-discord.srs"
             "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-geoblock-ru.srs"
             "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/apple.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ru.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/epicgames.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/escapefromtarkov.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/faceit.srs"
             "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/github.srs"
             "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/google-deepmind.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/google-play.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/microsoft.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/origin.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/pinterest.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/private.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/riot.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/steam.srs"
             "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/telegram.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/torrent.srs"
             "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/twitch-ads.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/twitch.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/win-spy.srs"
             "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/youtube.srs"
           )
           
@@ -67,9 +52,6 @@ jobs:
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-telegram.srs"
             "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/discord.lst"
             "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/meta.lst"
-            "https://github.com/hydraponique/roscomvpn-geoip/raw/refs/heads/master/release/sing-box/direct.srs"
-            "https://github.com/hydraponique/roscomvpn-geoip/raw/refs/heads/master/release/sing-box/private.srs"
-            
           )
 
           # --- УНИВЕРСАЛЬНЫЙ ПАРСЕР JSON/SRS ---
