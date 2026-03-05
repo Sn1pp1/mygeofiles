@@ -6,7 +6,7 @@ on:
 
 env:
   GO_VERSION: '1.22'
-  SING_BOX_VERSION: '1.11.0'  # Обновляем до последней версии
+  SING_BOX_VERSION: '1.11.0'
   MAX_ARTIFACT_SIZE_MB: 50
   DEBUG: ${{ secrets.DEBUG_MODE }}
 
@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-go-
 
       # ============================================
-      # 🔧 INSTALL SING-BOX (LATEST)
+      # 🔧 INSTALL SING-BOX
       # ============================================
       - name: Install sing-box
         run: |
@@ -49,7 +49,6 @@ jobs:
           SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
           DOWNLOADED=false
           
-          # Пробуем разные форматы URL
           for format in \
             "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz" \
             "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box_${SING_BOX_VERSION}_linux_amd64.tar.gz"; do
@@ -88,6 +87,12 @@ jobs:
           path: /usr/local/bin/sing-box
           key: ${{ runner.os }}-singbox-${{ env.SING_BOX_VERSION }}
 
+      # ============================================
+      # 📋 SET BUILD DATE
+      # ============================================
+      - name: Set build date
+        run: echo "BUILD_DATE=$(date -u '+%Y-%m-%d')" >> $GITHUB_ENV
+
       - name: Setup debug logging
         run: |
           echo "🔧 RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
@@ -97,7 +102,7 @@ jobs:
           fi
 
       # ============================================
-      # 📦 PREPARE DATA WITH BETTER ERROR HANDLING
+      # 📦 PREPARE DATA
       # ============================================
       - name: Prepare Data
         run: |
@@ -118,7 +123,6 @@ jobs:
             return 1
           }
 
-          # --- ИСТОЧНИКИ С АЛЬТЕРНАТИВАМИ ---
           GEOSITE_URLS=(
             "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
             "https://github.com/itdoginfo/allow-domains/releases/latest/download/russia_inside.srs"
@@ -189,7 +193,6 @@ jobs:
               if download_with_retry "$url" "temp_file"; then
                 if [[ "$full_name" == *.srs ]]; then
                   echo "   🔧 Attempting to decompile..."
-                  # Показываем ошибку для отладки
                   if ! DECOMPILE_OUTPUT=$(sing-box rule-set decompile "temp_file" -o "temp.json" 2>&1); then
                     echo "   ⚠️  Decompile failed: $DECOMPILE_OUTPUT"
                     echo "   📄 Checking file type:"
@@ -356,7 +359,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
-          name: "🔄 Auto-build #${{ github.run_number }} ($(date -u '+%Y-%m-%d'))"
+          name: "🔄 Auto-build #${{ github.run_number }} (${{ env.BUILD_DATE }})"
           body_path: changelog.md
           make_latest: true
           files: |
