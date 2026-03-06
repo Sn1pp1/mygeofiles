@@ -309,7 +309,7 @@ jobs:
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (FINAL FIX)
+      # 📤 PUSH FILES TO BRANCH (FORCE UPDATE)
       # ============================================
       - name: Push Files to Branch
         run: |
@@ -322,31 +322,25 @@ jobs:
           echo "📁 Files:"
           ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
-          # Принудительно добавляем ТОЛЬКО .dat и .sha256 файлы
-          echo "📋 Adding .dat files..."
-          git add -f geosite.dat
-          git add -f geoip.dat
-          git add -f geosite.dat.sha256
-          git add -f geoip.dat.sha256
+          # Принудительно обновляем timestamp файлов
+          touch geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
-          # Показываем что добавлено
-          echo "📊 Staged files:"
-          git diff --cached --name-only
+          # Принудительно добавляем через update-index
+          echo "📋 Force adding via update-index..."
+          git update-index --add --force geosite.dat
+          git update-index --add --force geoip.dat
+          git update-index --add --force geosite.dat.sha256
+          git update-index --add --force geoip.dat.sha256
           
-          # Формируем сообщение
-          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(date -u '+%Y-%m-%d %H:%M UTC')"
+          # Показываем статус
+          echo "📊 Status:"
+          git status --short
           
-          # Коммит (проверяем есть ли изменения)
-          echo "💾 Creating commit..."
-          if git diff --cached --quiet; then
-            echo "⚠️ No changes to commit"
-          else
-            git commit -m "$COMMIT_MSG"
-            echo "✅ Commit created"
-          fi
+          # Коммит
+          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}]"
+          git commit -m "$COMMIT_MSG" || echo "⚠️ No changes"
           
           # Push
-          echo "🚀 Pushing..."
           git push origin main --force
           
           echo "✅ Done!"
