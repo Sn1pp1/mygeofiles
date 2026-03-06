@@ -312,39 +312,36 @@ jobs:
       # 📤 PUSH FILES TO BRANCH (SIMPLIFIED)
       # ============================================
       - name: Push Files to Branch
-        run: |
-          echo "📤 Pushing artifacts..."
-          
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          
-          # Показываем файлы
-          echo "📁 Files to push:"
-          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
-          
-          # Добавляем ВСЕ файлы включая .dat
-          echo "📋 Adding all files..."
-          git add -A
-          
-          # Показываем что добавлено
-          echo "📊 Git status:"
-          git status
-          
-          # Коммит
-          echo "💾 Creating commit..."
-          git commit -m "🔄 Update dat files [Build #${{ github.run_number }}]
-
-          Built: $(date -u '+%Y-%m-%d %H:%M UTC')
-          Geosite: $(ls -1 data/geosite | wc -l) categories
-          Geoip: $(ls -1 data/geoip | wc -l) categories
-          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          || echo "⚠️  No changes to commit"
-          
-          # Push
-          echo "🚀 Pushing..."
-          git push origin main --force
-          
-          echo "✅ Done!"
+  run: |
+    echo "📤 Pushing artifacts..."
+    
+    git config --local user.email "github-actions[bot]@users.noreply.github.com"
+    git config --local user.name "github-actions[bot]"
+    
+    # Показываем файлы
+    echo "📁 Files to push:"
+    ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
+    
+    # Добавляем ВСЕ файлы включая .dat
+    echo "📋 Adding all files..."
+    git add -A
+    
+    # Показываем что добавлено
+    echo "📊 Git status:"
+    git status
+    
+    # Формируем сообщение
+    COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(date -u '+%Y-%m-%d %H:%M UTC')"
+    
+    # Коммит
+    echo "💾 Creating commit..."
+    git commit -m "$COMMIT_MSG" || echo "⚠️ No changes to commit"
+    
+    # Push
+    echo "🚀 Pushing..."
+    git push origin main --force
+    
+    echo "✅ Done!"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
