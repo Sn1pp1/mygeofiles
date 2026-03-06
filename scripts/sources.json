@@ -1,8 +1,8 @@
 {
   "block": {
-    "geosite": [
-      "category-ads"
-    ]
+    "geosite": ["category-ads"],
+    "geoip": [],
+    "json": []
   },
   "direct": {
     "geosite": [
@@ -18,11 +18,21 @@
       "pinterest",
       "faceit",
       "private",
-      "origin"
+      "origin",
+      "discord",
+      "telegram",
+      "whatsapp",
+      "youtube",
+      "google",
+      "geoblock-ru"
     ],
     "geoip": [
       "direct",
-      "private"
+      "private",
+      "ru"
+    ],
+    "json": [
+      "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/refs/heads/main/files/games.json"
     ]
   }
 }
