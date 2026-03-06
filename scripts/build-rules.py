@@ -15,7 +15,6 @@ SOURCES_FILE = Path("scripts/sources.json")
 OUTPUT_DIR = Path("files")
 SING_BOX = "sing-box"
 
-# ✅ Вернул константы
 REQUEST_TIMEOUT = 30
 REQUEST_RETRIES = 3
 REQUEST_DELAY = 2
@@ -68,7 +67,7 @@ def check_sing_box():
     return False
 
 def download_text_with_retry(url, retries=REQUEST_RETRIES):
-    """Скачивает текст с ретраями и обработкой ошибок"""
+    """Скачивает текст с ретраями"""
     headers = {"User-Agent": "Mozilla/5.0 (compatible; SRS-Builder/1.0)"}
     
     for attempt in range(1, retries + 1):
@@ -92,6 +91,27 @@ def download_text_with_retry(url, retries=REQUEST_RETRIES):
                 logger.error(f"  ❌ Failed after {retries} attempts: {url}")
                 return []
 
+def download_json_with_retry(url, retries=REQUEST_RETRIES):
+    """Скачивает и парсит JSON-файл с правилами"""
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; SRS-Builder/1.0)"}
+    
+    for attempt in range(1, retries + 1):
+        try:
+            logger.debug(f"  ↓ JSON {url} (attempt {attempt}/{retries})")
+            resp = requests.get(url, timeout=REQUEST_TIMEOUT, headers=headers)
+            resp.raise_for_status()
+            return resp.json()
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"  ⚠ JSON attempt {attempt} failed: {e}")
+            if attempt < retries:
+                time.sleep(REQUEST_DELAY * attempt)
+            else:
+                logger.error(f"  ❌ Failed to download JSON after {retries} attempts: {url}")
+                return None
+        except json.JSONDecodeError as e:
+            logger.error(f"  ❌ Invalid JSON from {url}: {e}")
+            return None
+
 def is_valid_ip_cidr(item):
     """Проверяет что строка — валидный IP/CIDR"""
     try:
@@ -100,6 +120,30 @@ def is_valid_ip_cidr(item):
     except ValueError:
         return False
 
+def extract_items_from_json_rule(rule_data):
+    """Извлекает items из JSON-правила (формат sing-box)"""
+    items = set()
+    
+    if not isinstance(rule_data, dict):
+        return items
+    
+    # Обрабатываем rules массив
+    for rule in rule_data.get("rules", []):
+        for domain in rule.get("domain", []):
+            items.add(domain)
+        for domain in rule.get("domain_keyword", []):
+            items.add(domain)
+        for domain in rule.get("domain_suffix", []):
+            items.add(domain)
+        for domain in rule.get("domain_regex", []):
+            items.add("regexp:" + domain)
+        for ip in rule.get("ip_cidr", []):
+            items.add(ip)
+        for code in rule.get("source_ip_cidr", []):
+            items.add(ip)
+    
+    return items
+
 def create_rule_json(items):
     """Создаёт JSON для компиляции в SRS — БЕЗ ЛИМИТОВ"""
     domains = []
@@ -107,14 +151,16 @@ def create_rule_json(items):
     ip_cidr = []
     
     for item in items:
-        if is_valid_ip_cidr(item):
+        if item.startswith("regexp:"):
+            # Регулярки обрабатываем отдельно если нужно
+            continue
+        elif is_valid_ip_cidr(item):
             ip_cidr.append(item)
         elif item.startswith("."):
             domain_suffix.append(item)
         else:
             domains.append(item)
     
-    # ✅ Все правила сохраняются без обрезки
     rules = {}
     if domains:
         rules["domain"] = domains
@@ -138,7 +184,7 @@ def compile_srs(json_data, output_path):
         logger.info(f"  ⚙ Compiling → {output_path.name}")
         result = subprocess.run(
             [SING_BOX, "rule-set", "compile", str(json_path), "-o", str(output_path)],
-            capture_output=True, text=True, timeout=60
+            capture_output=True, text=True, timeout=120  # Увеличил таймаут для больших файлов
         )
         
         if result.returncode != 0:
@@ -162,6 +208,7 @@ def build_category(name, config):
     logger.info(f"\n📦 Building '{name}'...")
     all_items = set()
     
+    # Geosite файлы (текст)
     for cat in config.get("geosite", []):
         url = f"{GEOSITE_BASE}/{cat}"
         items = download_text_with_retry(url)
@@ -171,6 +218,7 @@ def build_category(name, config):
         else:
             logger.warning(f"    ⚠ {cat}: empty or failed")
     
+    # GeoIP файлы (текст)
     for cat in config.get("geoip", []):
         url = f"{GEOIP_BASE}/{cat}.txt"
         items = download_text_with_retry(url)
@@ -179,6 +227,20 @@ def build_category(name, config):
             logger.info(f"    + geoip/{cat}: {len(items)} items")
         else:
             logger.warning(f"    ⚠ geoip/{cat}: empty or failed")
+    
+    # ✅ JSON файлы с готовыми правилами (например games.json)
+    for json_url in config.get("json", []):
+        logger.info(f"    + Loading JSON: {json_url}")
+        rule_data = download_json_with_retry(json_url)
+        if rule_data:
+            items = extract_items_from_json_rule(rule_data)
+            if items:
+                all_items.update(items)
+                logger.info(f"    + Merged {len(items)} rules from {Path(json_url).name}")
+            else:
+                logger.warning(f"    ⚠ No extractable rules from {Path(json_url).name}")
+        else:
+            logger.warning(f"    ⚠ Failed to load JSON: {json_url}")
     
     if not all_items:
         logger.warning(f"  ⚠ No items for '{name}', skipping")
