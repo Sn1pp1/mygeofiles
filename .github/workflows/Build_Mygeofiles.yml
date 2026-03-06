@@ -109,8 +109,14 @@ jobs:
           path: /usr/local/bin/sing-box
           key: ${{ runner.os }}-singbox-${{ env.SING_BOX_VERSION }}
 
+      # ============================================
+      # 📋 SET BUILD DATE (MSK TIME)
+      # ============================================
       - name: Set build date
-        run: echo "BUILD_DATE=$(date -u '+%Y-%m-%d')" >> $GITHUB_ENV
+        run: |
+          echo "BUILD_DATE=$(TZ=Europe/Moscow date '+%Y-%m-%d')" >> $GITHUB_ENV
+          echo "BUILD_TIME=$(TZ=Europe/Moscow date '+%H:%M:%S')" >> $GITHUB_ENV
+          echo "BUILD_DATETIME=$(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')" >> $GITHUB_ENV
 
       - name: Setup debug logging
         run: |
@@ -312,11 +318,14 @@ jobs:
           sha256sum geoip.dat > geoip.dat.sha256
           cat geosite.dat.sha256 geoip.dat.sha256
 
+      # ============================================
+      # 📝 GENERATE CHANGELOG (MSK TIME)
+      # ============================================
       - name: Generate changelog
         run: |
           echo "## 🔄 Build #${{ github.run_number }}" > changelog.md
           echo "" >> changelog.md
-          echo "**📅 Built:** $(date -u '+%Y-%m-%d %H:%M UTC')" >> changelog.md
+          echo "**📅 Built:** $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')" >> changelog.md
           echo "**🔗 Run:** [${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> changelog.md
           echo "**🔖 Commit:** [\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> changelog.md
           echo "" >> changelog.md
@@ -332,6 +341,9 @@ jobs:
           echo "\`\`\`" >> changelog.md
           cat changelog.md
 
+      # ============================================
+      # 📤 PUSH FILES TO BRANCH (MSK TIME)
+      # ============================================
       - name: Push Files to Branch
         run: |
           echo "📤 Pushing artifacts..."
@@ -354,13 +366,16 @@ jobs:
           echo "📊 Status:"
           git status --short
           
-          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}]"
+          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
           git commit -m "$COMMIT_MSG" || echo "⚠️ No changes"
           
           git push origin main --force
           
           echo "✅ Done!"
 
+      # ============================================
+      # 📤 CREATE RELEASE (MSK TIME)
+      # ============================================
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
