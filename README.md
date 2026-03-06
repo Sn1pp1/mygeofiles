@@ -151,10 +151,6 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
         "outbound": "block"
       },
       {
-        "domain_suffix": [".ru", ".su", ".рф", ".xn--p1ai"],
-        "outbound": "direct"
-      },
-      {
         "rule_set": "games-rules",
         "outbound": "direct"
       },
