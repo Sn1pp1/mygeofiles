@@ -1,56 +1,119 @@
 #!/usr/bin/env python3
 import json
+import logging
 import requests
 import subprocess
 import tempfile
+import time
+import ipaddress
 from pathlib import Path
 
+# ============================================
+# 🔧 CONFIGURATION
+# ============================================
 SOURCES_FILE = Path("scripts/sources.json")
 OUTPUT_DIR = Path("files")
 SING_BOX = "sing-box"
+MAX_RULES_PER_TYPE = 10000  # Конфигурируемый лимит
+REQUEST_TIMEOUT = 30
+REQUEST_RETRIES = 3
+REQUEST_DELAY = 2  # секунды между ретраями
 
+# ✅ ИСПРАВЛЕНО: убраны пробелы в конце URL
 GEOSITE_BASE = "https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/master/data"
 GEOIP_BASE = "https://raw.githubusercontent.com/hydraponique/roscomvpn-geoip/master/release/text"
 
-def load_sources():
-    with open(SOURCES_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+# ============================================
+# 🔧 LOGGING SETUP
+# ============================================
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%H:%M:%S"
+)
+logger = logging.getLogger(__name__)
 
-def download_text(url):
-    print(f"  ↓ {url}")
-    resp = requests.get(url, timeout=30)
-    resp.raise_for_status()
+# ============================================
+# 🔧 HELPER FUNCTIONS
+# ============================================
+def check_sing_box():
+    """Проверяет что sing-box установлен и работает"""
+    try:
+        result = subprocess.run(
+            [SING_BOX, "version"],
+            capture_output=True, text=True, timeout=10
+        )
+        if result.returncode == 0:
+            version = result.stdout.strip().split('\n')[0]
+            logger.info(f"✅ sing-box found: {version}")
+            return True
+    except FileNotFoundError:
+        logger.error(f"❌ {SING_BOX} not found in PATH")
+    except subprocess.TimeoutExpired:
+        logger.error(f"❌ {SING_BOX} check timed out")
+    except Exception as e:
+        logger.error(f"❌ Error checking {SING_BOX}: {e}")
+    return False
+
+def download_text_with_retry(url, retries=REQUEST_RETRIES):
+    """Скачивает текст с ретраями и обработкой ошибок"""
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; SRS-Builder/1.0)"}
     
-    items = []
-    for line in resp.text.splitlines():
-        line = line.strip()
-        if line and not line.startswith("#") and not line.startswith("!"):
-            items.append(line)
-    return items
+    for attempt in range(1, retries + 1):
+        try:
+            logger.debug(f"  ↓ {url} (attempt {attempt}/{retries})")
+            resp = requests.get(url, timeout=REQUEST_TIMEOUT, headers=headers)
+            resp.raise_for_status()
+            
+            items = []
+            for line in resp.text.splitlines():
+                line = line.strip()
+                if line and not line.startswith("#") and not line.startswith("!"):
+                    items.append(line)
+            return items
+            
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"  ⚠ Attempt {attempt} failed: {e}")
+            if attempt < retries:
+                time.sleep(REQUEST_DELAY * attempt)  # Экспоненциальная задержка
+            else:
+                logger.error(f"  ❌ Failed after {retries} attempts: {url}")
+                return []
 
-def is_ip_cidr(item):
-    return "/" in item or (item.count(".") == 3 and all(c.isdigit() or c == "." for c in item))
+def is_valid_ip_cidr(item):
+    """Проверяет что строка — валидный IP/CIDR"""
+    try:
+        ipaddress.ip_network(item, strict=False)
+        return True
+    except ValueError:
+        return False
 
 def create_rule_json(items):
+    """Создаёт JSON для компиляции в SRS"""
     domains = []
     domain_suffix = []
     ip_cidr = []
     
     for item in items:
-        if is_ip_cidr(item):
+        if is_valid_ip_cidr(item):
             ip_cidr.append(item)
         elif item.startswith("."):
             domain_suffix.append(item)
         else:
             domains.append(item)
     
+    # ✅ Предупреждение если превышен лимит
+    for name, lst in [("domain", domains), ("domain_suffix", domain_suffix), ("ip_cidr", ip_cidr)]:
+        if len(lst) > MAX_RULES_PER_TYPE:
+            logger.warning(f"  ⚠ {name}: {len(lst)} items exceed limit {MAX_RULES_PER_TYPE}, truncating")
+    
     rules = {}
     if domains:
-        rules["domain"] = domains[:10000]
+        rules["domain"] = domains[:MAX_RULES_PER_TYPE]
     if domain_suffix:
-        rules["domain_suffix"] = domain_suffix[:10000]
+        rules["domain_suffix"] = domain_suffix[:MAX_RULES_PER_TYPE]
     if ip_cidr:
-        rules["ip_cidr"] = ip_cidr[:10000]
+        rules["ip_cidr"] = ip_cidr[:MAX_RULES_PER_TYPE]
     
     if not rules:
         return None
@@ -58,78 +121,111 @@ def create_rule_json(items):
     return {"version": 1, "rules": [rules]}
 
 def compile_srs(json_data, output_path):
+    """Компилирует JSON в SRS через sing-box"""
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as tmp:
         json_path = Path(tmp.name)
         json.dump(json_data, tmp, indent=2, ensure_ascii=False)
     
-    print(f"  ⚙ Compiling → {output_path.name}")
-    result = subprocess.run(
-        [SING_BOX, "rule-set", "compile", str(json_path), "-o", str(output_path)],
-        capture_output=True, text=True
-    )
-    
-    json_path.unlink(missing_ok=True)
-    
-    if result.returncode != 0:
-        print(f"  ❌ Error: {result.stderr}")
+    try:
+        logger.info(f"  ⚙ Compiling → {output_path.name}")
+        result = subprocess.run(
+            [SING_BOX, "rule-set", "compile", str(json_path), "-o", str(output_path)],
+            capture_output=True, text=True, timeout=60  # ✅ Добавлен таймаут
+        )
+        
+        if result.returncode != 0:
+            logger.error(f"  ❌ Compile error: {result.stderr.strip()}")
+            return False
+        
+        logger.info(f"  ✅ Created {output_path.name} ({output_path.stat().st_size:,} bytes)")
+        return True
+        
+    except subprocess.TimeoutExpired:
+        logger.error("  ❌ Compile timed out")
         return False
-    return True
+    except Exception as e:
+        logger.error(f"  ❌ Compile failed: {e}")
+        return False
+    finally:
+        json_path.unlink(missing_ok=True)
 
 def build_category(name, config):
-    print(f"\n📦 Building '{name}'...")
+    """Собирает правила для категории"""
+    logger.info(f"\n📦 Building '{name}'...")
     all_items = set()
     
-    # Geosite файлы — файлы НАПРЯМУЮ в папке data (без подпапок!)
+    # Geosite файлы
     for cat in config.get("geosite", []):
-        url = f"{GEOSITE_BASE}/{cat}"  # Просто файл в data/
-        try:
-            items = download_text(url)
-            if items:
-                all_items.update(items)
-                print(f"    + {cat}: {len(items)} items")
-            else:
-                print(f"    ⚠ {cat}: File is empty")
-        except Exception as e:
-            print(f"    ⚠ {cat}: {e}")
+        url = f"{GEOSITE_BASE}/{cat}"
+        items = download_text_with_retry(url)
+        if items:
+            all_items.update(items)
+            logger.info(f"    + {cat}: {len(items)} items")
+        else:
+            logger.warning(f"    ⚠ {cat}: empty or failed")
     
-    # GeoIP файлы — с расширением .txt
+    # GeoIP файлы
     for cat in config.get("geoip", []):
         url = f"{GEOIP_BASE}/{cat}.txt"
-        try:
-            items = download_text(url)
+        items = download_text_with_retry(url)
+        if items:
             all_items.update(items)
-            print(f"    + geoip/{cat}: {len(items)} items")
-        except Exception as e:
-            print(f"    ⚠ geoip/{cat}: {e}")
+            logger.info(f"    + geoip/{cat}: {len(items)} items")
+        else:
+            logger.warning(f"    ⚠ geoip/{cat}: empty or failed")
     
     if not all_items:
-        print(f"  ⚠ No items for '{name}', skipping")
+        logger.warning(f"  ⚠ No items for '{name}', skipping")
         return False
     
-    print(f"  Total: {len(all_items)} unique items")
+    logger.info(f"  Total: {len(all_items):,} unique items")
     
     rule_json = create_rule_json(list(all_items))
     if not rule_json:
+        logger.warning(f"  ⚠ No valid rules for '{name}'")
         return False
     
     srs_path = OUTPUT_DIR / f"{name}.srs"
-    if compile_srs(rule_json, srs_path):
-        print(f"  ✅ Created {srs_path.name} ({srs_path.stat().st_size} bytes)")
-        return True
-    return False
+    return compile_srs(rule_json, srs_path)
+
+# ============================================
+# 🔧 MAIN
+# ============================================
 def main():
-    print("🚀 Sing-box SRS Builder")
+    logger.info("🚀 Sing-box SRS Builder starting...")
+    
+    # ✅ Проверка зависимостей
+    if not check_sing_box():
+        logger.error("❌ Cannot proceed without sing-box")
+        return 1
+    
     OUTPUT_DIR.mkdir(exist_ok=True)
     
-    sources = load_sources()
+    if not SOURCES_FILE.exists():
+        logger.error(f"❌ Sources file not found: {SOURCES_FILE}")
+        return 1
     
+    try:
+        sources = load_sources()
+    except json.JSONDecodeError as e:
+        logger.error(f"❌ Invalid JSON in {SOURCES_FILE}: {e}")
+        return 1
+    
+    success_count = 0
     for category in ["block", "direct"]:
         if category in sources:
-            build_category(category, sources[category])
+            if build_category(category, sources[category]):
+                success_count += 1
+        else:
+            logger.warning(f"  ⚠ Category '{category}' not found in sources")
     
-    print("\n✅ Done! Files:")
+    logger.info(f"\n✅ Done! Built {success_count}/2 categories")
+    
+    # Список результатов
     for f in sorted(OUTPUT_DIR.glob("*.srs")):
-        print(f"  • {f.name}")
+        logger.info(f"  • {f.name} ({f.stat().st_size:,} bytes)")
+    
+    return 0 if success_count > 0 else 1
 
 if __name__ == "__main__":
-    main()
+    exit(main())
