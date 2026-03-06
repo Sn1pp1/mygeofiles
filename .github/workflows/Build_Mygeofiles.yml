@@ -281,18 +281,11 @@ jobs:
             fi
           done
 
-      - name: Generate SHA256 with metadata
+      - name: Generate SHA256
         run: |
-          echo "🔐 Generating checksums with build info..."
-          
-          # Генерируем SHA256
+          echo "🔐 Generating checksums..."
           sha256sum geosite.dat > geosite.dat.sha256
           sha256sum geoip.dat > geoip.dat.sha256
-          
-          # Добавляем метаданные чтобы файл менялся каждый билд
-          echo "# Build ${{ github.run_number }} - $(date -u '+%Y-%m-%d %H:%M UTC')" >> geosite.dat.sha256
-          echo "# Build ${{ github.run_number }} - $(date -u '+%Y-%m-%d %H:%M UTC')" >> geoip.dat.sha256
-          
           cat geosite.dat.sha256 geoip.dat.sha256
 
       - name: Generate changelog
@@ -311,13 +304,12 @@ jobs:
           echo "" >> changelog.md
           echo "### 🔐 Checksums" >> changelog.md
           echo "\`\`\`" >> changelog.md
-          head -1 geosite.dat.sha256 >> changelog.md
-          head -1 geoip.dat.sha256 >> changelog.md
+          cat geosite.dat.sha256 geoip.dat.sha256 >> changelog.md
           echo "\`\`\`" >> changelog.md
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (RADICAL APPROACH)
+      # 📤 PUSH FILES TO BRANCH
       # ============================================
       - name: Push Files to Branch
         run: |
