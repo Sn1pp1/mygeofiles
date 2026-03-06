@@ -6,7 +6,6 @@ on:
 
 env:
   GO_VERSION: '1.22'
-  SING_BOX_VERSION: '1.13.1'  # ✅ Последняя версия
   MAX_ARTIFACT_SIZE_MB: 50
   DEBUG: ${{ secrets.DEBUG_MODE }}
 
@@ -40,6 +39,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      # ============================================
+      # 🔧 GET LATEST SING-BOX VERSION
+      # ============================================
+      - name: Get latest sing-box version
+        run: |
+          # Получаем последнюю версию из GitHub API
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | cut -c2-)
+          echo "SING_BOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+          echo "✅ Using sing-box v$LATEST_VERSION"
+
+      # ============================================
+      # 🔧 INSTALL SING-BOX
+      # ============================================
       - name: Install sing-box
         run: |
           echo "📦 Installing sing-box v${{ env.SING_BOX_VERSION }}..."
