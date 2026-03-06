@@ -281,11 +281,18 @@ jobs:
             fi
           done
 
-      - name: Generate SHA256
+      - name: Generate SHA256 with metadata
         run: |
-          echo "🔐 Generating checksums..."
+          echo "🔐 Generating checksums with build info..."
+          
+          # Генерируем SHA256
           sha256sum geosite.dat > geosite.dat.sha256
           sha256sum geoip.dat > geoip.dat.sha256
+          
+          # Добавляем метаданные чтобы файл менялся каждый билд
+          echo "# Build ${{ github.run_number }} - $(date -u '+%Y-%m-%d %H:%M UTC')" >> geosite.dat.sha256
+          echo "# Build ${{ github.run_number }} - $(date -u '+%Y-%m-%d %H:%M UTC')" >> geoip.dat.sha256
+          
           cat geosite.dat.sha256 geoip.dat.sha256
 
       - name: Generate changelog
@@ -304,12 +311,13 @@ jobs:
           echo "" >> changelog.md
           echo "### 🔐 Checksums" >> changelog.md
           echo "\`\`\`" >> changelog.md
-          cat geosite.dat.sha256 geoip.dat.sha256 >> changelog.md
+          head -1 geosite.dat.sha256 >> changelog.md
+          head -1 geoip.dat.sha256 >> changelog.md
           echo "\`\`\`" >> changelog.md
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (FORCE UPDATE)
+      # 📤 PUSH FILES TO BRANCH (NEW APPROACH)
       # ============================================
       - name: Push Files to Branch
         run: |
@@ -318,19 +326,13 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Проверяем файлы
+          # Показываем файлы
           echo "📁 Files:"
           ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
-          # Принудительно обновляем timestamp файлов
-          touch geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
-          
-          # Принудительно добавляем через update-index
-          echo "📋 Force adding via update-index..."
-          git update-index --add --force geosite.dat
-          git update-index --add --force geoip.dat
-          git update-index --add --force geosite.dat.sha256
-          git update-index --add --force geoip.dat.sha256
+          # Добавляем все файлы
+          echo "📋 Adding files..."
+          git add geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
           # Показываем статус
           echo "📊 Status:"
