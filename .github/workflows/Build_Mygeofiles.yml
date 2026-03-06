@@ -317,7 +317,7 @@ jobs:
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (NEW APPROACH)
+      # 📤 PUSH FILES TO BRANCH (FINAL ATTEMPT)
       # ============================================
       - name: Push Files to Branch
         run: |
@@ -330,17 +330,20 @@ jobs:
           echo "📁 Files:"
           ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
-          # Добавляем все файлы
-          echo "📋 Adding files..."
-          git add geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
+          # Принудительно добавляем КАЖДЫЙ файл отдельно с || true
+          echo "📋 Force adding each file..."
+          git add -f geosite.dat || true
+          git add -f geoip.dat || true
+          git add -f geosite.dat.sha256 || true
+          git add -f geoip.dat.sha256 || true
           
           # Показываем статус
           echo "📊 Status:"
           git status --short
           
-          # Коммит
+          # Коммит с --allow-empty
           COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}]"
-          git commit -m "$COMMIT_MSG" || echo "⚠️ No changes"
+          git commit --allow-empty -m "$COMMIT_MSG" || echo "⚠️ Commit failed"
           
           # Push
           git push origin main --force
