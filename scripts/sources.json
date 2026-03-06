@@ -1,11 +1,16 @@
 {
   "block": {
-    "geosite": ["category-ads"],
+    "geosite": [
+      "win-spy",
+      "torrent",
+      "category-ads"
+    ],
     "geoip": [],
     "json": []
   },
   "direct": {
     "geosite": [
+      "private",
       "category-ru",
       "microsoft",
       "apple",
@@ -14,25 +19,27 @@
       "riot",
       "escapefromtarkov",
       "steam",
+      "origin",
       "twitch",
       "pinterest",
-      "faceit",
-      "private",
-      "origin",
-      "discord",
-      "telegram",
-      "whatsapp",
-      "youtube",
-      "google",
-      "geoblock-ru"
+      "faceit"
     ],
     "geoip": [
       "direct",
-      "private",
-      "ru"
+      "private"
     ],
     "json": [
       "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/refs/heads/main/files/games.json"
     ]
+  },
+  "proxy": {
+    "geosite": [
+      "github",
+      "twitch-ads",
+      "youtube",
+      "telegram"
+    ],
+    "geoip": [],
+    "json": []
   }
 }
