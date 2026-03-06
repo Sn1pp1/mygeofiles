@@ -40,6 +40,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
+      # ============================================
+      # 🔧 INSTALL SING-BOX
+      # ============================================
       - name: Install sing-box
         run: |
           echo "📦 Installing sing-box v${{ env.SING_BOX_VERSION }}..."
@@ -85,6 +88,9 @@ jobs:
           path: /usr/local/bin/sing-box
           key: ${{ runner.os }}-singbox-${{ env.SING_BOX_VERSION }}
 
+      # ============================================
+      # 📋 SET BUILD DATE
+      # ============================================
       - name: Set build date
         run: echo "BUILD_DATE=$(date -u '+%Y-%m-%d')" >> $GITHUB_ENV
 
@@ -96,6 +102,9 @@ jobs:
             set -x
           fi
 
+      # ============================================
+      # 📦 PREPARE DATA
+      # ============================================
       - name: Prepare Data
         run: |
           mkdir -p data/geosite data/geoip
@@ -212,6 +221,9 @@ jobs:
           echo "🔄 Processing GEOIP sources..."
           process_links "geoip" "${GEOIP_URLS[@]}" || echo "⚠️  Some geoip downloads failed"
 
+      # ============================================
+      # ✅ VALIDATION & CLEANUP
+      # ============================================
       - name: Validate and Cleanup
         run: |
           find data -type f -empty -delete
@@ -225,6 +237,9 @@ jobs:
             exit 1
           fi
 
+      # ============================================
+      # 🔨 BUILD ARTIFACTS
+      # ============================================
       - name: Build geosite.dat
         run: |
           echo "🔨 Building geosite.dat..."
@@ -243,6 +258,9 @@ jobs:
           $(go env GOPATH)/bin/geoip -c geoip_config.json
           ls -lh geoip.dat
 
+      # ============================================
+      # 🧪 TEST GENERATED FILES
+      # ============================================
       - name: Test with sing-box check
         run: |
           echo "🧪 Testing generated files..."
@@ -264,6 +282,9 @@ jobs:
             echo "⚠️  sing-box check reported issues (non-fatal)"
           fi
 
+      # ============================================
+      # 📏 CHECK ARTIFACT SIZES
+      # ============================================
       - name: Check artifact sizes
         run: |
           echo "📏 Checking artifact sizes (max: ${{ env.MAX_ARTIFACT_SIZE_MB }}MB)..."
@@ -281,6 +302,9 @@ jobs:
             fi
           done
 
+      # ============================================
+      # 🔐 GENERATE CHECKSUMS
+      # ============================================
       - name: Generate SHA256
         run: |
           echo "🔐 Generating checksums..."
@@ -288,6 +312,9 @@ jobs:
           sha256sum geoip.dat > geoip.dat.sha256
           cat geosite.dat.sha256 geoip.dat.sha256
 
+      # ============================================
+      # 📝 GENERATE CHANGELOG
+      # ============================================
       - name: Generate changelog
         run: |
           echo "## 🔄 Build #${{ github.run_number }}" > changelog.md
@@ -309,7 +336,7 @@ jobs:
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (FIXED)
+      # 📤 PUSH FILES TO BRANCH (FORCE UPDATE)
       # ============================================
       - name: Push Files to Branch
         run: |
@@ -318,42 +345,34 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Проверяем что файлы существуют
-          echo "📁 Checking files:"
-          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 || exit 1
+          # Проверяем файлы
+          echo "📁 Files to push:"
+          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
-          # Показываем статус git
-          echo "📊 Git status before:"
-          git status
+          # Принудительно добавляем (даже если git думает что нет изменений)
+          git add -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
-          # Добавляем файлы
-          git add geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
+          # Показываем staged файлы
+          echo "📊 Staged files:"
+          git status --short
           
-          # Коммитим (только если есть изменения)
-          if ! git diff --cached --quiet; then
-            git commit -m "🔄 Update dat files [Build #${{ github.run_number }}]
+          # Коммитим (даже если файлы не изменились)
+          git commit --allow-empty -m "🔄 Update dat files [Build #${{ github.run_number }}]
 
-            - Built: $(date -u '+%Y-%m-%d %H:%M UTC')
-            - Geosite categories: $(ls -1 data/geosite | wc -l)
-            - Geoip categories: $(ls -1 data/geoip | wc -l)
-            - Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            echo "✅ Committed changes"
-          else
-            echo "ℹ️  No changes to commit"
-          fi
+          Built: $(date -u '+%Y-%m-%d %H:%M UTC')
+          Geosite: $(ls -1 data/geosite | wc -l) categories
+          Geoip: $(ls -1 data/geoip | wc -l) categories
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           
-          # Пушим с обработкой ошибок
-          echo "🚀 Pushing to branch..."
-          git push origin HEAD:main || {
-            echo "❌ Push failed! Trying with --force..."
-            git push --force origin HEAD:main || {
-              echo "❌ Force push also failed!"
-              exit 1
-            }
-          }
+          # Пушим с перезаписью
+          echo "🚀 Pushing..."
+          git push origin main --force
           
-          echo "✅ Push completed successfully"
+          echo "✅ Done!"
 
+      # ============================================
+      # 📤 CREATE RELEASE
+      # ============================================
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
