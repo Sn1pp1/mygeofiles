@@ -309,46 +309,28 @@ jobs:
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (FINAL FIX)
+      # 📤 PUSH FILES TO BRANCH (SIMPLIFIED)
       # ============================================
       - name: Push Files to Branch
         run: |
-          echo "📤 Pushing artifacts to repository..."
+          echo "📤 Pushing artifacts..."
           
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Проверяем что файлы СУЩЕСТВУЮТ
-          echo "📁 Checking files exist:"
-          for f in geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256; do
-            if [ -f "$f" ]; then
-              echo "✅ $f exists ($(du -h $f | cut -f1))"
-            else
-              echo "❌ $f NOT FOUND!"
-              exit 1
-            fi
-          done
-          
-          # Показываем текущий git status
-          echo "📊 Current git status:"
-          git status --short
-          
-          # Очищаем индекс полностью и добавляем заново
-          echo "🔄 Resetting git index..."
-          git reset HEAD . 2>/dev/null || true
+          # Показываем файлы
+          echo "📁 Files to push:"
+          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
           # Добавляем ВСЕ файлы включая .dat
-          echo "📋 Adding ALL files..."
-          git add -f geosite.dat || echo "Failed to add geosite.dat"
-          git add -f geoip.dat || echo "Failed to add geoip.dat"
-          git add -f geosite.dat.sha256 || echo "Failed to add geosite.dat.sha256"
-          git add -f geoip.dat.sha256 || echo "Failed to add geoip.dat.sha256"
+          echo "📋 Adding all files..."
+          git add -A
           
-          # Проверяем что добавлено
-          echo "📊 Staged files:"
-          git diff --cached --name-only
+          # Показываем что добавлено
+          echo "📊 Git status:"
+          git status
           
-          # Коммитим
+          # Коммит
           echo "💾 Creating commit..."
           git commit -m "🔄 Update dat files [Build #${{ github.run_number }}]
 
@@ -356,9 +338,9 @@ jobs:
           Geosite: $(ls -1 data/geosite | wc -l) categories
           Geoip: $(ls -1 data/geoip | wc -l) categories
           Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          || echo "⚠️  Commit failed"
+          || echo "⚠️  No changes to commit"
           
-          # Пушим
+          # Push
           echo "🚀 Pushing..."
           git push origin main --force
           
