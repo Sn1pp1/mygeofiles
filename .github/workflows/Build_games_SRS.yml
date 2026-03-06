@@ -3,27 +3,128 @@ on:
   push:
     paths:
       - 'files/games.json'
+  workflow_dispatch:  # ✅ Добавил ручной запуск
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: Checkout
+        uses: actions/checkout@v4  # ✅ Обновлено с v3 на v4
+        with:
+          fetch-depth: 2
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ============================================
+      # 🔧 GET LATEST SING-BOX VERSION
+      # ============================================
+      - name: Get latest sing-box version
+        run: |
+          # Получаем последнюю версию из GitHub API
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | cut -c2-)
+          echo "SING_BOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
+          echo "✅ Using sing-box v$LATEST_VERSION"
+
+      # ============================================
+      # 🔧 CACHE SING-BOX BINARY
+      # ============================================
+      - name: Cache sing-box binary
+        uses: actions/cache@v4  # ✅ Обновлено с v3 на v4
+        with:
+          path: /usr/local/bin/sing-box
+          key: ${{ runner.os }}-singbox-${{ env.SING_BOX_VERSION }}
+
+      # ============================================
+      # 🔧 INSTALL SING-BOX
+      # ============================================
+      - name: Install sing-box
+        run: |
+          echo "📦 Installing sing-box v${{ env.SING_BOX_VERSION }}..."
+          
+          SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
+          
+          # Проверяем кеш
+          if [ -f /usr/local/bin/sing-box ]; then
+            echo "✅ sing-box found in cache"
+            sing-box version
+            exit 0
+          fi
+          
+          DOWNLOADED=false
+          
+          # Пробуем разные форматы имени файла
+          for format in \
+            "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz" \
+            "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box_${SING_BOX_VERSION}_linux_amd64.tar.gz"; do
+            if curl -sL --fail --connect-timeout 15 --retry 2 "$format" -o sing-box.tar.gz 2>/dev/null; then
+              echo "✅ Downloaded from: $format"
+              DOWNLOADED=true
+              break
+            fi
+          done
+          
+          if [ "$DOWNLOADED" = true ] && file sing-box.tar.gz | grep -qE "gzip|tar"; then
+            tar xzf sing-box.tar.gz
+            SINGBOX_BIN=$(find . -name "sing-box" -type f 2>/dev/null | head -1)
+            
+            if [ -n "$SINGBOX_BIN" ]; then
+              cp "$SINGBOX_BIN" /usr/local/bin/sing-box
+              chmod +x /usr/local/bin/sing-box
+              echo "✅ sing-box installed"
+              sing-box version
+            else
+              echo "❌ Binary not found"
+              exit 1
+            fi
+            rm -rf sing-box.tar.gz $(tar tzf sing-box.tar.gz | head -1 | cut -f1 -d"/") 2>/dev/null || true
+          else
+            echo "❌ Failed to download sing-box"
+            exit 1
+          fi
+
+      # ============================================
+      # 🔨 COMPILE SRS
+      # ============================================
       - name: Compile SRS
         run: |
-          curl -Lo sing-box.tar.gz https://github.com/SagerNet/sing-box/releases/download/v1.8.10/sing-box-1.8.10-linux-amd64.tar.gz
-          tar -xzf sing-box.tar.gz
-          # Компилируем из папки files в папку files
-          ./sing-box-*/sing-box rule-set compile files/games.json -o files/games.srs
-          # ОЧИЩАЕМ временные файлы
-          rm -rf sing-box-*
-          rm -f sing-box.tar.gz
-      
+          echo "🔨 Compiling games.srs..."
+          
+          # Проверяем исходный файл
+          if [ ! -f "files/games.json" ]; then
+            echo "❌ files/games.json not found!"
+            exit 1
+          fi
+          
+          # Компилируем
+          sing-box rule-set compile files/games.json -o files/games.srs
+          
+          # Проверяем результат
+          if [ -f "files/games.srs" ]; then
+            echo "✅ games.srs compiled successfully"
+            ls -lh files/games.srs
+          else
+            echo "❌ Failed to compile games.srs"
+            exit 1
+          fi
+
+      # ============================================
+      # 📤 DEPLOY
+      # ============================================
       - name: Deploy
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          echo "📤 Deploying changes..."
+          
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Добавляем только .srs файл
           git add files/games.srs
-          git commit -m "Update binary rules in files/" || echo "No changes to commit"
+          
+          # Коммит с московским временем
+          COMMIT_MSG="🔄 Update games.srs - $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
+          git commit -m "$COMMIT_MSG" || echo "⚠️ No changes to commit"
+          
+          # Push
           git push
+          
+          echo "✅ Deploy completed!"
