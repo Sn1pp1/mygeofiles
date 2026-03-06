@@ -123,7 +123,7 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
         "tag": "block-rules",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/block.srs",
+        "url": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/block.srs",
         "download_detour": "proxy",
         "update_interval": "1d"
       },
@@ -131,7 +131,7 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
         "tag": "direct-rules",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct.srs",
+        "url": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/direct.srs",
         "download_detour": "proxy",
         "update_interval": "1d"
       },
@@ -139,7 +139,7 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
         "tag": "proxy-rules",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/proxy.srs",
+        "url": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/proxy.srs",
         "download_detour": "proxy",
         "update_interval": "1d"
       }
