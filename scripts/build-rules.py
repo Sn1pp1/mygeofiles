@@ -14,7 +14,11 @@ from pathlib import Path
 SOURCES_FILE = Path("scripts/sources.json")
 OUTPUT_DIR = Path("files")
 SING_BOX = "sing-box"
-# ✅ ЛИМИТ УБРАН — все правила сохраняются
+
+# ✅ Вернул константы
+REQUEST_TIMEOUT = 30
+REQUEST_RETRIES = 3
+REQUEST_DELAY = 2
 
 GEOSITE_BASE = "https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/master/data"
 GEOIP_BASE = "https://raw.githubusercontent.com/hydraponique/roscomvpn-geoip/master/release/text"
@@ -110,7 +114,7 @@ def create_rule_json(items):
         else:
             domains.append(item)
     
-    # ✅ Убрал проверку и обрезку лимита — все правила сохраняются
+    # ✅ Все правила сохраняются без обрезки
     rules = {}
     if domains:
         rules["domain"] = domains
