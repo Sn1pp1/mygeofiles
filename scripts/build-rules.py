@@ -14,10 +14,7 @@ from pathlib import Path
 SOURCES_FILE = Path("scripts/sources.json")
 OUTPUT_DIR = Path("files")
 SING_BOX = "sing-box"
-MAX_RULES_PER_TYPE = 10000
-REQUEST_TIMEOUT = 30
-REQUEST_RETRIES = 3
-REQUEST_DELAY = 2
+# ✅ ЛИМИТ УБРАН — все правила сохраняются
 
 GEOSITE_BASE = "https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/master/data"
 GEOIP_BASE = "https://raw.githubusercontent.com/hydraponique/roscomvpn-geoip/master/release/text"
@@ -100,7 +97,7 @@ def is_valid_ip_cidr(item):
         return False
 
 def create_rule_json(items):
-    """Создаёт JSON для компиляции в SRS"""
+    """Создаёт JSON для компиляции в SRS — БЕЗ ЛИМИТОВ"""
     domains = []
     domain_suffix = []
     ip_cidr = []
@@ -113,17 +110,14 @@ def create_rule_json(items):
         else:
             domains.append(item)
     
-    for name, lst in [("domain", domains), ("domain_suffix", domain_suffix), ("ip_cidr", ip_cidr)]:
-        if len(lst) > MAX_RULES_PER_TYPE:
-            logger.warning(f"  ⚠ {name}: {len(lst)} items exceed limit {MAX_RULES_PER_TYPE}, truncating")
-    
+    # ✅ Убрал проверку и обрезку лимита — все правила сохраняются
     rules = {}
     if domains:
-        rules["domain"] = domains[:MAX_RULES_PER_TYPE]
+        rules["domain"] = domains
     if domain_suffix:
-        rules["domain_suffix"] = domain_suffix[:MAX_RULES_PER_TYPE]
+        rules["domain_suffix"] = domain_suffix
     if ip_cidr:
-        rules["ip_cidr"] = ip_cidr[:MAX_RULES_PER_TYPE]
+        rules["ip_cidr"] = ip_cidr
     
     if not rules:
         return None
