@@ -184,7 +184,7 @@ def compile_srs(json_data, output_path):
         logger.info(f"  ⚙ Compiling → {output_path.name}")
         result = subprocess.run(
             [SING_BOX, "rule-set", "compile", str(json_path), "-o", str(output_path)],
-            capture_output=True, text=True, timeout=120  # Увеличил таймаут для больших файлов
+            capture_output=True, text=True, timeout=120
         )
         
         if result.returncode != 0:
@@ -228,7 +228,7 @@ def build_category(name, config):
         else:
             logger.warning(f"    ⚠ geoip/{cat}: empty or failed")
     
-    # ✅ JSON файлы с готовыми правилами (например games.json)
+    # JSON файлы с готовыми правилами (например games.json)
     for json_url in config.get("json", []):
         logger.info(f"    + Loading JSON: {json_url}")
         rule_data = download_json_with_retry(json_url)
@@ -278,14 +278,15 @@ def main():
         return 1
     
     success_count = 0
-    for category in ["block", "direct"]:
+    # ✅ Добавлена категория "proxy"
+    for category in ["block", "direct", "proxy"]:
         if category in sources:
             if build_category(category, sources[category]):
                 success_count += 1
         else:
             logger.warning(f"  ⚠ Category '{category}' not found in sources")
     
-    logger.info(f"\n✅ Done! Built {success_count}/2 categories")
+    logger.info(f"\n✅ Done! Built {success_count}/3 categories")
     
     for f in sorted(OUTPUT_DIR.glob("*.srs")):
         logger.info(f"  • {f.name} ({f.stat().st_size:,} bytes)")
