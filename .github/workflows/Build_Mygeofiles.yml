@@ -309,7 +309,7 @@ jobs:
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (FIXED - REMOVE & RE-ADD)
+      # 📤 PUSH FILES TO BRANCH (FINAL FIX)
       # ============================================
       - name: Push Files to Branch
         run: |
@@ -318,30 +318,45 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Проверяем файлы
-          echo "📁 Files to push:"
-          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
+          # Проверяем что файлы СУЩЕСТВУЮТ
+          echo "📁 Checking files exist:"
+          for f in geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256; do
+            if [ -f "$f" ]; then
+              echo "✅ $f exists ($(du -h $f | cut -f1))"
+            else
+              echo "❌ $f NOT FOUND!"
+              exit 1
+            fi
+          done
           
-          # Удаляем из git cache (но не с диска!)
-          echo "🗑️  Removing from git cache..."
-          git rm --cached geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 2>/dev/null || true
+          # Показываем текущий git status
+          echo "📊 Current git status:"
+          git status --short
           
-          # Принудительно добавляем заново
-          echo "📋 Adding files forcefully..."
-          git add -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
+          # Очищаем индекс полностью и добавляем заново
+          echo "🔄 Resetting git index..."
+          git reset HEAD . 2>/dev/null || true
+          
+          # Добавляем ВСЕ файлы включая .dat
+          echo "📋 Adding ALL files..."
+          git add -f geosite.dat || echo "Failed to add geosite.dat"
+          git add -f geoip.dat || echo "Failed to add geoip.dat"
+          git add -f geosite.dat.sha256 || echo "Failed to add geosite.dat.sha256"
+          git add -f geoip.dat.sha256 || echo "Failed to add geoip.dat.sha256"
           
           # Проверяем что добавлено
-          echo "📊 Git status:"
-          git status --short
+          echo "📊 Staged files:"
+          git diff --cached --name-only
           
           # Коммитим
           echo "💾 Creating commit..."
-          git commit --allow-empty -m "🔄 Update dat files [Build #${{ github.run_number }}]
+          git commit -m "🔄 Update dat files [Build #${{ github.run_number }}]
 
           Built: $(date -u '+%Y-%m-%d %H:%M UTC')
           Geosite: $(ls -1 data/geosite | wc -l) categories
           Geoip: $(ls -1 data/geoip | wc -l) categories
           Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          || echo "⚠️  Commit failed"
           
           # Пушим
           echo "🚀 Pushing..."
