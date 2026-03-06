@@ -24,8 +24,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'  # ✅ Всегда последняя стабильная 3.x
-          cache: 'pip'
+          python-version: '3.x'  # ✅ Убрал cache: 'pip'
 
       - name: Install requests
         run: pip install requests
