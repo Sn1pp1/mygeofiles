@@ -6,7 +6,7 @@ on:
 
 env:
   GO_VERSION: '1.22'
-  SING_BOX_VERSION: '1.11.0'
+  SING_BOX_VERSION: '1.13.1'  # ✅ Последняя версия
   MAX_ARTIFACT_SIZE_MB: 50
   DEBUG: ${{ secrets.DEBUG_MODE }}
 
@@ -308,9 +308,6 @@ jobs:
           echo "\`\`\`" >> changelog.md
           cat changelog.md
 
-      # ============================================
-      # 📤 PUSH FILES TO BRANCH
-      # ============================================
       - name: Push Files to Branch
         run: |
           echo "📤 Pushing artifacts..."
@@ -318,30 +315,24 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Показываем файлы
           echo "📁 Files:"
           ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
-          # Удаляем файлы из Git (но не с диска!)
           echo "🗑️  Removing from Git index..."
           git rm --cached -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 || true
           
-          # Добавляем как новые файлы
           echo "📋 Adding as new files..."
           git add -f geosite.dat
           git add -f geoip.dat
           git add -f geosite.dat.sha256
           git add -f geoip.dat.sha256
           
-          # Показываем статус
           echo "📊 Status:"
           git status --short
           
-          # Коммит
           COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}]"
           git commit -m "$COMMIT_MSG" || echo "⚠️ No changes"
           
-          # Push
           git push origin main --force
           
           echo "✅ Done!"
