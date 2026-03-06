@@ -5,7 +5,6 @@ on:
   workflow_dispatch:
 
 env:
-  GO_VERSION: '1.22'
   MAX_ARTIFACT_SIZE_MB: 50
   DEBUG: ${{ secrets.DEBUG_MODE }}
 
@@ -23,6 +22,19 @@ jobs:
           fetch-depth: 2
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # ============================================
+      # 🔧 GET LATEST GO VERSION
+      # ============================================
+      - name: Get latest Go version
+        run: |
+          # Получаем последнюю стабильную версию Go
+          GO_VERSION=$(curl -s https://go.dev/VERSION?m=text | head -n 1 | sed 's/go//' | cut -d. -f1,2)
+          echo "GO_VERSION=$GO_VERSION" >> $GITHUB_ENV
+          echo "✅ Using Go v$GO_VERSION"
+
+      # ============================================
+      # 🔧 SETUP GO
+      # ============================================
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
