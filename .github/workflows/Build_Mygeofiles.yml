@@ -309,7 +309,7 @@ jobs:
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (FIXED)
+      # 📤 PUSH FILES TO BRANCH (SIMPLIFIED)
       # ============================================
       - name: Push Files to Branch
         run: |
@@ -330,12 +330,15 @@ jobs:
           echo "📊 Git status:"
           git status
           
-          # Формируем сообщение
-          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(date -u '+%Y-%m-%d %H:%M UTC')"
-          
           # Коммит
           echo "💾 Creating commit..."
-          git commit -m "$COMMIT_MSG" || echo "⚠️ No changes to commit"
+          git commit -m "🔄 Update dat files [Build #${{ github.run_number }}]
+
+          Built: $(date -u '+%Y-%m-%d %H:%M UTC')
+          Geosite: $(ls -1 data/geosite | wc -l) categories
+          Geoip: $(ls -1 data/geoip | wc -l) categories
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          || echo "⚠️  No changes to commit"
           
           # Push
           echo "🚀 Pushing..."
