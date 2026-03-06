@@ -309,7 +309,7 @@ jobs:
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (SIMPLIFIED)
+      # 📤 PUSH FILES TO BRANCH (FINAL FIX)
       # ============================================
       - name: Push Files to Branch
         run: |
@@ -318,27 +318,32 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Показываем файлы
-          echo "📁 Files to push:"
+          # Проверяем файлы
+          echo "📁 Files:"
           ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
-          # Добавляем ВСЕ файлы включая .dat
-          echo "📋 Adding all files..."
-          git add -A
+          # Принудительно добавляем ТОЛЬКО .dat и .sha256 файлы
+          echo "📋 Adding .dat files..."
+          git add -f geosite.dat
+          git add -f geoip.dat
+          git add -f geosite.dat.sha256
+          git add -f geoip.dat.sha256
           
           # Показываем что добавлено
-          echo "📊 Git status:"
-          git status
+          echo "📊 Staged files:"
+          git diff --cached --name-only
           
-          # Коммит
+          # Формируем сообщение
+          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(date -u '+%Y-%m-%d %H:%M UTC')"
+          
+          # Коммит (проверяем есть ли изменения)
           echo "💾 Creating commit..."
-          git commit -m "🔄 Update dat files [Build #${{ github.run_number }}]
-
-          Built: $(date -u '+%Y-%m-%d %H:%M UTC')
-          Geosite: $(ls -1 data/geosite | wc -l) categories
-          Geoip: $(ls -1 data/geoip | wc -l) categories
-          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          || echo "⚠️  No changes to commit"
+          if git diff --cached --quiet; then
+            echo "⚠️ No changes to commit"
+          else
+            git commit -m "$COMMIT_MSG"
+            echo "✅ Commit created"
+          fi
           
           # Push
           echo "🚀 Pushing..."
