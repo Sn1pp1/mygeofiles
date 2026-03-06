@@ -124,21 +124,24 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
         "type": "remote",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/block.srs",
-        "download_detour": "proxy"
+        "download_detour": "proxy",
+        "update_interval": "1d"
       },
       {
         "tag": "direct-rules",
         "type": "remote",
         "format": "binary",
         "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct.srs",
-        "download_detour": "proxy"
+        "download_detour": "proxy",
+        "update_interval": "1d"
       },
       {
-        "tag": "games-rules",
+        "tag": "proxy-rules",
         "type": "remote",
         "format": "binary",
-        "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/games.srs",
-        "download_detour": "proxy"
+        "url": "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/proxy.srs",
+        "download_detour": "proxy",
+        "update_interval": "1d"
       }
     ],
     "rules": [
@@ -151,12 +154,12 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
         "outbound": "block"
       },
       {
-        "rule_set": "games-rules",
+        "rule_set": "direct-rules",
         "outbound": "direct"
       },
       {
-        "rule_set": "direct-rules",
-        "outbound": "direct"
+        "rule_set": "proxy-rules",
+        "outbound": "proxy"
       },
       {
         "process_name": [
