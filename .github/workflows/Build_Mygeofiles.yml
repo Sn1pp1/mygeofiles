@@ -309,39 +309,39 @@ jobs:
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (SIMPLIFIED)
+      # 📤 PUSH FILES TO BRANCH (FIXED)
       # ============================================
       - name: Push Files to Branch
-  run: |
-    echo "📤 Pushing artifacts..."
-    
-    git config --local user.email "github-actions[bot]@users.noreply.github.com"
-    git config --local user.name "github-actions[bot]"
-    
-    # Показываем файлы
-    echo "📁 Files to push:"
-    ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
-    
-    # Добавляем ВСЕ файлы включая .dat
-    echo "📋 Adding all files..."
-    git add -A
-    
-    # Показываем что добавлено
-    echo "📊 Git status:"
-    git status
-    
-    # Формируем сообщение
-    COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(date -u '+%Y-%m-%d %H:%M UTC')"
-    
-    # Коммит
-    echo "💾 Creating commit..."
-    git commit -m "$COMMIT_MSG" || echo "⚠️ No changes to commit"
-    
-    # Push
-    echo "🚀 Pushing..."
-    git push origin main --force
-    
-    echo "✅ Done!"
+        run: |
+          echo "📤 Pushing artifacts..."
+          
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          # Показываем файлы
+          echo "📁 Files to push:"
+          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
+          
+          # Добавляем ВСЕ файлы включая .dat
+          echo "📋 Adding all files..."
+          git add -A
+          
+          # Показываем что добавлено
+          echo "📊 Git status:"
+          git status
+          
+          # Формируем сообщение
+          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(date -u '+%Y-%m-%d %H:%M UTC')"
+          
+          # Коммит
+          echo "💾 Creating commit..."
+          git commit -m "$COMMIT_MSG" || echo "⚠️ No changes to commit"
+          
+          # Push
+          echo "🚀 Pushing..."
+          git push origin main --force
+          
+          echo "✅ Done!"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
