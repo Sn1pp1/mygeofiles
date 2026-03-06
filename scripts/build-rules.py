@@ -14,12 +14,11 @@ from pathlib import Path
 SOURCES_FILE = Path("scripts/sources.json")
 OUTPUT_DIR = Path("files")
 SING_BOX = "sing-box"
-MAX_RULES_PER_TYPE = 10000  # Конфигурируемый лимит
+MAX_RULES_PER_TYPE = 10000
 REQUEST_TIMEOUT = 30
 REQUEST_RETRIES = 3
-REQUEST_DELAY = 2  # секунды между ретраями
+REQUEST_DELAY = 2
 
-# ✅ ИСПРАВЛЕНО: убраны пробелы в конце URL
 GEOSITE_BASE = "https://raw.githubusercontent.com/hydraponique/roscomvpn-geosite/master/data"
 GEOIP_BASE = "https://raw.githubusercontent.com/hydraponique/roscomvpn-geoip/master/release/text"
 
@@ -36,6 +35,18 @@ logger = logging.getLogger(__name__)
 # ============================================
 # 🔧 HELPER FUNCTIONS
 # ============================================
+def load_sources():
+    """Загружает sources.json"""
+    try:
+        with open(SOURCES_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logger.error(f"❌ Sources file not found: {SOURCES_FILE}")
+        return {}
+    except json.JSONDecodeError as e:
+        logger.error(f"❌ Invalid JSON in {SOURCES_FILE}: {e}")
+        return {}
+
 def check_sing_box():
     """Проверяет что sing-box установлен и работает"""
     try:
@@ -75,7 +86,7 @@ def download_text_with_retry(url, retries=REQUEST_RETRIES):
         except requests.exceptions.RequestException as e:
             logger.warning(f"  ⚠ Attempt {attempt} failed: {e}")
             if attempt < retries:
-                time.sleep(REQUEST_DELAY * attempt)  # Экспоненциальная задержка
+                time.sleep(REQUEST_DELAY * attempt)
             else:
                 logger.error(f"  ❌ Failed after {retries} attempts: {url}")
                 return []
@@ -102,7 +113,6 @@ def create_rule_json(items):
         else:
             domains.append(item)
     
-    # ✅ Предупреждение если превышен лимит
     for name, lst in [("domain", domains), ("domain_suffix", domain_suffix), ("ip_cidr", ip_cidr)]:
         if len(lst) > MAX_RULES_PER_TYPE:
             logger.warning(f"  ⚠ {name}: {len(lst)} items exceed limit {MAX_RULES_PER_TYPE}, truncating")
@@ -130,7 +140,7 @@ def compile_srs(json_data, output_path):
         logger.info(f"  ⚙ Compiling → {output_path.name}")
         result = subprocess.run(
             [SING_BOX, "rule-set", "compile", str(json_path), "-o", str(output_path)],
-            capture_output=True, text=True, timeout=60  # ✅ Добавлен таймаут
+            capture_output=True, text=True, timeout=60
         )
         
         if result.returncode != 0:
@@ -154,7 +164,6 @@ def build_category(name, config):
     logger.info(f"\n📦 Building '{name}'...")
     all_items = set()
     
-    # Geosite файлы
     for cat in config.get("geosite", []):
         url = f"{GEOSITE_BASE}/{cat}"
         items = download_text_with_retry(url)
@@ -164,7 +173,6 @@ def build_category(name, config):
         else:
             logger.warning(f"    ⚠ {cat}: empty or failed")
     
-    # GeoIP файлы
     for cat in config.get("geoip", []):
         url = f"{GEOIP_BASE}/{cat}.txt"
         items = download_text_with_retry(url)
@@ -194,7 +202,6 @@ def build_category(name, config):
 def main():
     logger.info("🚀 Sing-box SRS Builder starting...")
     
-    # ✅ Проверка зависимостей
     if not check_sing_box():
         logger.error("❌ Cannot proceed without sing-box")
         return 1
@@ -205,10 +212,9 @@ def main():
         logger.error(f"❌ Sources file not found: {SOURCES_FILE}")
         return 1
     
-    try:
-        sources = load_sources()
-    except json.JSONDecodeError as e:
-        logger.error(f"❌ Invalid JSON in {SOURCES_FILE}: {e}")
+    sources = load_sources()
+    if not sources:
+        logger.error("❌ Failed to load sources")
         return 1
     
     success_count = 0
@@ -221,7 +227,6 @@ def main():
     
     logger.info(f"\n✅ Done! Built {success_count}/2 categories")
     
-    # Список результатов
     for f in sorted(OUTPUT_DIR.glob("*.srs")):
         logger.info(f"  • {f.name} ({f.stat().st_size:,} bytes)")
     
