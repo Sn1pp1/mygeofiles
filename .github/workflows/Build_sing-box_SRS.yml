@@ -24,7 +24,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'  # ✅ Убрал cache: 'pip'
+          python-version: '3.x'
 
       - name: Install requests
         run: pip install requests
@@ -107,7 +107,8 @@ jobs:
           
           python scripts/build-rules.py
           
-          if [ -f "files/block.srs" ] && [ -f "files/direct.srs" ]; then
+          # ✅ Добавил проверку proxy.srs
+          if [ -f "files/block.srs" ] && [ -f "files/direct.srs" ] && [ -f "files/proxy.srs" ]; then
             echo "✅ SRS files built successfully"
             ls -lh files/*.srs
           else
@@ -129,7 +130,8 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: '🔄 Auto-update SRS - ${{ env.BUILD_DATETIME }}'
-          file_pattern: 'files/block.srs files/direct.srs'
+          # ✅ Добавил proxy.srs в список файлов
+          file_pattern: 'files/block.srs files/direct.srs files/proxy.srs'
           branch: main
           commit_user_name: github-actions[bot]
           commit_user_email: github-actions[bot]@users.noreply.github.com
