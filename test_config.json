@@ -1,0 +1,10 @@
+{
+  "log": {"level": "error"},
+  "route": {
+    "rules": [
+      {"geosite": ["category-ads-all"], "action": "block"},
+      {"geoip": ["private", "cn"], "action": "block"},
+      {"geosite": ["google", "telegram"], "action": "direct"}
+    ]
+  }
+}
