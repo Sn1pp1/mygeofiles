@@ -165,4 +165,3 @@ basicattentiontoken.org
 vpn.brave.com
 safebrowsing.brave.com
 redirector.brave.com
-1
