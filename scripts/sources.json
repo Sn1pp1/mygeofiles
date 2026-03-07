@@ -12,6 +12,7 @@
     "geosite": [
       "private",
       "category-ru",
+      "whitelist",
       "microsoft",
       "apple",
       "google-play",
