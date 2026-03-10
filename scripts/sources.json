@@ -1,8 +1,6 @@
 {
   "block": {
     "geosite": [
-      "win-spy",
-      "torrent",
       "category-ads"
     ],
     "geoip": [],
@@ -30,7 +28,6 @@
       "private"
     ],
     "json": [
-      "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/refs/heads/main/files/games.json"
     ]
   },
   "proxy": {
