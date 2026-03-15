@@ -65,12 +65,12 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
     "servers": [
       {
         "tag": "dns-direct",
-        "address": "https://8.8.8.8/dns-query",
+        "address": "https://1.1.1.1/dns-query",
         "detour": "direct"
       },
       {
         "tag": "dns-remote",
-        "address": "https://8.8.8.8/dns-query",
+        "address": "https://1.1.1.1/dns-query",
         "detour": "proxy"
       }
     ],
@@ -111,56 +111,14 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
     {
       "type": "direct",
       "tag": "direct"
-    },
-    {
-      "type": "block",
-      "tag": "block"
     }
   ],
   "route": {
-    "rule_set": [
-      {
-        "tag": "block-rules",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/block.srs",
-        "download_detour": "proxy",
-        "update_interval": "1d"
-      },
-      {
-        "tag": "direct-rules",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/direct.srs",
-        "download_detour": "proxy",
-        "update_interval": "1d"
-      },
-      {
-        "tag": "proxy-rules",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/proxy.srs",
-        "download_detour": "proxy",
-        "update_interval": "1d"
-      }
-    ],
     "rules": [
       {
         "protocol": "dns",
         "action": "hijack-dns"
-      },
-      {
-        "rule_set": "block-rules",
-        "outbound": "block"
-      },
-      {
-        "rule_set": "direct-rules",
-        "outbound": "direct"
-      },
-      {
-        "rule_set": "proxy-rules",
-        "outbound": "proxy"
-      },
+      }, 
       {
         "process_name": [
           "vpnagent.exe",
