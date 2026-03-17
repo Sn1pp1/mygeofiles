@@ -65,12 +65,12 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
     "servers": [
       {
         "tag": "dns-direct",
-        "address": "https://1.1.1.1/dns-query",
+        "address": "https://8.8.8.8/dns-query",
         "detour": "direct"
       },
       {
         "tag": "dns-remote",
-        "address": "https://1.1.1.1/dns-query",
+        "address": "https://8.8.8.8/dns-query",
         "detour": "proxy"
       }
     ],
