@@ -14,9 +14,6 @@
 
 </div>
 
-
-## 📡 Для X-Ray
-
 ### GitHub Releases
 
 **📥 geosite.dat**
@@ -43,14 +40,16 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geosite.dat
 https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
 ```
 
----
+<div align="center">
 
 ## 📡 КОНФИГУРАЦИЯ SING-BOX ДЛЯ HAPP
+
+</div>
 
 <details>
 <summary>
 
-### 🔽 ТЫК 🔽
+### 🔽 Показать полный конфиг для копирования 🔽
 
 </summary>
 
