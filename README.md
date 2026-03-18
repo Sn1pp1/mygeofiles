@@ -65,12 +65,12 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
     "servers": [
       {
         "tag": "dns-direct",
-        "address": "https://8.8.8.8/dns-query",
+        "address": "8.8.8.8",
         "detour": "direct"
       },
       {
         "tag": "dns-remote",
-        "address": "https://8.8.8.8/dns-query",
+        "address": "8.8.8.8",
         "detour": "proxy"
       }
     ],
@@ -96,9 +96,7 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
       "mtu": 1400,
       "auto_route": true,
       "strict_route": false,
-      "stack": "gvisor",
-      "sniff": true,
-      "sniff_override_destination": true
+      "stack": "gvisor"
     }
   ],
   "outbounds": [
