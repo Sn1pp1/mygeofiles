@@ -156,23 +156,6 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
 
 ---
 
-
-**📥 block.srs**
-```text
-https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/block.srs
-```
-
-**📥 direct.srs**
-```text
-https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/direct.srs
-```
-
-**📥 proxy.srs**
-```text
-https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/proxy.srs
-```
----
-
 ## 📌 Важные примечания
 
 > [!NOTE]
