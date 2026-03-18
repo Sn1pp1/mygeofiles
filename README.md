@@ -2,7 +2,7 @@
 
 # 🌍 GeoSite & GeoIP Files
 
-**Актуальные базы GeoSite и GeoIP для X-Ray и Sing-Box**
+**Актуальные базы GeoSite и GeoIP для X-Ray**
 
 </div>
 
