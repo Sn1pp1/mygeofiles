@@ -7,12 +7,8 @@
 </div>
 
 ---
-
-<div align="center">
   
 ## 📋 Быстрое копирование всех ссылок
-
-</div>
 
 ### GitHub Releases
 
@@ -40,11 +36,7 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geosite.dat
 https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
 ```
 
-<div align="center">
-
 ## 📡 КОНФИГУРАЦИЯ SING-BOX ДЛЯ HAPP
-
-</div>
 
 <details>
 <summary>
