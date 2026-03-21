@@ -87,7 +87,9 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
       "mtu": 1400,
       "auto_route": true,
       "strict_route": false,
-      "stack": "gvisor"
+      "stack": "gvisor",
+      "sniff": true,
+      "sniff_override_destination": true
     }
   ],
   "outbounds": [
@@ -107,7 +109,7 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
       {
         "protocol": "dns",
         "action": "hijack-dns"
-      }, 
+      },
       {
         "process_name": [
           "vpnagent.exe",
