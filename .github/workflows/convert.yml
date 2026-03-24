@@ -3,8 +3,8 @@ name: Convert domains to MRS
 on:
   push:
     paths:
-      - 'files/domain-list.txt'  # Запуск при изменении исходного файла
-  workflow_dispatch:            # + ручной запуск
+      - 'files/domain-list.txt'
+  workflow_dispatch:
 
 jobs:
   convert:
@@ -13,22 +13,38 @@ jobs:
       contents: write
     
     steps:
-      - name: 📦 Checkout
+      - name: 📦 Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       
       - name: 🐍 Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
+          cache: 'pip'
       
-      - name: 🔄 Convert to MRS
+      - name: 📥 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+      
+      - name: 🔄 Convert TXT to MRS
         run: |
           python scripts/convert.py files/domain-list.txt files/domain-list.mrs
       
-      - name: 💾 Commit MRS
+      - name: 📊 Show stats
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add files/domain-list.mrs
-          git commit -m "🔄 Auto-generate domain-list.mrs" || exit 0
-          git push
+          echo "📈 Statistics:"
+          echo "- Input file: $(wc -l < files/domain-list.txt) lines"
+          echo "- Output file size: $(du -h files/domain-list.mrs | cut -f1)"
+          head -c 8 files/domain-list.mrs | xxd
+      
+      - name: 💾 Commit and push MRS
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: '🔄 Auto-generate domain-list.mrs from domain-list.txt'
+          file_pattern: 'files/domain-list.mrs'
+          commit_options: '--no-verify'
+          commit_user_name: 'GitHub Actions'
+          commit_user_email: 'actions@github.com'
+          commit_author: 'GitHub Actions <actions@github.com>'
