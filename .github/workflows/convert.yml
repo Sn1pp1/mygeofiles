@@ -22,11 +22,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'pip'
-      
-      - name: 📥 Install dependencies
-        run: |
-          python -m pip install --upgrade pip
+          # Убрали cache: 'pip' — скрипт не требует внешних библиотек
       
       - name: 🔄 Convert TXT to MRS
         run: |
@@ -37,6 +33,7 @@ jobs:
           echo "📈 Statistics:"
           echo "- Input file: $(wc -l < files/domain-list.txt) lines"
           echo "- Output file size: $(du -h files/domain-list.mrs | cut -f1)"
+          echo "- First 8 bytes (hex):"
           head -c 8 files/domain-list.mrs | xxd
       
       - name: 💾 Commit and push MRS
