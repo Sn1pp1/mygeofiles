@@ -1,0 +1,34 @@
+name: Convert domains to MRS
+
+on:
+  push:
+    paths:
+      - 'files/domain-list.txt'  # Запуск при изменении исходного файла
+  workflow_dispatch:            # + ручной запуск
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: 📦 Checkout
+        uses: actions/checkout@v4
+      
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: 🔄 Convert to MRS
+        run: |
+          python scripts/convert.py files/domain-list.txt files/domain-list.mrs
+      
+      - name: 💾 Commit MRS
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add files/domain-list.mrs
+          git commit -m "🔄 Auto-generate domain-list.mrs" || exit 0
+          git push
