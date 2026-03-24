@@ -18,18 +18,21 @@ def convert_to_mrs(input_file: str, output_file: str):
         else:
             rules.append(f'DOMAIN-SUFFIX,{line}')
     
-    # Генерируем MRS
+    # Генерируем MRS (правильный бинарный формат)
     with open(output_file, 'wb') as f:
-        f.write(b'MRS\x00')
-        f.write(struct.pack('<I', 1))
-        f.write(struct.pack('<I', len(rules)))
+        # Заголовок
+        f.write(b'MRS\x00')                    # Magic: 4 байта
+        f.write(struct.pack('<I', 1))          # Version: 4 байта (little-endian uint32)
+        f.write(struct.pack('<I', len(rules))) # Count: 4 байта (little-endian uint32)
         
+        # Каждое правило: 2 байта длина + данные
         for rule in rules:
-            data = rule.encode('utf-8')
-            f.write(struct.pack('<H', len(data)))
-            f.write(data)
+            rule_bytes = rule.encode('utf-8')
+            f.write(struct.pack('<H', len(rule_bytes)))  # Length: 2 байта (little-endian uint16)
+            f.write(rule_bytes)                          # Data
     
-    print(f"✅ Конвертировано {len(rules)} правил")
+    print(f"✅ Конвертировано {len(rules)} правил в MRS формат")
+    print(f"📁 Выходной файл: {output_file}")
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
