@@ -159,7 +159,7 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
 </summary>
 
 
-```json
+```yaml
 mixed-port: 7890
 allow-lan: true
 lan-allowed-ips:
