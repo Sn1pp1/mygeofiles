@@ -168,10 +168,10 @@ lan-allowed-ips: # Разрешенные ip для подключения к la
   - 10.0.0.0/8
   - 172.16.0.0/12
   - 192.168.0.0/16
-  - ::1/128
-  - fc00::/7
   - 10.95.0.8/32
   - 10.95.0.9/32
+  - ::1/128
+  - fc00::/7
 tcp-concurrent: true
 enable-process: true
 find-process-mode: always
@@ -189,7 +189,7 @@ sniffer:
   enable: true
   force-dns-mapping: true
   parse-pure-ip: true
-  override-destination: false
+  override-destination: true
   sniff:
     HTTP:
       ports:
@@ -214,12 +214,12 @@ sniffer:
     - 198.51.100.0/24
     - 203.0.113.0/24
     - 224.0.0.0/3
+    - 10.95.0.8/32
+    - 10.95.0.9/32
     - ::/127
     - fc00::/7
     - fe80::/10
     - ff00::/8
-    - 10.95.0.8/32
-    - 10.95.0.9/32
 
 tun:
   enable: true
@@ -245,12 +245,12 @@ tun:
     - 198.51.100.0/24
     - 203.0.113.0/24
     - 224.0.0.0/3
+    - 10.95.0.8/32
+    - 10.95.0.9/32
     - ::/127
     - fc00::/7
     - fe80::/10
     - ff00::/8
-    - 10.95.0.8/32
-    - 10.95.0.9/32
 
 dns:
   enable: true
@@ -264,10 +264,6 @@ dns:
     - rule-set:geosite-private
     - "*.lan"
     - "*.msftncsi.com"
-    - "localhost"
-    - "*.local"
-    - "*.mvideo.ru"
-    - "mvideo.ru"
   # ----
   # Опционально выбираем DNS сервера - меняйте на ваш вкус.
   default-nameserver:
@@ -282,11 +278,11 @@ dns:
     - https://8.8.8.8/dns-query#DIRECT
   direct-nameserver:
     # DNS для сайтов идущих через DIRECT
-    - https://77.88.8.8/dns-query#DIRECT    # DoH Яндекс (основной)
-    - https://1.1.1.1/dns-query#DIRECT      # DoH Cloudflare (резерв)
+    - https://1.1.1.1/dns-query#DIRECT      # DoH Cloudflare (основной)
+    - https://77.88.8.8/dns-query#DIRECT    # DoH Яндекс (резерв)
     - https://8.8.8.8/dns-query#DIRECT      # DoH Google (резерв)
     - tls://77.88.8.8:853#DIRECT            # DoT Яндекс (fallback)
-    - 77.88.8.8#DIRECT                       # Plain UDP (последний резерв)
+    - 77.88.8.8#DIRECT                      # Plain UDP (последний резерв)
   nameserver:
     # Сервер по умолчанию, DNS запросы будут идти через то, что выбрано в "Остальные сайты"
     - https://1.1.1.1/dns-query#🌍 Остальные сайты   # DoH CF (приоритет 1)
@@ -647,6 +643,14 @@ rule-providers:
     path: ./rule-sets/refilter.mrs
     interval: 86400
     proxy: 🚫 Недоступные сайты
+  refilter_ipsum:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/re-filter/ip-rule.mrs
+    path: ./re-filter/ip-rule.mrs
+    interval: 86400
+    proxy: 🚫 Недоступные сайты
   youtube:
     type: http
     behavior: domain
@@ -818,6 +822,7 @@ rules:
   # 🚫 Недоступные сайты
   - RULE-SET,ru-inside,🚫 Недоступные сайты # ITDog списки доменов недоступные из РФ
   - RULE-SET,refilter_domains,🚫 Недоступные сайты # Re:Filter списки доменов недоступные из РФ
+  - RULE-SET,refilter_ipsum,🚫 Недоступные сайты
   - RULE-SET,ru-inline-banned,🚫 Недоступные сайты # Домены набитые вручную (смотрите выше)
   - RULE-SET,inline-blocked-ips,🚫 Недоступные сайты # IP набитые вручную (смотрите выше)
   - RULE-SET,category-porn,🚫 Недоступные сайты # Опционально
