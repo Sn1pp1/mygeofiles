@@ -229,7 +229,7 @@ tun:
   dns-hijack:
     - any:53
     - tcp://any:53
-  strict-route: false
+  strict-route: true
   mtu: 1400
   route-exclude-address:
     - 0.0.0.0/8
