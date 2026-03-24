@@ -27,16 +27,15 @@ jobs:
         run: |
           python scripts/convert.py files/domain-list.txt files/domain-list.mrs
       
-      - name: 🕐 Get current time
+      - name: 🕐 Get current time in MSK
         id: time
-        run: echo "datetime=$(date '+%Y-%m-%d %H:%M MSK')" >> $GITHUB_OUTPUT
+        run: |
+          echo "datetime=$(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK')" >> $GITHUB_OUTPUT
       
-      - name: 💾 Commit and push MRS
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: '🔄 Auto-generate domain-list.mrs - ${{ steps.time.outputs.datetime }}'
-          file_pattern: 'files/domain-list.mrs'
-          commit_options: '--no-verify'
-          commit_user_name: 'GitHub Actions'
-          commit_user_email: 'actions@github.com'
-          commit_author: 'GitHub Actions <actions@github.com>'
+      - name: 💾 Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add files/domain-list.mrs
+          git diff --quiet && git diff --staged --quiet || git commit -m "🔄 Auto-generate MRS - ${{ steps.time.outputs.datetime }}"
+          git push
