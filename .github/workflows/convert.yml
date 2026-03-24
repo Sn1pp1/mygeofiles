@@ -22,24 +22,19 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          # Убрали cache: 'pip' — скрипт не требует внешних библиотек
       
       - name: 🔄 Convert TXT to MRS
         run: |
           python scripts/convert.py files/domain-list.txt files/domain-list.mrs
       
-      - name: 📊 Show stats
-        run: |
-          echo "📈 Statistics:"
-          echo "- Input file: $(wc -l < files/domain-list.txt) lines"
-          echo "- Output file size: $(du -h files/domain-list.mrs | cut -f1)"
-          echo "- First 8 bytes (hex):"
-          head -c 8 files/domain-list.mrs | xxd
+      - name: 🕐 Get current time
+        id: time
+        run: echo "datetime=$(date '+%Y-%m-%d %H:%M MSK')" >> $GITHUB_OUTPUT
       
       - name: 💾 Commit and push MRS
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: '🔄 Auto-generate domain-list.mrs from domain-list.txt'
+          commit_message: '🔄 Auto-generate domain-list.mrs - ${{ steps.time.outputs.datetime }}'
           file_pattern: 'files/domain-list.mrs'
           commit_options: '--no-verify'
           commit_user_name: 'GitHub Actions'
