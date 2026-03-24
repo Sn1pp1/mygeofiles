@@ -13,28 +13,23 @@ def convert_to_mrs(input_file: str, output_file: str):
     # Формируем правила DOMAIN-SUFFIX
     rules = []
     for line in lines:
-        # Если уже форматированное правило — оставляем как есть
         if line.startswith(('DOMAIN-', 'IP-CIDR', 'PROCESS-', 'AND(', 'OR(')):
             rules.append(line)
-        # Простой домен — добавляем DOMAIN-SUFFIX
         else:
             rules.append(f'DOMAIN-SUFFIX,{line}')
     
-    # Генерируем MRS (бинарный формат Mihomo)
+    # Генерируем MRS
     with open(output_file, 'wb') as f:
-        # Заголовок: MRS\0 + version(u32 LE) + count(u32 LE)
         f.write(b'MRS\x00')
-        f.write(struct.pack('<I', 1))           # Version: 1
-        f.write(struct.pack('<I', len(rules)))  # Count
+        f.write(struct.pack('<I', 1))
+        f.write(struct.pack('<I', len(rules)))
         
-        # Правила: len(u16 LE) + data(bytes)
         for rule in rules:
             data = rule.encode('utf-8')
             f.write(struct.pack('<H', len(data)))
             f.write(data)
     
     print(f"✅ Конвертировано {len(rules)} правил")
-    print(f"📁 Выход: {output_file}")
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
