@@ -164,13 +164,24 @@ mixed-port: 7890
 allow-lan: true
 lan-allowed-ips:
   - 127.0.0.0/8
+  - ::1/128
   - 10.0.0.0/8
   - 172.16.0.0/12
   - 192.168.0.0/16
+  - 100.64.0.0/10
+  - 169.254.0.0/16
+  - 192.0.0.0/24
+  - 192.0.2.0/24
+  - 192.88.99.0/24
+  - 198.51.100.0/24
+  - 203.0.113.0/24
+  - 224.0.0.0/4
+  - 240.0.0.0/4
   - 10.95.0.8/32
   - 10.95.0.9/32
-  - ::1/128
   - fc00::/7
+  - fe80::/10
+  - ff00::/8
 tcp-concurrent: true
 enable-process: true
 find-process-mode: always
@@ -187,6 +198,7 @@ sniffer:
   enable: true
   force-dns-mapping: true
   parse-pure-ip: true
+  override-destination: true
   skip-dst-address:
     - 0.0.0.0/8
     - 10.0.0.0/8
@@ -200,7 +212,8 @@ sniffer:
     - 192.168.0.0/16
     - 198.51.100.0/24
     - 203.0.113.0/24
-    - 224.0.0.0/3
+    - 224.0.0.0/4
+    - 240.0.0.0/4
     - 10.95.0.8/32
     - 10.95.0.9/32
     - ::/127
@@ -212,7 +225,6 @@ sniffer:
       ports:
         - 80
         - 8080-8880
-      override-destination: true
     TLS:
       ports:
         - 443
@@ -252,71 +264,12 @@ tun:
     - fe80::/10
     - ff00::/8
   exclude-process:
-    # === Cisco Secure Client (AnyConnect) ===
     - "vpnui.exe"
     - "vpnagent.exe"
     - "vpncli.exe"
     - "AnyConnect.exe"
     - "ac_helper.exe"
     - "ac_service.exe"
-    - "posture.exe"
-    - "ise_posture.exe"
-    - "amp.exe"
-    - "darts.exe"
-    # Steam
-    - "steam.exe"
-    - "steamwebhelper.exe"
-    - "steam_service.exe"
-    # Epic Games
-    - "EpicGamesLauncher.exe"
-    - "EpicGamesClient.exe"
-    # Battle.net
-    - "Battle.net.exe"
-    - "Battle.net Helper.exe"
-    - "Agent.exe"
-    # Riot Games
-    - "RiotClientServices.exe"
-    - "VALORANT.exe"
-    - "LeagueOfLegends.exe"
-    - "LeagueClient.exe"
-    # EA / Origin
-    - "EADesktop.exe"
-    - "Origin.exe"
-    # Ubisoft
-    - "Uplay.exe"
-    - "UbisoftConnect.exe"
-    # GOG
-    - "GalaxyClient.exe"
-    # Популярные игры
-    - "cs2.exe"
-    - "csgo.exe"
-    - "dota2.exe"
-    - "Minecraft.exe"
-    - "javaw.exe"
-    - "WorldOfTanks.exe"
-    - "WarThunder.exe"
-    - "RocketLeague.exe"
-    - "Fortnite.exe"
-    - "FortniteClient.exe"
-    - "ApexLegends.exe"
-    - "r5apex.exe"
-    - "Overwatch.exe"
-    - "OverwatchLauncher.exe"
-    - "Wow.exe"
-    - "PUBG.exe"
-    - "TslGame.exe"
-    - "Rust.exe"
-    - "GTAV.exe"
-    - "GTA5.exe"
-    - "RedDeadRedemption2.exe"
-    - "PathOfExile.exe"
-    - "FallGuys.exe"
-    # Античиты
-    - "EasyAntiCheat.exe"
-    - "BattlEye.exe"
-    - "beservice.exe"
-    - "vgc.exe"
-    - "vgtray.exe"
 
 dns:
   enable: true
@@ -328,14 +281,46 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
+    - rule-set:private-domains
     - "*.lan"
     - "*.local"
+    - "*.localdomain"
+    - "*.workgroup"
+    - "*.home"
+    - "*.internal"
+    - "*.corp"
+    - "*.private"
     - "localhost"
-    - "*.mvideo.ru"
+    - "localhost.*"
     - "*.msftncsi.com"
-    - "time.*.com"
+    - "*.msftconnecttest.com"
     - "dns.msftncsi.com"
+    - "www.msftncsi.com"
     - "www.msftconnecttest.com"
+    - "*.microsoft.com"
+    - "*.windows.com"
+    - "*.windows.net"
+    - "*.windowsupdate.com"
+    - "time.windows.com"
+    - "*.time.windows.com"
+    - "*.apple.com"
+    - "*.icloud.com"
+    - "*.mzstatic.com"
+    - "*.cdn-apple.com"
+    - "gateway.icloud.com"
+    - "captive.apple.com"
+    - "*.gstatic.com"
+    - "*.android.com"
+    - "connectivitycheck.gstatic.com"
+    - "time.*.com"
+    - "*.time.com"
+    - "*.pool.ntp.org"
+    - "*.ntp.org"
+    - "*.router.asus.com"
+    - "*.tplinkwifi.net"
+    - "*.routerlogin.com"
+    - "*.fritz.box"
+    - "*.myfritz.net"
   
   default-nameserver:
     - https://1.1.1.1/dns-query#DIRECT
@@ -357,123 +342,90 @@ dns:
     - 77.88.8.8#DIRECT
   
   nameserver:
-    - https://1.1.1.1/dns-query#🌍 VPN
-    - https://8.8.8.8/dns-query#🌍 VPN
-    - tls://1.1.1.1:853#🌍 VPN
-    - tls://8.8.8.8:853#🌍 VPN
+    - https://1.1.1.1/dns-query#PROXY
+    - https://8.8.8.8/dns-query#PROXY
+    - tls://1.1.1.1:853#PROXY
+    - tls://8.8.8.8:853#PROXY
 
-proxies:
-  # LEAVE THIS LINE!
-
+proxies: # LEAVE THIS LINE!
 proxy-groups:
-  - name: 🌍 VPN
+  - name: 🛡️ VPN
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png  
     type: select
     proxies:
-      - ⚡️ Fastest
-      - 📶 First Available
+      - ⚡️ Авто
       # LEAVE THIS LINE!
   - name: ▶️ YouTube
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png  
     type: select
     proxies:
-      - 🌍 VPN
+      - 🛡️ VPN
       # LEAVE THIS LINE!
   - name: 💬 Discord
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Discord.png  
     type: select
     proxies:
-      - 🌍 VPN
+      - 🛡️ VPN
       # LEAVE THIS LINE!
-  - name: ⚡️ Fastest
-    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Auto.png  
+  - name: ➤ Telegram
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png
+    type: select
+    proxies:
+      - 🛡️ VPN
+      - 🔓 Без VPN
+      # LEAVE THIS LINE!
+  - name: 🌍  Остальные сайты
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
+    type: select
+    proxies:
+      - 🔓 Без VPN
+      - 🛡️ VPN
+      # LEAVE THIS LINE!
+  - name: ⚡️ Авто
     type: url-test
     tolerance: 150
-    url: https://cp.cloudflare.com/generate_204  
+    url: https://www.gstatic.com/generate_204
     interval: 300
+    # exclude-filter:
+    remnawave:
+      include-proxies: false
+    include-all: true
+    hidden: true
+    # LEAVE THIS LINE!
+  - name: PROXY
+    type: select
+    hidden: true
+    remnawave:
+      include-proxies: false
     proxies:
-      # LEAVE THIS LINE!
-  - name: 📶 First Available
-    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Download.png  
-    type: fallback
-    url: https://cp.cloudflare.com/generate_204  
-    interval: 300
+      - 🛡️ VPN
+    # LEAVE THIS LINE!
+  - name: 🔓 Без VPN
+    type: select
+    hidden: true
+    remnawave:
+      include-proxies: false
     proxies:
-      # LEAVE THIS LINE!
+      - DIRECT
+    # LEAVE THIS LINE!
+  - name: ⛔ Блок
+    type: select
+    hidden: true
+    remnawave:
+      include-proxies: false
+    proxies:
+      - REJECT
+    # LEAVE THIS LINE!
+  - name: ⏭️ Пропуск
+    type: select
+    hidden: true
+    remnawave:
+      include-proxies: false
+    proxies:
+      - PASS
+    # LEAVE THIS LINE!
 
 rule-providers:
-  domain-list:
-    type: http
-    behavior: classical
-    format: text
-    url: https://github.com/Sn1pp1/mygeofiles/raw/main/files/domain.txt
-    path: ./rule-sets/domain.txt
-    interval: 86400
-    proxy: 🌍 VPN
-  meta_domains:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 86400
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/meta.mrs
-    path: ./rule-sets/meta.mrs
-    proxy: 🌍 VPN
-  telegram_ips:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    interval: 86400
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/telegram.mrs
-    path: ./rule-sets/telegram_ips.mrs
-    proxy: 🌍 VPN
-  telegram_domains:
-    type: http
-    behavior: domain
-    format: mrs
-    interval: 86400
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/telegram.mrs
-    path: ./rule-sets/telegram_domains.mrs
-    proxy: 🌍 VPN
-  discord_domains:
-    type: http
-    behavior: domain
-    format: mrs
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/discord.mrs
-    path: ./rule-sets/discord_domains.mrs
-    interval: 86400
-    proxy: 🌍 VPN
-  discord_voiceips:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/discord-voice-ip-list.mrs
-    path: ./rule-sets/discord_voiceips.mrs
-    interval: 86400
-    proxy: 🌍 VPN
-  refilter_domains:
-    type: http
-    behavior: domain
-    format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/re-filter/domain-rule.mrs
-    path: ./rule-sets/refilter_domains.mrs
-    interval: 86400
-    proxy: 🌍 VPN
-  refilter_ipsum:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/re-filter/ip-rule.mrs
-    path: ./rule-sets/refilter_ipsum.mrs
-    interval: 86400
-    proxy: 🌍 VPN
-  youtube:
-    type: http
-    behavior: domain
-    format: mrs
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs
-    path: ./rule-sets/youtube.mrs
-    interval: 86400
-    proxy: 🌍 VPN
   oisd_big:
     type: http
     behavior: domain
@@ -481,23 +433,87 @@ rule-providers:
     url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/oisd/big.mrs
     path: ./rule-sets/oisd_big.mrs
     interval: 86400
-    proxy: 🌍 VPN
-  torrent-trackers:
+    proxy: 🛡️ VPN
+  category-ads:
     type: http
     behavior: domain
     format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-trackers.mrs
-    path: ./rule-sets/torrent-trackers.mrs
+    url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/category-ads.mrs
+    path: ./rule-sets/category-ads.mrs
+    proxy: 🛡️ VPN
     interval: 86400
-    proxy: 🌍 VPN
-  torrent-clients:
+  private-ips:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geoip/release/mihomo/private.mrs
+    path: ./rule-sets/geoip-private.mrs
+    proxy: 🛡️ VPN
+    interval: 86400
+  private-domains:
+    type: http
+    behavior: domain
+    format: mrs
+    url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/private.mrs
+    path: ./rule-sets/geosite-private.mrs
+    proxy: 🛡️ VPN
+    interval: 86400
+  domain-list:
     type: http
     behavior: classical
-    format: yaml
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-clients.yaml
-    path: ./rule-sets/torrent-clients.yaml
+    format: text
+    url: https://github.com/Sn1pp1/mygeofiles/raw/main/files/domain.txt
+    path: ./rule-sets/domain.txt
     interval: 86400
-    proxy: 🌍 VPN
+    proxy: 🛡️ VPN
+  meta_domains:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/meta.mrs
+    path: ./rule-sets/meta.mrs
+    proxy: 🛡️ VPN
+  telegram_ips:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    interval: 86400
+    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/telegram.mrs
+    path: ./rule-sets/telegram_ips.mrs
+    proxy: 🛡️ VPN
+  telegram_domains:
+    type: http
+    behavior: domain
+    format: mrs
+    interval: 86400
+    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/telegram.mrs
+    path: ./rule-sets/telegram_domains.mrs
+    proxy: 🛡️ VPN
+  discord_domains:
+    type: http
+    behavior: domain
+    format: mrs
+    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/discord.mrs
+    path: ./rule-sets/discord_domains.mrs
+    interval: 86400
+    proxy: 🛡️ VPN
+  discord_voiceips:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/discord-voice-ip-list.mrs
+    path: ./rule-sets/discord_voiceips.mrs
+    interval: 86400
+    proxy: 🛡️ VPN
+  youtube:
+    type: http
+    behavior: domain
+    format: mrs
+    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs
+    path: ./rule-sets/youtube.mrs
+    interval: 86400
+    proxy: 🛡️ VPN
   ru-bundle:
     type: http
     behavior: domain
@@ -505,7 +521,39 @@ rule-providers:
     url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/ru-bundle/rule.mrs
     path: ./rule-sets/ru-bundle.mrs
     interval: 86400
-    proxy: 🌍 VPN
+    proxy: 🛡️ VPN
+  refilter_domains:
+    type: http
+    behavior: domain
+    format: mrs
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/re-filter/domain-rule.mrs
+    path: ./rule-sets/refilter_domains.mrs
+    interval: 86400
+    proxy: 🛡️ VPN
+  refilter_ipsum:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/re-filter/ip-rule.mrs
+    path: ./rule-sets/refilter_ipsum.mrs
+    interval: 86400
+    proxy: 🛡️ VPN
+  torrent-trackers:
+    type: http
+    behavior: domain
+    format: mrs
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-trackers.mrs
+    path: ./rule-sets/torrent-trackers.mrs
+    interval: 86400
+    proxy: 🛡️ VPN
+  torrent-clients:
+    type: http
+    behavior: classical
+    format: yaml
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-clients.yaml
+    path: ./rule-sets/torrent-clients.yaml
+    interval: 86400
+    proxy: 🛡️ VPN
 
 rules:
   - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
@@ -514,18 +562,23 @@ rules:
   - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
   - IP-CIDR,10.95.0.8/32,DIRECT,no-resolve
   - IP-CIDR,10.95.0.9/32,DIRECT,no-resolve
-  - RULE-SET,oisd_big,REJECT
-  - OR,((DOMAIN,ipwhois.app),(DOMAIN,ipwho.is),(DOMAIN,api.ip.sb),(DOMAIN,ipapi.co),(DOMAIN,ipinfo.io)),🌍 VPN
+  - IP-CIDR,::/0,REJECT-DROP,no-resolve
+  - RULE-SET,private-ips,DIRECT,no-resolve
+  - RULE-SET,private-domains,DIRECT
+  - AND,((NETWORK,UDP),(DST-PORT,443)),REJECT-DROP
+  - RULE-SET,oisd_big,REJECT-DROP
+  - RULE-SET,category-ads,REJECT-DROP
   - OR,((RULE-SET,torrent-clients),(RULE-SET,torrent-trackers)),DIRECT
+  - OR,((DOMAIN,ipwhois.app),(DOMAIN,ipwho.is),(DOMAIN,api.ip.sb),(DOMAIN,ipapi.co),(DOMAIN,ipinfo.io)),PROXY
+  - RULE-SET,domain-list,PROXY
+  - RULE-SET,meta_domains,PROXY
+  - RULE-SET,ru-bundle,PROXY
   - RULE-SET,youtube,▶️ YouTube
-  - OR,((RULE-SET,telegram_ips),(RULE-SET,telegram_domains)),🌍 VPN
+  - OR,((RULE-SET,telegram_ips),(RULE-SET,telegram_domains)),➤ Telegram
   - OR,((RULE-SET,discord_domains),(RULE-SET,discord_voiceips),(PROCESS-NAME,Discord.exe)),💬 Discord
-  - RULE-SET,domain-list,🌍 VPN
-  - RULE-SET,meta_domains,🌍 VPN
-  - RULE-SET,refilter_domains,🌍 VPN
-  - RULE-SET,refilter_ipsum,🌍 VPN
-  - RULE-SET,ru-bundle,🌍 VPN
-  - MATCH,DIRECT
+  - RULE-SET,refilter_domains,PROXY
+  - RULE-SET,refilter_ipsum,PROXY
+  - MATCH,🌍  Остальные сайты
 ```
 </details>
 
