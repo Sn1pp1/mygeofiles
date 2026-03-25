@@ -402,12 +402,12 @@ proxy-groups:
       # LEAVE THIS LINE!
 
 rule-providers:
-  domain_list:
+  domain-list:
     type: http
-    behavior: domain
+    behavior: classical
     format: text
-    url: https://github.com/Sn1pp1/mygeofiles/raw/main/files/domain.txt  
-    path: ./rule-sets/domain_list.txt
+    url: https://github.com/Sn1pp1/mygeofiles/raw/main/files/domain.txt
+    path: ./rule-sets/domain.txt
     interval: 86400
     proxy: 🌍 VPN
   meta_domains:
@@ -415,7 +415,7 @@ rule-providers:
     behavior: domain
     format: mrs
     interval: 86400
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/meta.mrs  
+    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/meta.mrs
     path: ./rule-sets/meta.mrs
     proxy: 🌍 VPN
   telegram_ips:
@@ -423,7 +423,7 @@ rule-providers:
     behavior: ipcidr
     format: mrs
     interval: 86400
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/telegram.mrs  
+    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geoip/telegram.mrs
     path: ./rule-sets/telegram_ips.mrs
     proxy: 🌍 VPN
   telegram_domains:
@@ -431,14 +431,14 @@ rule-providers:
     behavior: domain
     format: mrs
     interval: 86400
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/telegram.mrs  
+    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/telegram.mrs
     path: ./rule-sets/telegram_domains.mrs
     proxy: 🌍 VPN
   discord_domains:
     type: http
     behavior: domain
     format: mrs
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/discord.mrs  
+    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/discord.mrs
     path: ./rule-sets/discord_domains.mrs
     interval: 86400
     proxy: 🌍 VPN
@@ -446,7 +446,7 @@ rule-providers:
     type: http
     behavior: ipcidr
     format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/discord-voice-ip-list.mrs  
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/discord-voice-ip-list.mrs
     path: ./rule-sets/discord_voiceips.mrs
     interval: 86400
     proxy: 🌍 VPN
@@ -454,7 +454,7 @@ rule-providers:
     type: http
     behavior: domain
     format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/re-filter/domain-rule.mrs  
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/re-filter/domain-rule.mrs
     path: ./rule-sets/refilter_domains.mrs
     interval: 86400
     proxy: 🌍 VPN
@@ -462,7 +462,7 @@ rule-providers:
     type: http
     behavior: ipcidr
     format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/re-filter/ip-rule.mrs  
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/re-filter/ip-rule.mrs
     path: ./rule-sets/refilter_ipsum.mrs
     interval: 86400
     proxy: 🌍 VPN
@@ -470,7 +470,7 @@ rule-providers:
     type: http
     behavior: domain
     format: mrs
-    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs  
+    url: https://github.com/MetaCubeX/meta-rules-dat/raw/meta/geo/geosite/youtube.mrs
     path: ./rule-sets/youtube.mrs
     interval: 86400
     proxy: 🌍 VPN
@@ -478,7 +478,7 @@ rule-providers:
     type: http
     behavior: domain
     format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/oisd/big.mrs  
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/oisd/big.mrs
     path: ./rule-sets/oisd_big.mrs
     interval: 86400
     proxy: 🌍 VPN
@@ -486,7 +486,7 @@ rule-providers:
     type: http
     behavior: domain
     format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-trackers.mrs  
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-trackers.mrs
     path: ./rule-sets/torrent-trackers.mrs
     interval: 86400
     proxy: 🌍 VPN
@@ -494,7 +494,7 @@ rule-providers:
     type: http
     behavior: classical
     format: yaml
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-clients.yaml  
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-clients.yaml
     path: ./rule-sets/torrent-clients.yaml
     interval: 86400
     proxy: 🌍 VPN
@@ -502,7 +502,7 @@ rule-providers:
     type: http
     behavior: domain
     format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/ru-bundle/rule.mrs  
+    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/ru-bundle/rule.mrs
     path: ./rule-sets/ru-bundle.mrs
     interval: 86400
     proxy: 🌍 VPN
@@ -520,7 +520,7 @@ rules:
   - RULE-SET,youtube,▶️ YouTube
   - OR,((RULE-SET,telegram_ips),(RULE-SET,telegram_domains)),🌍 VPN
   - OR,((RULE-SET,discord_domains),(RULE-SET,discord_voiceips),(PROCESS-NAME,Discord.exe)),💬 Discord
-  - RULE-SET,domain_list,🌍 VPN
+  - RULE-SET,domain-list,🌍 VPN
   - RULE-SET,meta_domains,🌍 VPN
   - RULE-SET,refilter_domains,🌍 VPN
   - RULE-SET,refilter_ipsum,🌍 VPN
