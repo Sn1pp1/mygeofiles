@@ -161,27 +161,20 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
 
 ```yaml
 mixed-port: 7890
-allow-lan: true
+allow-lan: false
 lan-allowed-ips:
-  - 127.0.0.0/8
-  - ::1/128
-  - 10.0.0.0/8
-  - 172.16.0.0/12
-  - 192.168.0.0/16
-  - 100.64.0.0/10
-  - 169.254.0.0/16
-  - 192.0.0.0/24
-  - 192.0.2.0/24
-  - 192.88.99.0/24
-  - 198.51.100.0/24
-  - 203.0.113.0/24
-  - 224.0.0.0/4
-  - 240.0.0.0/4
-  - 10.95.0.8/32
-  - 10.95.0.9/32
-  - fc00::/7
-  - fe80::/10
-  - ff00::/8
+    - 127.0.0.0/8
+    - ::1/128
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+    - fc00::/7
+    - fe80::/10
+    - ff00::/8
+    - 100.64.0.0/10
+    - 169.254.0.0/16
+    - 224.0.0.0/3
+
 tcp-concurrent: true
 enable-process: true
 find-process-mode: always
@@ -200,26 +193,19 @@ sniffer:
   parse-pure-ip: true
   override-destination: true
   skip-dst-address:
-    - 0.0.0.0/8
     - 10.0.0.0/8
-    - 100.64.0.0/10
-    - 127.0.0.0/8
-    - 169.254.0.0/16
     - 172.16.0.0/12
-    - 192.0.0.0/24
-    - 192.0.2.0/24
-    - 192.88.99.0/24
     - 192.168.0.0/16
-    - 198.51.100.0/24
-    - 203.0.113.0/24
-    - 224.0.0.0/4
-    - 240.0.0.0/4
-    - 10.95.0.8/32
-    - 10.95.0.9/32
+    - 0.0.0.0/8
+    - 127.0.0.0/8
+    - 100.64.0.0/10
+    - 169.254.0.0/16
+    - 224.0.0.0/3
     - ::/127
     - fc00::/7
     - fe80::/10
     - ff00::/8
+
   sniff:
     HTTP:
       ports:
@@ -235,7 +221,7 @@ sniffer:
 
 tun:
   enable: true
-  stack: mixed
+  stack: gVisor
   auto-route: true
   auto-detect-interface: true
   dns-hijack:
@@ -244,32 +230,18 @@ tun:
   strict-route: true
   mtu: 1400
   route-exclude-address:
-    - 0.0.0.0/8
     - 10.0.0.0/8
-    - 100.64.0.0/10
-    - 127.0.0.0/8
-    - 169.254.0.0/16
     - 172.16.0.0/12
-    - 192.0.0.0/24
-    - 192.0.2.0/24
-    - 192.88.99.0/24
     - 192.168.0.0/16
-    - 198.51.100.0/24
-    - 203.0.113.0/24
+    - 0.0.0.0/8
+    - 127.0.0.0/8
+    - 100.64.0.0/10
+    - 169.254.0.0/16
     - 224.0.0.0/3
-    - 10.95.0.8/32
-    - 10.95.0.9/32
     - ::/127
     - fc00::/7
     - fe80::/10
     - ff00::/8
-  exclude-process:
-    - "vpnui.exe"
-    - "vpnagent.exe"
-    - "vpncli.exe"
-    - "AnyConnect.exe"
-    - "ac_helper.exe"
-    - "ac_service.exe"
 
 dns:
   enable: true
@@ -281,7 +253,6 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - rule-set:private-domains
     - "*.lan"
     - "*.local"
     - "*.localdomain"
@@ -294,168 +265,91 @@ dns:
     - "localhost.*"
     - "*.msftncsi.com"
     - "*.msftconnecttest.com"
-    - "dns.msftncsi.com"
-    - "www.msftncsi.com"
-    - "www.msftconnecttest.com"
-    - "*.microsoft.com"
-    - "*.windows.com"
-    - "*.windows.net"
-    - "*.windowsupdate.com"
-    - "time.windows.com"
-    - "*.time.windows.com"
+    - "*.gstatic.com"
+    - "clients3.google.com"
     - "*.apple.com"
     - "*.icloud.com"
-    - "*.mzstatic.com"
-    - "*.cdn-apple.com"
-    - "gateway.icloud.com"
-    - "captive.apple.com"
-    - "*.gstatic.com"
-    - "*.android.com"
-    - "connectivitycheck.gstatic.com"
-    - "time.*.com"
-    - "*.time.com"
-    - "*.pool.ntp.org"
-    - "*.ntp.org"
-    - "*.router.asus.com"
-    - "*.tplinkwifi.net"
-    - "*.routerlogin.com"
-    - "*.fritz.box"
-    - "*.myfritz.net"
-  
+
   default-nameserver:
-    - https://1.1.1.1/dns-query#DIRECT
-    - https://8.8.8.8/dns-query#DIRECT
-    - tls://1.1.1.1:853#DIRECT
-    - tls://8.8.8.8:853#DIRECT
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+    - tls://1.1.1.1:853
+    - tls://8.8.8.8:853
   
   proxy-server-nameserver:
-    - https://1.1.1.1/dns-query#DIRECT
-    - https://8.8.8.8/dns-query#DIRECT
-    - tls://1.1.1.1:853#DIRECT
-    - tls://8.8.8.8:853#DIRECT
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+    - tls://1.1.1.1:853
+    - tls://8.8.8.8:853
   
   direct-nameserver:
-    - https://1.1.1.1/dns-query#DIRECT
-    - https://77.88.8.8/dns-query#DIRECT
-    - https://8.8.8.8/dns-query#DIRECT
-    - tls://77.88.8.8:853#DIRECT
-    - 77.88.8.8#DIRECT
+    - https://1.1.1.1/dns-query
+    - https://77.88.8.8/dns-query
+    - https://8.8.8.8/dns-query
+    - tls://77.88.8.8:853
+    - 77.88.8.8
   
   nameserver:
-    - https://1.1.1.1/dns-query#PROXY
-    - https://8.8.8.8/dns-query#PROXY
-    - tls://1.1.1.1:853#PROXY
-    - tls://8.8.8.8:853#PROXY
+    - https://1.1.1.1/dns-query
+    - https://8.8.8.8/dns-query
+    - tls://1.1.1.1:853
+    - tls://8.8.8.8:853
 
-proxies: # LEAVE THIS LINE!
+proxies:
 proxy-groups:
   - name: 🛡️ VPN
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Hijacking.png  
     type: select
     proxies:
-      - ⚡️ Авто
-      # LEAVE THIS LINE!
+      - ⚡️ Auto
+
   - name: ▶️ YouTube
-    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png  
+    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/YouTube.png
     type: select
     proxies:
       - 🛡️ VPN
-      # LEAVE THIS LINE!
-  - name: 💬 Discord
-    icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Discord.png  
-    type: select
-    proxies:
-      - 🛡️ VPN
-      # LEAVE THIS LINE!
+
   - name: ➤ Telegram
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Telegram.png
     type: select
     proxies:
       - 🛡️ VPN
-      - 🔓 Без VPN
-      # LEAVE THIS LINE!
-  - name: 🌍  Остальные сайты
+      - 🇷🇺 Без VPN
+
+  - name: 🌍  Global
     icon: https://cdn.jsdelivr.net/gh/Koolson/Qure@master/IconSet/Color/Global.png
     type: select
     proxies:
-      - 🔓 Без VPN
+      - 🇷🇺 Без VPN
       - 🛡️ VPN
-      # LEAVE THIS LINE!
-  - name: ⚡️ Авто
+
+  - name: ⚡️ Auto
     type: url-test
-    tolerance: 150
-    url: https://www.gstatic.com/generate_204
-    interval: 300
-    # exclude-filter:
-    remnawave:
-      include-proxies: false
-    include-all: true
     hidden: true
-    # LEAVE THIS LINE!
+    tolerance: 150
+    url: https://cp.cloudflare.com/generate_204
+    interval: 300
+    proxies:
+
   - name: PROXY
     type: select
     hidden: true
-    remnawave:
-      include-proxies: false
     proxies:
       - 🛡️ VPN
-    # LEAVE THIS LINE!
-  - name: 🔓 Без VPN
+
+  - name: 🇷🇺 Без VPN
     type: select
     hidden: true
-    remnawave:
-      include-proxies: false
     proxies:
       - DIRECT
-    # LEAVE THIS LINE!
-  - name: ⛔ Блок
-    type: select
-    hidden: true
-    remnawave:
-      include-proxies: false
-    proxies:
-      - REJECT
-    # LEAVE THIS LINE!
-  - name: ⏭️ Пропуск
-    type: select
-    hidden: true
-    remnawave:
-      include-proxies: false
-    proxies:
-      - PASS
-    # LEAVE THIS LINE!
 
 rule-providers:
-  oisd_big:
-    type: http
-    behavior: domain
-    format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/oisd/big.mrs
-    path: ./rule-sets/oisd_big.mrs
-    interval: 86400
-    proxy: 🛡️ VPN
   category-ads:
     type: http
     behavior: domain
     format: mrs
     url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/category-ads.mrs
     path: ./rule-sets/category-ads.mrs
-    proxy: 🛡️ VPN
-    interval: 86400
-  private-ips:
-    type: http
-    behavior: ipcidr
-    format: mrs
-    url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geoip/release/mihomo/private.mrs
-    path: ./rule-sets/geoip-private.mrs
-    proxy: 🛡️ VPN
-    interval: 86400
-  private-domains:
-    type: http
-    behavior: domain
-    format: mrs
-    url: https://cdn.jsdelivr.net/gh/hydraponique/roscomvpn-geosite/release/mihomo/private.mrs
-    path: ./rule-sets/geosite-private.mrs
     proxy: 🛡️ VPN
     interval: 86400
   domain-list:
@@ -538,47 +432,19 @@ rule-providers:
     path: ./rule-sets/refilter_ipsum.mrs
     interval: 86400
     proxy: 🛡️ VPN
-  torrent-trackers:
-    type: http
-    behavior: domain
-    format: mrs
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-trackers.mrs
-    path: ./rule-sets/torrent-trackers.mrs
-    interval: 86400
-    proxy: 🛡️ VPN
-  torrent-clients:
-    type: http
-    behavior: classical
-    format: yaml
-    url: https://github.com/legiz-ru/mihomo-rule-sets/raw/main/other/torrent-clients.yaml
-    path: ./rule-sets/torrent-clients.yaml
-    interval: 86400
-    proxy: 🛡️ VPN
 
 rules:
-  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
-  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
-  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
-  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
-  - IP-CIDR,10.95.0.8/32,DIRECT,no-resolve
-  - IP-CIDR,10.95.0.9/32,DIRECT,no-resolve
-  - IP-CIDR,::/0,REJECT-DROP,no-resolve
-  - RULE-SET,private-ips,DIRECT,no-resolve
-  - RULE-SET,private-domains,DIRECT
-  - AND,((NETWORK,UDP),(DST-PORT,443)),REJECT-DROP
-  - RULE-SET,oisd_big,REJECT-DROP
-  - RULE-SET,category-ads,REJECT-DROP
-  - OR,((RULE-SET,torrent-clients),(RULE-SET,torrent-trackers)),DIRECT
+  - RULE-SET,category-ads,REJECT
   - OR,((DOMAIN,ipwhois.app),(DOMAIN,ipwho.is),(DOMAIN,api.ip.sb),(DOMAIN,ipapi.co),(DOMAIN,ipinfo.io)),PROXY
   - RULE-SET,domain-list,PROXY
   - RULE-SET,meta_domains,PROXY
   - RULE-SET,ru-bundle,PROXY
   - RULE-SET,youtube,▶️ YouTube
   - OR,((RULE-SET,telegram_ips),(RULE-SET,telegram_domains)),➤ Telegram
-  - OR,((RULE-SET,discord_domains),(RULE-SET,discord_voiceips),(PROCESS-NAME,Discord.exe)),💬 Discord
+  - OR,((RULE-SET,discord_domains),(RULE-SET,discord_voiceips),(PROCESS-NAME,Discord.exe)),PROXY
   - RULE-SET,refilter_domains,PROXY
   - RULE-SET,refilter_ipsum,PROXY
-  - MATCH,🌍  Остальные сайты
+  - MATCH,🌍  Global
 ```
 </details>
 
