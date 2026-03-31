@@ -56,12 +56,12 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
     "servers": [
       {
         "tag": "dns-direct",
-        "address": "8.8.8.8",
+        "address": "1.1.1.1",
         "detour": "direct"
       },
       {
         "tag": "dns-remote",
-        "address": "8.8.8.8",
+        "address": "1.1.1.1",
         "detour": "proxy"
       }
     ],
@@ -128,14 +128,18 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
       },
       {
         "ip_cidr": [
-          "127.0.0.0/8",
-          "224.0.0.0/4",
-          "255.255.255.255/32",
           "10.0.0.0/8",
           "172.16.0.0/12",
           "192.168.0.0/16",
-          "10.95.0.8/32",
-          "10.95.0.9/32"
+          "0.0.0.0/8",
+          "127.0.0.0/8",
+          "100.64.0.0/10",
+          "169.254.0.0/16",
+          "224.0.0.0/3",
+          "::/127",
+          "fc00::/7",
+          "fe80::/10",
+          "ff00::/8"
         ],
         "outbound": "direct"
       }
