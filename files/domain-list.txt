@@ -9,6 +9,7 @@ gql.twitch.tv
 ads.twitch.tv
 playlist.ttvnw.net
 static-cdn.jtvnw.net
+whoer.net
 karing.app
 boberlogs.top
 uwu-logs.xyz
@@ -42,7 +43,6 @@ eset.com
 bitdefender.com
 av-test.org
 mcafee.com
-nai.com
 trellix.com
 skyhigh.cloud
 sophos.com
