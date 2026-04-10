@@ -38,6 +38,7 @@ symantec.com
 avast.com
 avg.com
 avcdn.net
+akadns.net
 avira.com
 eset.com
 bitdefender.com
