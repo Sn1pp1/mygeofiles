@@ -9,6 +9,7 @@ gql.twitch.tv
 ads.twitch.tv
 playlist.ttvnw.net
 static-cdn.jtvnw.net
+jut.su
 whoer.net
 karing.app
 boberlogs.top
