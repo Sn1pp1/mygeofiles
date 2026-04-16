@@ -9,6 +9,7 @@ gql.twitch.tv
 ads.twitch.tv
 playlist.ttvnw.net
 static-cdn.jtvnw.net
+incy.cc
 yandexwebcache.org
 jut.su
 ipwho.is
