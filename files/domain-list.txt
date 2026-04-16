@@ -11,6 +11,10 @@ playlist.ttvnw.net
 static-cdn.jtvnw.net
 yandexwebcache.org
 jut.su
+ipwho.is
+api.ip.sb
+ipapi.co
+ip-api.com
 whoer.net
 karing.app
 boberlogs.top
