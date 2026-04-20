@@ -13,9 +13,14 @@ incy.cc
 yandexwebcache.org
 jut.su
 ipwho.is
-api.ip.sb
+api.myip.com
 ipapi.co
+ident.me
 ip-api.com
+ipinfo.io
+api.ip.sb
+2ip.io
+2ipcore.com
 whoer.net
 karing.app
 boberlogs.top
