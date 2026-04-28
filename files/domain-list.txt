@@ -44,6 +44,16 @@ ipapi.com
 abuseipdb.com
 spyse.com
 dnsperf.com
+maxmind.com
+rdap.db.ripe.net
+ifconfig.co
+ip2location.io
+iplocation.com
+country.is
+geoapify.com
+geojs.io
+ipbase.com
+ipquery.io
 karing.app
 boberlogs.top
 uwu-logs.xyz
