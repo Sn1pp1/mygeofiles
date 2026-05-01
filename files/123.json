@@ -1,0 +1,48 @@
+{
+  "Name": "snp",
+  "GlobalProxy": "false",
+  "RouteOrder": "block-proxy-direct",
+  "RemoteDNSType": "DoH",
+  "RemoteDNSDomain": "https://8.8.8.8/dns-query",
+  "RemoteDNSIP": "8.8.8.8",
+  "DomesticDNSType": "DoH",
+  "DomesticDNSDomain": "https://77.88.8.8/dns-query",
+  "DomesticDNSIP": "77.88.8.8",
+  "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
+  "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
+  "LastUpdated": "",
+  "DnsHosts": {
+    "lkfl2.nalog.ru": "213.24.64.175",
+    "lknpd.nalog.ru": "213.24.64.181"
+  },
+  "DirectSites": [
+    "geosite:PRIVATE"
+  ],
+  "DirectIp": [
+    "geoip:PRIVATE"
+  ],
+  "ProxySites": [
+    "geosite:RU-BLOCKED",
+    "geosite:DISCORD",
+    "geosite:DOMAIN-LIST",
+    "geosite:META",
+    "geosite:TELEGRAM",
+    "geosite:YOUTUBE",
+    "geosite:GOOGLE-DEEPMIND",
+    "geosite:GOOGLE-PLAY"
+  ],
+  "ProxyIp": [
+    "geoip:DISCORD",
+    "geoip:META",
+    "geoip:RU-BLOCKED",
+    "geoip:RU-BLOCKED-COMMUNITY",
+    "geoip:TELEGRAM"
+  ],
+  "BlockSites": [
+    "geosite:CATEGORY-ADS"
+  ],
+  "BlockIp": [],
+  "DomainStrategy": "IPIfNonMatch",
+  "FakeDNS": "false",
+  "UseChunkFiles": "true"
+}
