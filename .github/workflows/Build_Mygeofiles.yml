@@ -146,6 +146,8 @@ jobs:
           }
 
           GEOSITE_URLS=(
+            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-private.srs"
             "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-ru-blocked.srs"
             "https://github.com/itdoginfo/allow-domains/releases/latest/download/russia_inside.srs"
@@ -156,17 +158,19 @@ jobs:
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-youtube.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-deepmind.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-play.srs"
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-private.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-cloudflare.srs"
+            "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.lst"
           )
           
           GEOIP_URLS=(
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-private.srs"
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked.srs"
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked-community.srs"
             "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-telegram.srs"
             "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/discord.lst"
             "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/meta.lst"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-private.srs"
+            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-cloudflare.srs"
+            "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.txt"
           )
 
           cat <<'EOF' > parser.py
