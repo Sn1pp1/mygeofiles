@@ -27,7 +27,6 @@ jobs:
       # ============================================
       - name: Get latest Go version
         run: |
-          # Получаем последнюю стабильную версию Go
           GO_VERSION=$(curl -s https://go.dev/VERSION?m=text | head -n 1 | sed 's/go//' | cut -d. -f1,2)
           echo "GO_VERSION=$GO_VERSION" >> $GITHUB_ENV
           echo "✅ Using Go v$GO_VERSION"
@@ -56,7 +55,6 @@ jobs:
       # ============================================
       - name: Get latest sing-box version
         run: |
-          # Получаем последнюю версию из GitHub API
           LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | cut -c2-)
           echo "SING_BOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
           echo "✅ Using sing-box v$LATEST_VERSION"
@@ -258,6 +256,46 @@ jobs:
             echo "❌ Error: No geosite data generated!"
             exit 1
           fi
+
+      # ============================================
+      # ✨ ОЧИСТКА И НОРМАЛИЗАЦИЯ ДОМЕНОВ
+      # ============================================
+      - name: Clean and Normalize Domains
+        run: |
+          echo "🧹 Cleaning and normalizing domain files..."
+          
+          for file in data/geosite/*; do
+            [ -f "$file" ] || continue
+            
+            filename=$(basename "$file")
+            echo "   • Processing $filename..."
+            
+            # Создаем очищенную версию файла
+            sed -E '
+              # Удаляем leading/trailing пробелы и кавычки
+              s/^[[:space:]"'"'"']+//; s/[[:space:]"'"'"']+$//;
+              # Удаляем пустые строки
+              /^$/d;
+              # Удаляем комментарии
+              /^#/d;
+              # Исправляем *.domain.* → .domain (суффикс)
+              s/^\*\.(.+)\.\*$/.\1/;
+              # Исправляем *.domain → .domain
+              s/^\*\.(.+)$/.\1/;
+              # Удаляем двойные точки
+              s/\.\././g;
+            ' "$file" | \
+            grep -E '^(full:|regexp:|keyword:)?[a-zA-Z0-9]' | \
+            sort -u > "$file.cleaned"
+            
+            # Заменяем оригинальный файл
+            mv "$file.cleaned" "$file"
+            
+            count=$(wc -l < "$file")
+            echo "     ✅ Cleaned: $count entries"
+          done
+          
+          echo "✅ Domain normalization complete"
 
       - name: Build geosite.dat
         run: |
