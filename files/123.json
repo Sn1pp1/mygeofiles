@@ -11,10 +11,7 @@
   "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
   "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
   "LastUpdated": "",
-  "DnsHosts": {
-    "lkfl2.nalog.ru": "213.24.64.175",
-    "lknpd.nalog.ru": "213.24.64.181"
-  },
+  "DnsHosts": {},
   "DirectSites": [
     "geosite:PRIVATE"
   ],
