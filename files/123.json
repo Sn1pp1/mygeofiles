@@ -10,14 +10,8 @@
   "domesticDnsDomain": "https://77.88.8.8/dns-query",
   "domesticDnsIp": "77.88.8.8",
   "enableFakeDns": false,
-  "dnsHosts": {},
-  "remoteDns": "https://1.1.1.1/dns-query",
-  "domesticDns": "https://77.88.8.8/dns-query",
   "geoipUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
   "geositeUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
-  "geoDataUpdatedAt": null,
-  "geoipHash": null,
-  "geositeHash": null,
   "directDomains": [
     "geosite:PRIVATE",
     "geosite:CATEGORY-RU"
