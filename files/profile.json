@@ -5,11 +5,11 @@
   "type": "CUSTOM",
   "globalProxy": false,
   "remoteDnsType": "DOH",
-  "remoteDnsDomain": "https://cloudflare-dns.com/dns-query",
+  "remoteDnsDomain": "https://1.1.1.1/dns-query",
   "remoteDnsIp": "1.1.1.1",
-  "domesticDnsType": "DOU",
-  "domesticDnsDomain": "",
-  "domesticDnsIp": "8.8.8.8",
+  "domesticDnsType": "DOH",
+  "domesticDnsDomain": "https://77.88.8.8/dns-query",
+  "domesticDnsIp": "77.88.8.8",
   "enableFakeDns": false,
   "dnsHosts": {},
   "remoteDns": "https://1.1.1.1/dns-query",
@@ -17,8 +17,8 @@
   "geoipUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
   "geositeUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
   "geoDataUpdatedAt": null,
-  "geoipHash": null,
-  "geositeHash": null,
+  "geoipHash": "3d5b9931ef09b703498f4872a274c3bbab33152528cb0d160af77d1ed816ca4b",
+  "geositeHash": "0426f73811e1b02eb1e526ff32ef7271276c94a0c0b7f9e613e48ee82adfe592",
   "directDomains": [
     "geosite:PRIVATE",
     "geosite:CATEGORY-RU"
@@ -59,8 +59,8 @@
   "isEditable": true,
   "sortOrder": 100,
   "createdAt": 1778090561275,
-  "updatedAt": 1778090696318,
-  "sourceUrl": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/profile.json",
+  "updatedAt": 1778091517163,
+  "sourceUrl": "https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/files/profile.json",
   "updateInterval": 43200,
-  "sourceLastUpdated": null
+  "sourceLastUpdated": 1778091337091
 }
