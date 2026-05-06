@@ -16,7 +16,7 @@
   "domesticDns": "https://77.88.8.8/dns-query",
   "geoipUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
   "geositeUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
-  "geoDataUpdatedAt": null,
+  "geoDataUpdatedAt":
   "geoipHash": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/geoip.dat.sha256",
   "geositeHash": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/geoip.dat.sha256",
   "directDomains": [
