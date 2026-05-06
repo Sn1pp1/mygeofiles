@@ -1,5 +1,4 @@
 {
-  "id": "d3c2e92b-ba2b-4315-b172-7b2abf8572c4",
   "name": "snp",
   "description": "",
   "type": "GLOBAL",
@@ -55,12 +54,6 @@
   "useChunkFiles": true,
   "bypassPrivateIps": true,
   "bypassLocalDns": false,
-  "isBuiltIn": false,
-  "isEditable": true,
-  "sortOrder": 0,
-  "createdAt": 1778087447575,
-  "updatedAt": 1778088158500,
   "sourceUrl": "https://github.com/Sn1pp1/mygeofiles/raw/main/files/123.json",
-  "updateInterval": 43200,
-  "sourceLastUpdated": 1778087447575
+  "updateInterval": 43200
 }
