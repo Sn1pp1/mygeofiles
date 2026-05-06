@@ -48,6 +48,6 @@
     "UseChunkFiles": true,
     "bypassPrivateIPs": true,
     "bypassLocalDNS": false,
-    "sourceURL": null,
+    "sourceURL": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/profile.json",
     "updateInterval": 43200
 }
