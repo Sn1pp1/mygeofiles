@@ -1,26 +1,29 @@
 {
-  "Name": "snp",
-  "GlobalProxy": "false",
-  "RouteOrder": "block-proxy-direct",
-  "RemoteDNSType": "DoH",
-  "RemoteDNSDomain": "https://1.1.1.1/dns-query",
-  "RemoteDNSIP": "1.1.1.1",
-  "DomesticDNSType": "DoH",
-  "DomesticDNSDomain": "https://77.88.8.8/dns-query",
-  "DomesticDNSIP": "77.88.8.8",
-  "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
-  "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
-  "LastUpdated": "1777755599",
-  "DnsHosts": {},
-  "DirectSites": [
+  "id": "d3c2e92b-ba2b-4315-b172-7b2abf8572c4",
+  "name": "snp",
+  "description": "",
+  "type": "GLOBAL",
+  "globalProxy": false,
+  "remoteDnsType": "DOH",
+  "remoteDnsDomain": "https://1.1.1.1/dns-query",
+  "remoteDnsIp": "1.1.1.1",
+  "domesticDnsType": "DOH",
+  "domesticDnsDomain": "https://77.88.8.8/dns-query",
+  "domesticDnsIp": "77.88.8.8",
+  "enableFakeDns": false,
+  "dnsHosts": {},
+  "remoteDns": "https://1.1.1.1/dns-query",
+  "domesticDns": "https://77.88.8.8/dns-query",
+  "geoipUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
+  "geositeUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
+  "geoDataUpdatedAt": null,
+  "geoipHash": null,
+  "geositeHash": null,
+  "directDomains": [
     "geosite:PRIVATE",
     "geosite:CATEGORY-RU"
   ],
-  "DirectIp": [
-    "geoip:PRIVATE",
-    "geoip:IPS-FOR-RU"
-  ],
-  "ProxySites": [
+  "proxyDomains": [
     "geosite:RU-BLOCKED",
     "geosite:DISCORD",
     "geosite:DOMAIN-LIST",
@@ -31,7 +34,14 @@
     "geosite:GOOGLE-PLAY",
     "geosite:CLOUDFLARE"
   ],
-  "ProxyIp": [
+  "blockDomains": [
+    "geosite:CATEGORY-ADS"
+  ],
+  "directIp": [
+    "geoip:PRIVATE",
+    "geoip:IPS-FOR-RU"
+  ],
+  "proxyIp": [
     "geoip:DISCORD",
     "geoip:META",
     "geoip:RU-BLOCKED",
@@ -39,11 +49,18 @@
     "geoip:TELEGRAM",
     "geoip:CLOUDFLARE"
   ],
-  "BlockSites": [
-    "geosite:CATEGORY-ADS"
-  ],
-  "BlockIp": [],
-  "DomainStrategy": "IPIfNonMatch",
-  "FakeDNS": "false",
-  "UseChunkFiles": "true"
+  "blockIp": [],
+  "domainStrategy": "IPIfNonMatch",
+  "routeOrder": "block-proxy-direct",
+  "useChunkFiles": true,
+  "bypassPrivateIps": true,
+  "bypassLocalDns": false,
+  "isBuiltIn": false,
+  "isEditable": true,
+  "sortOrder": 0,
+  "createdAt": 1778087447575,
+  "updatedAt": 1778088833079,
+  "sourceUrl": "https://github.com/Sn1pp1/mygeofiles/raw/main/files/123.json",
+  "updateInterval": 43200,
+  "sourceLastUpdated": 1778088785391
 }
