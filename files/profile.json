@@ -10,14 +10,8 @@
     "DomesticDNSDomain": "https://77.88.8.8/dns-query",
     "DomesticDNSIP": "77.88.8.8",
     "FakeDNS": false,
-    "DnsHosts": {},
-    "RemoteDns": "https://1.1.1.1/dns-query",
-    "DomesticDns": "8.8.8.8",
     "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
     "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
-    "LastUpdated": "1777755599",
-    "GeoipHash": "3d5b9931ef09b703498f4872a274c3bbab33152528cb0d160af77d1ed816ca4b",
-    "GeositeHash": "0426f73811e1b02eb1e526ff32ef7271276c94a0c0b7f9e613e48ee82adfe592",
     "DirectSites": [
         "geosite:PRIVATE",
         "geosite:CATEGORY-RU"
@@ -54,12 +48,6 @@
     "UseChunkFiles": true,
     "bypassPrivateIPs": true,
     "bypassLocalDNS": false,
-    "isDefault": false,
-    "isEditable": true,
-    "sortOrder": 0,
-    "createdAt": 1778100778532,
-    "updatedAt": 1778100778532,
     "sourceURL": null,
-    "updateInterval": 43200,
-    "sourceLastUpdated": null
+    "updateInterval": 43200
 }
