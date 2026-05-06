@@ -1,1 +1,66 @@
-
+{
+  "id": "67dde16a-aa1c-474a-8bf1-d8fb9567d4a3",
+  "name": "snp",
+  "description": "",
+  "type": "CUSTOM",
+  "globalProxy": false,
+  "remoteDnsType": "DOH",
+  "remoteDnsDomain": "https://cloudflare-dns.com/dns-query",
+  "remoteDnsIp": "1.1.1.1",
+  "domesticDnsType": "DOU",
+  "domesticDnsDomain": "",
+  "domesticDnsIp": "8.8.8.8",
+  "enableFakeDns": false,
+  "dnsHosts": {},
+  "remoteDns": "https://1.1.1.1/dns-query",
+  "domesticDns": "8.8.8.8",
+  "geoipUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
+  "geositeUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
+  "geoDataUpdatedAt": null,
+  "geoipHash": null,
+  "geositeHash": null,
+  "directDomains": [
+    "geosite:PRIVATE",
+    "geosite:CATEGORY-RU"
+  ],
+  "proxyDomains": [
+    "geosite:DISCORD",
+    "geosite:DOMAIN-LIST",
+    "geosite:META",
+    "geosite:RUSSIA-INSIDE",
+    "geosite:TELEGRAM",
+    "geosite:YOUTUBE",
+    "geosite:GOOGLE-DEEPMIND",
+    "geosite:GOOGLE-PLAY",
+    "geosite:CLOUDFLARE"
+  ],
+  "blockDomains": [
+    "geosite:CATEGORY-ADS"
+  ],
+  "directIp": [
+    "geoip:PRIVATE",
+    "geoip:IPS-FOR-RU"
+  ],
+  "proxyIp": [
+    "geoip:DISCORD",
+    "geoip:META",
+    "geoip:RU-BLOCKED",
+    "geoip:RU-BLOCKED-COMMUNITY",
+    "geoip:TELEGRAM",
+    "geoip:CLOUDFLARE"
+  ],
+  "blockIp": [],
+  "domainStrategy": "IPIfNonMatch",
+  "routeOrder": "block-proxy-direct",
+  "useChunkFiles": false,
+  "bypassPrivateIps": true,
+  "bypassLocalDns": false,
+  "isBuiltIn": false,
+  "isEditable": true,
+  "sortOrder": 100,
+  "createdAt": 1778090561275,
+  "updatedAt": 1778090696318,
+  "sourceUrl": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/profile.json",
+  "updateInterval": 43200,
+  "sourceLastUpdated": null
+}
