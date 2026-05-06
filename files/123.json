@@ -16,8 +16,9 @@
   "domesticDns": "https://77.88.8.8/dns-query",
   "geoipUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
   "geositeUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
-  "geoipHash": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/geoip.dat.sha256",
-  "geositeHash": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/geoip.dat.sha256",
+  "geoDataUpdatedAt": null,
+  "geoipHash": null,
+  "geositeHash": null,
   "directDomains": [
     "geosite:PRIVATE",
     "geosite:CATEGORY-RU"
@@ -57,9 +58,9 @@
   "isBuiltIn": false,
   "isEditable": true,
   "sortOrder": 0,
-  "createdAt":
-  "updatedAt":
+  "createdAt": 
+  "updatedAt": 
   "sourceUrl": "https://github.com/Sn1pp1/mygeofiles/raw/main/files/123.json",
   "updateInterval": 43200,
-  "sourceLastUpdated":
+  "sourceLastUpdated": 
 }
