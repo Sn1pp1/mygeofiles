@@ -143,32 +143,36 @@ jobs:
             return 1
           }
 
-          GEOSITE_URLS=(
-            "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-private.srs"
-            "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-ru-blocked.srs"
-            "https://github.com/itdoginfo/allow-domains/releases/latest/download/russia_inside.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-telegram.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-meta.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-discord.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-youtube.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-deepmind.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-play.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-cloudflare.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-github.srs"
-            "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.lst"
-          )
+          # ============================================
+          # 📋 КАТЕГОРИИ: ИМЯ → URL (ассоциативные массивы)
+          # ============================================
           
-          GEOIP_URLS=(
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-private.srs"
-            "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked.srs"
-            "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked-community.srs"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-telegram.srs"
-            "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/discord.lst"
-            "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/meta.lst"
-            "https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-cloudflare.srs"
-            "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.txt"
+          declare -A GEOSITE=(
+            ["category-ads"]="https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
+            ["private"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-private.srs"
+            ["domain-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
+            ["russia-inside"]="https://github.com/itdoginfo/allow-domains/releases/latest/download/russia_inside.srs"
+            ["ru-blocked"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-ru-blocked.srs"
+            ["telegram"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-telegram.srs"
+            ["meta"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-meta.srs"
+            ["discord"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-discord.srs"
+            ["youtube"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-youtube.srs"
+            ["google-deepmind"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-deepmind.srs"
+            ["google-play"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-play.srs"
+            ["cloudflare"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-cloudflare.srs"
+            ["github"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-github.srs"
+            ["category-ru"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.lst"
+          )
+
+          declare -A GEOIP=(
+            ["private-ip"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-private.srs"
+            ["ru-blocked-ip"]="https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked.srs"
+            ["ru-blocked-community-ip"]="https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/srs/ru-blocked-community.srs"
+            ["telegram-ip"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-telegram.srs"
+            ["discord-ip"]="https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/discord.lst"
+            ["meta-ip"]="https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/meta.lst"
+            ["cloudflare-ip"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-cloudflare.srs"
+            ["category-ru-ip"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.txt"
           )
 
           cat <<'EOF' > parser.py
@@ -203,46 +207,62 @@ jobs:
           except Exception as e: print(f"Parser error: {e}")
           EOF
 
-          process_links() {
-            local target=$1; shift
-            local links=("$@")
+          process_categories() {
+            local target=$1
+            shift
+            local -n categories=$1
+            
             local failed=0
-            for url in "${links[@]}"; do
+            
+            for name in "${!categories[@]}"; do
+              local url="${categories[$name]}"
               [ -z "$url" ] && continue
-              full_name=$(python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1].split('/')[-1].strip()))" "$url")
-              fname=$(echo "${full_name%.*}" | tr '_' '-' | tr '@' '-' | tr '[:upper:]' '[:lower:]')
-              fname=${fname#geosite-}; fname=${fname#geoip-}
               
-              echo "⬇️  $full_name → $fname"
-              if download_with_retry "$url" "temp_file"; then
-                if [[ "$full_name" == *.srs ]]; then
-                  echo "   🔧 Attempting to decompile..."
-                  if ! DECOMPILE_OUTPUT=$(sing-box rule-set decompile "temp_file" -o "temp.json" 2>&1); then
-                    echo "   ⚠️  Decompile failed: $DECOMPILE_OUTPUT"
-                    continue
-                  fi
-                  python3 parser.py "$target" "$fname"
-                elif [[ "$full_name" == *.txt || "$full_name" == *.lst ]]; then
-                  grep -v '^#' "temp_file" | sed 's/[[:space:]]//g' | grep -v '^$' > "data/$target/$fname" || true
-                  count=$(wc -l < "data/$target/$fname")
-                  echo "   ✅ Saved $count entries"
-                else
-                  mv "temp_file" "temp.json"
-                  python3 parser.py "$target" "$fname"
-                fi
-              else
+              echo ""
+              echo "⬇️  [$target] $name"
+              echo "    URL: $url"
+              
+              if ! download_with_retry "$url" "temp_file"; then
+                echo "  ❌ Не удалось скачать"
                 ((failed++))
+                continue
               fi
-              rm -f temp.json temp_file
+              
+              local ext="${url##*.}"
+              local output_path="data/$target/$name"
+              
+              if [[ "$url" == *.srs ]]; then
+                echo "  🔧 Декомпилируем .srs..."
+                if ! sing-box rule-set decompile "temp_file" -o "temp.json" 2>/dev/null; then
+                  echo "  ⚠️  Декомпиляция не удалась, пропускаем"
+                  rm -f temp_file
+                  ((failed++))
+                  continue
+                fi
+                python3 parser.py "$target" "$name"
+                
+              elif [[ "$ext" == "txt" || "$ext" == "lst" ]]; then
+                echo "  📝 Обрабатываем текстовый список..."
+                grep -v '^#' "temp_file" | sed 's/[[:space:]]//g' | grep -v '^$' > "$output_path" || true
+                count=$(wc -l < "$output_path" 2>/dev/null || echo 0)
+                echo "  ✅ Сохранено: $count записей → $output_path"
+                
+              else
+                mv "temp_file" "temp.json"
+                python3 parser.py "$target" "$name"
+              fi
+              
+              rm -f temp.json temp_file 2>/dev/null || true
             done
+            
             return $failed
           }
 
-          echo "🔄 Processing GEOSITE sources..."
-          process_links "geosite" "${GEOSITE_URLS[@]}" || echo "⚠️  Some geosite downloads failed"
+          echo "🔄 Processing GEOSITE categories..."
+          process_categories "geosite" GEOSITE || echo "⚠️  Некоторые geosite не обработаны"
           
-          echo "🔄 Processing GEOIP sources..."
-          process_links "geoip" "${GEOIP_URLS[@]}" || echo "⚠️  Some geoip downloads failed"
+          echo "🔄 Processing GEOIP categories..."
+          process_categories "geoip" GEOIP || echo "⚠️  Некоторые geoip не обработаны"
 
       - name: Validate and Cleanup
         run: |
@@ -270,25 +290,17 @@ jobs:
             filename=$(basename "$file")
             echo "   • Processing $filename..."
             
-            # Создаем очищенную версию файла
             sed -E '
-              # Удаляем leading/trailing пробелы и кавычки
               s/^[[:space:]"'"'"']+//; s/[[:space:]"'"'"']+$//;
-              # Удаляем пустые строки
               /^$/d;
-              # Удаляем комментарии
               /^#/d;
-              # Исправляем *.domain.* → .domain (суффикс)
               s/^\*\.(.+)\.\*$/.\1/;
-              # Исправляем *.domain → .domain
               s/^\*\.(.+)$/.\1/;
-              # Удаляем двойные точки
               s/\.\././g;
             ' "$file" | \
             grep -E '^(full:|regexp:|keyword:)?[a-zA-Z0-9]' | \
             sort -u > "$file.cleaned"
             
-            # Заменяем оригинальный файл
             mv "$file.cleaned" "$file"
             
             count=$(wc -l < "$file")
