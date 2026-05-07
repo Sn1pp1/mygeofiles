@@ -232,7 +232,7 @@ jobs:
               
               if [[ "$url" == *.srs ]]; then
                 echo "  🔧 Декомпилируем .srs..."
-                if ! sing-box rule-set decompile "temp_file" -o "temp.json" 2>/dev/null; then
+                if ! sing-box rule-set decompile "temp_file" -o "temp.json" 2>&1; then
                   echo "  ⚠️  Декомпиляция не удалась, пропускаем"
                   rm -f temp_file
                   ((failed++))
@@ -306,7 +306,7 @@ jobs:
           echo "✅ Domain normalization complete"
 
       # ============================================
-      # 📦 КОМПИЛЯЦИЯ В SRS (YAML-конвертация)
+      # 📦 КОМПИЛЯЦИЯ В SRS (С ДЕТАЛЬНЫМ ЛОГИРОВАНИЕМ)
       # ============================================
       - name: Compile parsed rules to SRS
         run: |
@@ -321,30 +321,45 @@ jobs:
             
             echo "   📦 Compiling $name..."
             
+            # Проверяем входной файл
+            if [[ ! -s "$input_file" ]]; then
+              echo "   ⚠️  Input file is empty: $input_file"
+              return 1
+            fi
+            
             local temp_yaml="temp_${name}.yaml"
+            local rule_count=0
             
             {
               echo "payload:"
-              while IFS= read -r line; do
-                line=$(echo "$line" | xargs)
+              while IFS= read -r line || [[ -n "$line" ]]; do
+                line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
                 [[ -z "$line" || "$line" =~ ^# ]] && continue
+                
+                ((rule_count++))
                 
                 case "$line" in
                   keyword:*)
-                    echo "  - '+.$(echo "${line#keyword:}" | sed 's/^\.*//')'" 
+                    domain="${line#keyword:}"
+                    domain=$(echo "$domain" | sed 's/^\.\+//')
+                    echo "  - '+.$domain'"
                     ;;
                   regexp:*)
-                    echo "  - 'regex:${line#regexp:}'"
+                    pattern="${line#regexp:}"
+                    echo "  - 'regex:$pattern'"
                     ;;
                   full:*)
-                    echo "  - '${line#full:}'"
+                    domain="${line#full:}"
+                    echo "  - '$domain'"
                     ;;
                   domain:*)
-                    echo "  - '+.${line#domain:}'"
+                    domain="${line#domain:}"
+                    echo "  - '+.$domain'"
                     ;;
                   *)
-                    clean_domain=$(echo "$line" | sed 's/^\.\+//' | sed 's/\*$//')
-                    if [[ -n "$clean_domain" ]]; then
+                    # domain_suffix по умолчанию
+                    clean_domain=$(echo "$line" | sed 's/^\.\+//;s/\*$//')
+                    if [[ -n "$clean_domain" && ! "$clean_domain" =~ ^[0-9] ]]; then
                       echo "  - '+.$clean_domain'"
                     fi
                     ;;
@@ -352,20 +367,34 @@ jobs:
               done < "$input_file"
             } > "$temp_yaml"
             
-            local count=$(grep -c "^  - " "$temp_yaml" 2>/dev/null || echo "0")
+            # Проверяем YAML
+            if [[ ! -s "$temp_yaml" ]]; then
+              echo "   ⚠️  YAML file is empty"
+              rm -f "$temp_yaml"
+              return 1
+            fi
             
-            if [[ "$count" -gt 0 ]]; then
-              if sing-box rule-set compile "$temp_yaml" -o "$output_file" 2>/dev/null; then
-                echo "   ✅ Created $(basename "$output_file") ($(du -h "$output_file" | cut -f1), $count rules)"
-                rm -f "$temp_yaml"
-                return 0
-              else
-                echo "   ⚠️  Failed to compile $name"
-                rm -f "$temp_yaml"
-                return 1
-              fi
+            local yaml_count=$(grep -c "^  - " "$temp_yaml" 2>/dev/null || echo "0")
+            echo "   📄 Rules in YAML: $yaml_count (total lines: $rule_count)"
+            
+            if [[ "$yaml_count" -eq 0 ]]; then
+              echo "   ⚠️  No valid rules in YAML"
+              echo "   📋 YAML content (first 10 lines):"
+              head -10 "$temp_yaml" | sed 's/^/      /'
+              rm -f "$temp_yaml"
+              return 1
+            fi
+            
+            # Компилируем БЕЗ скрытия ошибок
+            if sing-box rule-set compile "$temp_yaml" -o "$output_file"; then
+              local size=$(du -h "$output_file" | cut -f1)
+              echo "   ✅ Created $(basename "$output_file") ($size, $yaml_count rules)"
+              rm -f "$temp_yaml"
+              return 0
             else
-              echo "   ⚠️  Skipping $name (no valid rules)"
+              echo "   ❌ Failed to compile $name"
+              echo "   📋 YAML content (first 20 lines):"
+              head -20 "$temp_yaml" | sed 's/^/      /'
               rm -f "$temp_yaml"
               return 1
             fi
@@ -378,42 +407,62 @@ jobs:
             
             echo "   📦 Compiling $name..."
             
+            if [[ ! -s "$input_file" ]]; then
+              echo "   ⚠️  Input file is empty: $input_file"
+              return 1
+            fi
+            
             local temp_yaml="temp_${name}.yaml"
+            local rule_count=0
             
             {
               echo "payload:"
-              while IFS= read -r line; do
-                line=$(echo "$line" | xargs)
+              while IFS= read -r line || [[ -n "$line" ]]; do
+                line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
                 [[ -z "$line" || "$line" =~ ^# ]] && continue
                 
                 case "$line" in
                   ip_cidr:*|ip:*)
-                    echo "  - '${line#*:}'"
+                    cidr="${line#*:}"
+                    echo "  - '$cidr'"
+                    ((rule_count++))
                     ;;
                   *)
+                    # Проверяем, похожа ли строка на IP/CIDR
                     if [[ "$line" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/[0-9]+)?$ ]] || \
                        [[ "$line" =~ ^[0-9a-fA-F:]+(/[0-9]+)?$ ]]; then
                       echo "  - '$line'"
+                      ((rule_count++))
                     fi
                     ;;
                 esac
               done < "$input_file"
             } > "$temp_yaml"
             
-            local count=$(grep -c "^  - " "$temp_yaml" 2>/dev/null || echo "0")
+            if [[ ! -s "$temp_yaml" ]]; then
+              echo "   ⚠️  YAML file is empty"
+              rm -f "$temp_yaml"
+              return 1
+            fi
             
-            if [[ "$count" -gt 0 ]]; then
-              if sing-box rule-set compile "$temp_yaml" -o "$output_file" 2>/dev/null; then
-                echo "   ✅ Created $(basename "$output_file") ($(du -h "$output_file" | cut -f1), $count rules)"
-                rm -f "$temp_yaml"
-                return 0
-              else
-                echo "   ⚠️  Failed to compile $name"
-                rm -f "$temp_yaml"
-                return 1
-              fi
+            local yaml_count=$(grep -c "^  - " "$temp_yaml" 2>/dev/null || echo "0")
+            echo "   📄 Rules in YAML: $yaml_count (total lines: $rule_count)"
+            
+            if [[ "$yaml_count" -eq 0 ]]; then
+              echo "   ⚠️  No valid IP rules in YAML"
+              rm -f "$temp_yaml"
+              return 1
+            fi
+            
+            if sing-box rule-set compile "$temp_yaml" -o "$output_file"; then
+              local size=$(du -h "$output_file" | cut -f1)
+              echo "   ✅ Created $(basename "$output_file") ($size, $yaml_count rules)"
+              rm -f "$temp_yaml"
+              return 0
             else
-              echo "   ⚠️  Skipping $name (no valid rules)"
+              echo "   ❌ Failed to compile $name"
+              echo "   📋 YAML content (first 20 lines):"
+              head -20 "$temp_yaml" | sed 's/^/      /'
               rm -f "$temp_yaml"
               return 1
             fi
@@ -423,19 +472,30 @@ jobs:
           for file in data/geosite/*; do
             [ -f "$file" ] || continue
             name=$(basename "$file")
+            echo ""
             compile_geosite_to_srs "$file" "srs/geosite/${name}.srs" || true
           done
 
+          echo ""
           echo "📍 Compiling GeoIP rules..."
           for file in data/geoip/*; do
             [ -f "$file" ] || continue
             name=$(basename "$file")
+            echo ""
             compile_geoip_to_srs "$file" "srs/geoip/${name}.srs" || true
           done
 
+          echo ""
           echo "📊 SRS compilation summary:"
-          echo "   • GeoSite SRS: $(ls -1 srs/geosite/*.srs 2>/dev/null | wc -l) files"
-          echo "   • GeoIP SRS: $(ls -1 srs/geoip/*.srs 2>/dev/null | wc -l) files"
+          geosite_count=$(ls -1 srs/geosite/*.srs 2>/dev/null | wc -l)
+          geoip_count=$(ls -1 srs/geoip/*.srs 2>/dev/null | wc -l)
+          echo "   • GeoSite SRS: $geosite_count files"
+          echo "   • GeoIP SRS: $geoip_count files"
+          
+          if [[ "$geosite_count" -eq 0 && "$geoip_count" -eq 0 ]]; then
+            echo "❌ No SRS files generated!"
+            exit 1
+          fi
 
       - name: Build geosite.dat
         run: |
@@ -454,6 +514,27 @@ jobs:
           go install github.com/v2fly/geoip@latest
           $(go env GOPATH)/bin/geoip -c geoip_config.json
           ls -lh geoip.dat
+
+      - name: Test with sing-box check
+        run: |
+          echo "🧪 Testing generated files..."
+          cat <<EOF > test_config.json
+          {
+            "log": {"level": "error"},
+            "route": {
+              "rules": [
+                {"geosite": ["category-ads"], "action": "block"},
+                {"geoip": ["private-ip", "ru-blocked-ip"], "action": "block"},
+                {"geosite": ["telegram", "youtube"], "action": "direct"}
+              ]
+            }
+          }
+          EOF
+          if sing-box check -c test_config.json 2>&1; then
+            echo "✅ sing-box config validation passed"
+          else
+            echo "⚠️  sing-box check reported issues (non-fatal)"
+          fi
 
       - name: Check artifact sizes
         run: |
