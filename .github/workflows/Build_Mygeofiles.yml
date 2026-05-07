@@ -306,7 +306,7 @@ jobs:
           echo "✅ Domain normalization complete"
 
       # ============================================
-      # 📦 КОМПИЛЯЦИЯ В SRS (С ДЕТАЛЬНЫМ ЛОГИРОВАНИЕМ)
+      # 📦 КОМПИЛЯЦИЯ В SRS (JSON-формат для sing-box)
       # ============================================
       - name: Compile parsed rules to SRS
         run: |
@@ -321,81 +321,86 @@ jobs:
             
             echo "   📦 Compiling $name..."
             
-            # Проверяем входной файл
             if [[ ! -s "$input_file" ]]; then
               echo "   ⚠️  Input file is empty: $input_file"
               return 1
             fi
             
-            local temp_yaml="temp_${name}.yaml"
-            local rule_count=0
+            local temp_json="temp_${name}.json"
             
+            # Генерируем JSON-массив правил для sing-box
             {
-              echo "payload:"
+              echo "["
+              local first=true
               while IFS= read -r line || [[ -n "$line" ]]; do
                 line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
                 [[ -z "$line" || "$line" =~ ^# ]] && continue
                 
-                ((rule_count++))
+                local rule_type="domain_suffix"
+                local rule_value="$line"
                 
                 case "$line" in
                   keyword:*)
-                    domain="${line#keyword:}"
-                    domain=$(echo "$domain" | sed 's/^\.\+//')
-                    echo "  - '+.$domain'"
+                    rule_type="domain_keyword"
+                    rule_value="${line#keyword:}"
                     ;;
                   regexp:*)
-                    pattern="${line#regexp:}"
-                    echo "  - 'regex:$pattern'"
+                    rule_type="domain_regex"
+                    rule_value="${line#regexp:}"
                     ;;
                   full:*)
-                    domain="${line#full:}"
-                    echo "  - '$domain'"
+                    rule_type="domain"
+                    rule_value="${line#full:}"
                     ;;
                   domain:*)
-                    domain="${line#domain:}"
-                    echo "  - '+.$domain'"
+                    rule_type="domain"
+                    rule_value="${line#domain:}"
                     ;;
                   *)
-                    # domain_suffix по умолчанию
-                    clean_domain=$(echo "$line" | sed 's/^\.\+//;s/\*$//')
-                    if [[ -n "$clean_domain" && ! "$clean_domain" =~ ^[0-9] ]]; then
-                      echo "  - '+.$clean_domain'"
-                    fi
+                    rule_value=$(echo "$line" | sed 's/^\.\+//;s/\*$//')
+                    [[ -z "$rule_value" || "$rule_value" =~ ^[0-9] ]] && continue
                     ;;
                 esac
+                
+                # Экранируем кавычки и обратные слеши для JSON
+                rule_value=$(echo "$rule_value" | sed 's/\\/\\\\/g; s/"/\\"/g')
+                
+                if [[ "$first" == "true" ]]; then
+                  first=false
+                else
+                  echo ","
+                fi
+                printf '  {"type":"%s","value":"%s"}' "$rule_type" "$rule_value"
               done < "$input_file"
-            } > "$temp_yaml"
+              echo ""
+              echo "]"
+            } > "$temp_json"
             
-            # Проверяем YAML
-            if [[ ! -s "$temp_yaml" ]]; then
-              echo "   ⚠️  YAML file is empty"
-              rm -f "$temp_yaml"
+            if [[ ! -s "$temp_json" ]]; then
+              echo "   ⚠️  JSON file is empty"
+              rm -f "$temp_json"
               return 1
             fi
             
-            local yaml_count=$(grep -c "^  - " "$temp_yaml" 2>/dev/null || echo "0")
-            echo "   📄 Rules in YAML: $yaml_count (total lines: $rule_count)"
+            local rule_count=$(grep -c '"type"' "$temp_json" 2>/dev/null || echo "0")
+            echo "   📄 Rules in JSON: $rule_count"
             
-            if [[ "$yaml_count" -eq 0 ]]; then
-              echo "   ⚠️  No valid rules in YAML"
-              echo "   📋 YAML content (first 10 lines):"
-              head -10 "$temp_yaml" | sed 's/^/      /'
-              rm -f "$temp_yaml"
+            if [[ "$rule_count" -eq 0 ]]; then
+              echo "   ⚠️  No valid rules in JSON"
+              rm -f "$temp_json"
               return 1
             fi
             
-            # Компилируем БЕЗ скрытия ошибок
-            if sing-box rule-set compile "$temp_yaml" -o "$output_file"; then
+            if sing-box rule-set compile "$temp_json" -o "$output_file"; then
               local size=$(du -h "$output_file" | cut -f1)
-              echo "   ✅ Created $(basename "$output_file") ($size, $yaml_count rules)"
-              rm -f "$temp_yaml"
+              echo "   ✅ Created $(basename "$output_file") ($size, $rule_count rules)"
+              rm -f "$temp_json"
               return 0
             else
               echo "   ❌ Failed to compile $name"
-              echo "   📋 YAML content (first 20 lines):"
-              head -20 "$temp_yaml" | sed 's/^/      /'
-              rm -f "$temp_yaml"
+              echo "   📋 JSON content (first 15 lines):"
+              head -15 "$temp_json" | sed 's/^/      /'
+              rm -f "$temp_json"
               return 1
             fi
           }
@@ -412,58 +417,69 @@ jobs:
               return 1
             fi
             
-            local temp_yaml="temp_${name}.yaml"
-            local rule_count=0
+            local temp_json="temp_${name}.json"
             
             {
-              echo "payload:"
+              echo "["
+              local first=true
               while IFS= read -r line || [[ -n "$line" ]]; do
                 line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
                 [[ -z "$line" || "$line" =~ ^# ]] && continue
                 
+                local rule_value=""
+                
                 case "$line" in
                   ip_cidr:*|ip:*)
-                    cidr="${line#*:}"
-                    echo "  - '$cidr'"
-                    ((rule_count++))
+                    rule_value="${line#*:}"
                     ;;
                   *)
-                    # Проверяем, похожа ли строка на IP/CIDR
                     if [[ "$line" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/[0-9]+)?$ ]] || \
                        [[ "$line" =~ ^[0-9a-fA-F:]+(/[0-9]+)?$ ]]; then
-                      echo "  - '$line'"
-                      ((rule_count++))
+                      rule_value="$line"
+                    else
+                      continue
                     fi
                     ;;
                 esac
+                
+                rule_value=$(echo "$rule_value" | sed 's/\\/\\\\/g; s/"/\\"/g')
+                
+                if [[ "$first" == "true" ]]; then
+                  first=false
+                else
+                  echo ","
+                fi
+                printf '  {"type":"ip_cidr","value":"%s"}' "$rule_value"
               done < "$input_file"
-            } > "$temp_yaml"
+              echo ""
+              echo "]"
+            } > "$temp_json"
             
-            if [[ ! -s "$temp_yaml" ]]; then
-              echo "   ⚠️  YAML file is empty"
-              rm -f "$temp_yaml"
+            if [[ ! -s "$temp_json" ]]; then
+              echo "   ⚠️  JSON file is empty"
+              rm -f "$temp_json"
               return 1
             fi
             
-            local yaml_count=$(grep -c "^  - " "$temp_yaml" 2>/dev/null || echo "0")
-            echo "   📄 Rules in YAML: $yaml_count (total lines: $rule_count)"
+            local rule_count=$(grep -c '"type"' "$temp_json" 2>/dev/null || echo "0")
+            echo "   📄 Rules in JSON: $rule_count"
             
-            if [[ "$yaml_count" -eq 0 ]]; then
-              echo "   ⚠️  No valid IP rules in YAML"
-              rm -f "$temp_yaml"
+            if [[ "$rule_count" -eq 0 ]]; then
+              echo "   ⚠️  No valid IP rules in JSON"
+              rm -f "$temp_json"
               return 1
             fi
             
-            if sing-box rule-set compile "$temp_yaml" -o "$output_file"; then
+            if sing-box rule-set compile "$temp_json" -o "$output_file"; then
               local size=$(du -h "$output_file" | cut -f1)
-              echo "   ✅ Created $(basename "$output_file") ($size, $yaml_count rules)"
-              rm -f "$temp_yaml"
+              echo "   ✅ Created $(basename "$output_file") ($size, $rule_count rules)"
+              rm -f "$temp_json"
               return 0
             else
               echo "   ❌ Failed to compile $name"
-              echo "   📋 YAML content (first 20 lines):"
-              head -20 "$temp_yaml" | sed 's/^/      /'
-              rm -f "$temp_yaml"
+              echo "   📋 JSON content (first 15 lines):"
+              head -15 "$temp_json" | sed 's/^/      /'
+              rm -f "$temp_json"
               return 1
             fi
           }
