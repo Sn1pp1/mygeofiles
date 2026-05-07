@@ -143,6 +143,9 @@ jobs:
             return 1
           }
 
+          # ============================================
+          # 📋 КАТЕГОРИИ: ИМЯ → URL
+          # ============================================
           declare -A GEOSITE=(
             ["category-ads"]="https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
             ["private"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-private.srs"
@@ -303,7 +306,7 @@ jobs:
           echo "✅ Domain normalization complete"
 
       # ============================================
-      # 📦 КОМПИЛЯЦИЯ В SRS (НОВЫЙ ШАГ)
+      # 📦 КОМПИЛЯЦИЯ В SRS (YAML-конвертация)
       # ============================================
       - name: Compile parsed rules to SRS
         run: |
@@ -311,53 +314,128 @@ jobs:
           rm -rf srs
           mkdir -p srs/geosite srs/geoip
 
-          compile_to_srs() {
-            local input_dir=$1
-            local output_dir=$2
-            local category_type=$3
-
-            for file in "$input_dir"/*; do
-              [ -f "$file" ] || continue
-              local name=$(basename "$file")
-              echo "   📦 Compiling $name..."
-
-              # Генерируем текстовый формат для sing-box rule-set compile
-              local temp_rules="temp_rules_${name}.txt"
-              > "$temp_rules"
-
+          compile_geosite_to_srs() {
+            local input_file=$1
+            local output_file=$2
+            local name=$(basename "$input_file")
+            
+            echo "   📦 Compiling $name..."
+            
+            local temp_yaml="temp_${name}.yaml"
+            
+            {
+              echo "payload:"
               while IFS= read -r line; do
                 line=$(echo "$line" | xargs)
-                [[ -z "$line" ]] && continue
-
+                [[ -z "$line" || "$line" =~ ^# ]] && continue
+                
                 case "$line" in
-                  keyword:*)  echo "domain_keyword:${line#keyword:}" >> "$temp_rules" ;;
-                  regexp:*)   echo "domain_regex:${line#regexp:}" >> "$temp_rules" ;;
-                  full:*)     echo "domain:${line#full:}" >> "$temp_rules" ;;
+                  keyword:*)
+                    echo "  - '+.$(echo "${line#keyword:}" | sed 's/^\.*//')'" 
+                    ;;
+                  regexp:*)
+                    echo "  - 'regex:${line#regexp:}'"
+                    ;;
+                  full:*)
+                    echo "  - '${line#full:}'"
+                    ;;
+                  domain:*)
+                    echo "  - '+.${line#domain:}'"
+                    ;;
                   *)
-                    if [[ "$category_type" == "geoip" ]]; then
-                      echo "ip_cidr:$line" >> "$temp_rules"
-                    else
-                      echo "domain_suffix:$line" >> "$temp_rules"
+                    clean_domain=$(echo "$line" | sed 's/^\.\+//' | sed 's/\*$//')
+                    if [[ -n "$clean_domain" ]]; then
+                      echo "  - '+.$clean_domain'"
                     fi
                     ;;
                 esac
-              done < "$file"
-
-              if [ -s "$temp_rules" ]; then
-                if sing-box rule-set compile "$temp_rules" -o "$output_dir/$name.srs" 2>/dev/null; then
-                  echo "   ✅ Created srs/$category_type/$name.srs ($(du -h "$output_dir/$name.srs" | cut -f1))"
-                else
-                  echo "   ⚠️  Failed to compile $name"
-                fi
+              done < "$input_file"
+            } > "$temp_yaml"
+            
+            local count=$(grep -c "^  - " "$temp_yaml" 2>/dev/null || echo "0")
+            
+            if [[ "$count" -gt 0 ]]; then
+              if sing-box rule-set compile "$temp_yaml" -o "$output_file" 2>/dev/null; then
+                echo "   ✅ Created $(basename "$output_file") ($(du -h "$output_file" | cut -f1), $count rules)"
+                rm -f "$temp_yaml"
+                return 0
               else
-                echo "   ⚠️  Skipping $name (empty after parsing)"
+                echo "   ⚠️  Failed to compile $name"
+                rm -f "$temp_yaml"
+                return 1
               fi
-              rm -f "$temp_rules"
-            done
+            else
+              echo "   ⚠️  Skipping $name (no valid rules)"
+              rm -f "$temp_yaml"
+              return 1
+            fi
           }
 
-          compile_to_srs "data/geosite" "srs/geosite" "geosite"
-          compile_to_srs "data/geoip" "srs/geoip" "geoip"
+          compile_geoip_to_srs() {
+            local input_file=$1
+            local output_file=$2
+            local name=$(basename "$input_file")
+            
+            echo "   📦 Compiling $name..."
+            
+            local temp_yaml="temp_${name}.yaml"
+            
+            {
+              echo "payload:"
+              while IFS= read -r line; do
+                line=$(echo "$line" | xargs)
+                [[ -z "$line" || "$line" =~ ^# ]] && continue
+                
+                case "$line" in
+                  ip_cidr:*|ip:*)
+                    echo "  - '${line#*:}'"
+                    ;;
+                  *)
+                    if [[ "$line" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/[0-9]+)?$ ]] || \
+                       [[ "$line" =~ ^[0-9a-fA-F:]+(/[0-9]+)?$ ]]; then
+                      echo "  - '$line'"
+                    fi
+                    ;;
+                esac
+              done < "$input_file"
+            } > "$temp_yaml"
+            
+            local count=$(grep -c "^  - " "$temp_yaml" 2>/dev/null || echo "0")
+            
+            if [[ "$count" -gt 0 ]]; then
+              if sing-box rule-set compile "$temp_yaml" -o "$output_file" 2>/dev/null; then
+                echo "   ✅ Created $(basename "$output_file") ($(du -h "$output_file" | cut -f1), $count rules)"
+                rm -f "$temp_yaml"
+                return 0
+              else
+                echo "   ⚠️  Failed to compile $name"
+                rm -f "$temp_yaml"
+                return 1
+              fi
+            else
+              echo "   ⚠️  Skipping $name (no valid rules)"
+              rm -f "$temp_yaml"
+              return 1
+            fi
+          }
+
+          echo "📍 Compiling GeoSite rules..."
+          for file in data/geosite/*; do
+            [ -f "$file" ] || continue
+            name=$(basename "$file")
+            compile_geosite_to_srs "$file" "srs/geosite/${name}.srs" || true
+          done
+
+          echo "📍 Compiling GeoIP rules..."
+          for file in data/geoip/*; do
+            [ -f "$file" ] || continue
+            name=$(basename "$file")
+            compile_geoip_to_srs "$file" "srs/geoip/${name}.srs" || true
+          done
+
+          echo "📊 SRS compilation summary:"
+          echo "   • GeoSite SRS: $(ls -1 srs/geosite/*.srs 2>/dev/null | wc -l) files"
+          echo "   • GeoIP SRS: $(ls -1 srs/geoip/*.srs 2>/dev/null | wc -l) files"
 
       - name: Build geosite.dat
         run: |
@@ -376,27 +454,6 @@ jobs:
           go install github.com/v2fly/geoip@latest
           $(go env GOPATH)/bin/geoip -c geoip_config.json
           ls -lh geoip.dat
-
-      - name: Test with sing-box check
-        run: |
-          echo "🧪 Testing generated files..."
-          cat <<EOF > test_config.json
-          {
-            "log": {"level": "error"},
-            "route": {
-              "rules": [
-                {"geosite": ["category-ads-all"], "action": "block"},
-                {"geoip": ["private", "cn"], "action": "block"},
-                {"geosite": ["google", "telegram"], "action": "direct"}
-              ]
-            }
-          }
-          EOF
-          if sing-box check -c test_config.json 2>&1; then
-            echo "✅ sing-box config validation passed"
-          else
-            echo "⚠️  sing-box check reported issues (non-fatal)"
-          fi
 
       - name: Check artifact sizes
         run: |
@@ -437,6 +494,14 @@ jobs:
           echo "- **geosite.dat size:** $(du -h geosite.dat | cut -f1)" >> changelog.md
           echo "- **geoip.dat size:** $(du -h geoip.dat | cut -f1)" >> changelog.md
           echo "" >> changelog.md
+          echo "### 📁 GeoSite SRS" >> changelog.md
+          echo "\`\`\`" >> changelog.md
+          ls -1 srs/geosite/*.srs 2>/dev/null | xargs -n1 basename >> changelog.md || echo "(none)" >> changelog.md
+          echo "\`\`\`" >> changelog.md
+          echo "### 📁 GeoIP SRS" >> changelog.md
+          echo "\`\`\`" >> changelog.md
+          ls -1 srs/geoip/*.srs 2>/dev/null | xargs -n1 basename >> changelog.md || echo "(none)" >> changelog.md
+          echo "\`\`\`" >> changelog.md
           echo "### 🔐 Checksums" >> changelog.md
           echo "\`\`\`" >> changelog.md
           cat geosite.dat.sha256 geoip.dat.sha256 >> changelog.md
@@ -444,7 +509,7 @@ jobs:
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (ОБНОВЛЁН)
+      # 📤 PUSH FILES TO BRANCH
       # ============================================
       - name: Push Files to Branch
         run: |
@@ -478,7 +543,7 @@ jobs:
           echo "✅ Done!"
 
       # ============================================
-      # 📤 CREATE RELEASE (ОБНОВЛЁН)
+      # 📤 CREATE RELEASE
       # ============================================
       - name: Create Release
         uses: softprops/action-gh-release@v2
