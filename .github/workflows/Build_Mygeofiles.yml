@@ -143,10 +143,6 @@ jobs:
             return 1
           }
 
-          # ============================================
-          # 📋 КАТЕГОРИИ: ИМЯ → URL (ассоциативные массивы)
-          # ============================================
-          
           declare -A GEOSITE=(
             ["category-ads"]="https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
             ["private"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-private.srs"
@@ -277,9 +273,6 @@ jobs:
             exit 1
           fi
 
-      # ============================================
-      # ✨ ОЧИСТКА И НОРМАЛИЗАЦИЯ ДОМЕНОВ
-      # ============================================
       - name: Clean and Normalize Domains
         run: |
           echo "🧹 Cleaning and normalizing domain files..."
@@ -308,6 +301,63 @@ jobs:
           done
           
           echo "✅ Domain normalization complete"
+
+      # ============================================
+      # 📦 КОМПИЛЯЦИЯ В SRS (НОВЫЙ ШАГ)
+      # ============================================
+      - name: Compile parsed rules to SRS
+        run: |
+          echo "🔨 Compiling parsed rules to .srs format..."
+          rm -rf srs
+          mkdir -p srs/geosite srs/geoip
+
+          compile_to_srs() {
+            local input_dir=$1
+            local output_dir=$2
+            local category_type=$3
+
+            for file in "$input_dir"/*; do
+              [ -f "$file" ] || continue
+              local name=$(basename "$file")
+              echo "   📦 Compiling $name..."
+
+              # Генерируем текстовый формат для sing-box rule-set compile
+              local temp_rules="temp_rules_${name}.txt"
+              > "$temp_rules"
+
+              while IFS= read -r line; do
+                line=$(echo "$line" | xargs)
+                [[ -z "$line" ]] && continue
+
+                case "$line" in
+                  keyword:*)  echo "domain_keyword:${line#keyword:}" >> "$temp_rules" ;;
+                  regexp:*)   echo "domain_regex:${line#regexp:}" >> "$temp_rules" ;;
+                  full:*)     echo "domain:${line#full:}" >> "$temp_rules" ;;
+                  *)
+                    if [[ "$category_type" == "geoip" ]]; then
+                      echo "ip_cidr:$line" >> "$temp_rules"
+                    else
+                      echo "domain_suffix:$line" >> "$temp_rules"
+                    fi
+                    ;;
+                esac
+              done < "$file"
+
+              if [ -s "$temp_rules" ]; then
+                if sing-box rule-set compile "$temp_rules" -o "$output_dir/$name.srs" 2>/dev/null; then
+                  echo "   ✅ Created srs/$category_type/$name.srs ($(du -h "$output_dir/$name.srs" | cut -f1))"
+                else
+                  echo "   ⚠️  Failed to compile $name"
+                fi
+              else
+                echo "   ⚠️  Skipping $name (empty after parsing)"
+              fi
+              rm -f "$temp_rules"
+            done
+          }
+
+          compile_to_srs "data/geosite" "srs/geosite" "geosite"
+          compile_to_srs "data/geoip" "srs/geoip" "geoip"
 
       - name: Build geosite.dat
         run: |
@@ -372,9 +422,6 @@ jobs:
           sha256sum geoip.dat > geoip.dat.sha256
           cat geosite.dat.sha256 geoip.dat.sha256
 
-      # ============================================
-      # 📝 GENERATE CHANGELOG (MSK TIME)
-      # ============================================
       - name: Generate changelog
         run: |
           echo "## 🔄 Build #${{ github.run_number }}" > changelog.md
@@ -386,6 +433,7 @@ jobs:
           echo "### 📦 Contents" >> changelog.md
           echo "- **Geosite categories:** $(ls -1 data/geosite 2>/dev/null | wc -l)" >> changelog.md
           echo "- **Geoip categories:** $(ls -1 data/geoip 2>/dev/null | wc -l)" >> changelog.md
+          echo "- **SRS files:** $(find srs -name "*.srs" 2>/dev/null | wc -l)" >> changelog.md
           echo "- **geosite.dat size:** $(du -h geosite.dat | cut -f1)" >> changelog.md
           echo "- **geoip.dat size:** $(du -h geoip.dat | cut -f1)" >> changelog.md
           echo "" >> changelog.md
@@ -396,7 +444,7 @@ jobs:
           cat changelog.md
 
       # ============================================
-      # 📤 PUSH FILES TO BRANCH (MSK TIME)
+      # 📤 PUSH FILES TO BRANCH (ОБНОВЛЁН)
       # ============================================
       - name: Push Files to Branch
         run: |
@@ -405,22 +453,24 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          echo "📁 Files:"
-          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
+          echo "📁 Root files:"
+          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 2>/dev/null || true
           
-          echo "🗑️  Removing from Git index..."
-          git rm --cached -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 || true
+          echo "📁 SRS files:"
+          find srs -type f -name "*.srs" 2>/dev/null | head -20 || echo "  (no srs files)"
           
-          echo "📋 Adding as new files..."
-          git add -f geosite.dat
-          git add -f geoip.dat
-          git add -f geosite.dat.sha256
-          git add -f geoip.dat.sha256
+          echo "🗑️  Clearing old Git index..."
+          git rm --cached -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 2>/dev/null || true
+          git rm --cached -r srs 2>/dev/null || true
+          
+          echo "📋 Adding files..."
+          git add -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
+          git add -f srs/ 2>/dev/null || true
           
           echo "📊 Status:"
           git status --short
           
-          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
+          COMMIT_MSG="🔄 Update dat + srs files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
           git commit -m "$COMMIT_MSG" || echo "⚠️ No changes"
           
           git push origin main --force
@@ -428,7 +478,7 @@ jobs:
           echo "✅ Done!"
 
       # ============================================
-      # 📤 CREATE RELEASE (MSK TIME)
+      # 📤 CREATE RELEASE (ОБНОВЛЁН)
       # ============================================
       - name: Create Release
         uses: softprops/action-gh-release@v2
@@ -442,6 +492,8 @@ jobs:
             geoip.dat
             geosite.dat.sha256
             geoip.dat.sha256
-          fail_on_unmatched_files: true
+            srs/geosite/*.srs
+            srs/geoip/*.srs
+          fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
