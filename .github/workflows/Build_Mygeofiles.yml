@@ -144,7 +144,7 @@ jobs:
           }
 
           # ============================================
-          # 📋 КАТЕГОРИИ: ИМЯ → URL
+          # 📋 КАТЕГОРИИ: ИМЯ → URL (ассоциативные массивы)
           # ============================================
           declare -A GEOSITE=(
             ["category-ads"]="https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
@@ -305,214 +305,6 @@ jobs:
           
           echo "✅ Domain normalization complete"
 
-      # ============================================
-      # 📦 КОМПИЛЯЦИЯ В SRS (JSON-формат для sing-box)
-      # ============================================
-      - name: Compile parsed rules to SRS
-        run: |
-          echo "🔨 Compiling parsed rules to .srs format..."
-          rm -rf srs
-          mkdir -p srs/geosite srs/geoip
-
-          compile_geosite_to_srs() {
-            local input_file=$1
-            local output_file=$2
-            local name=$(basename "$input_file")
-            
-            echo "   📦 Compiling $name..."
-            
-            if [[ ! -s "$input_file" ]]; then
-              echo "   ⚠️  Input file is empty: $input_file"
-              return 1
-            fi
-            
-            local temp_json="temp_${name}.json"
-            
-            # Генерируем JSON-массив правил для sing-box
-            {
-              echo "["
-              local first=true
-              while IFS= read -r line || [[ -n "$line" ]]; do
-                line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-                [[ -z "$line" || "$line" =~ ^# ]] && continue
-                
-                local rule_type="domain_suffix"
-                local rule_value="$line"
-                
-                case "$line" in
-                  keyword:*)
-                    rule_type="domain_keyword"
-                    rule_value="${line#keyword:}"
-                    ;;
-                  regexp:*)
-                    rule_type="domain_regex"
-                    rule_value="${line#regexp:}"
-                    ;;
-                  full:*)
-                    rule_type="domain"
-                    rule_value="${line#full:}"
-                    ;;
-                  domain:*)
-                    rule_type="domain"
-                    rule_value="${line#domain:}"
-                    ;;
-                  *)
-                    rule_value=$(echo "$line" | sed 's/^\.\+//;s/\*$//')
-                    [[ -z "$rule_value" || "$rule_value" =~ ^[0-9] ]] && continue
-                    ;;
-                esac
-                
-                # Экранируем кавычки и обратные слеши для JSON
-                rule_value=$(echo "$rule_value" | sed 's/\\/\\\\/g; s/"/\\"/g')
-                
-                if [[ "$first" == "true" ]]; then
-                  first=false
-                else
-                  echo ","
-                fi
-                printf '  {"type":"%s","value":"%s"}' "$rule_type" "$rule_value"
-              done < "$input_file"
-              echo ""
-              echo "]"
-            } > "$temp_json"
-            
-            if [[ ! -s "$temp_json" ]]; then
-              echo "   ⚠️  JSON file is empty"
-              rm -f "$temp_json"
-              return 1
-            fi
-            
-            local rule_count=$(grep -c '"type"' "$temp_json" 2>/dev/null || echo "0")
-            echo "   📄 Rules in JSON: $rule_count"
-            
-            if [[ "$rule_count" -eq 0 ]]; then
-              echo "   ⚠️  No valid rules in JSON"
-              rm -f "$temp_json"
-              return 1
-            fi
-            
-            if sing-box rule-set compile "$temp_json" -o "$output_file"; then
-              local size=$(du -h "$output_file" | cut -f1)
-              echo "   ✅ Created $(basename "$output_file") ($size, $rule_count rules)"
-              rm -f "$temp_json"
-              return 0
-            else
-              echo "   ❌ Failed to compile $name"
-              echo "   📋 JSON content (first 15 lines):"
-              head -15 "$temp_json" | sed 's/^/      /'
-              rm -f "$temp_json"
-              return 1
-            fi
-          }
-
-          compile_geoip_to_srs() {
-            local input_file=$1
-            local output_file=$2
-            local name=$(basename "$input_file")
-            
-            echo "   📦 Compiling $name..."
-            
-            if [[ ! -s "$input_file" ]]; then
-              echo "   ⚠️  Input file is empty: $input_file"
-              return 1
-            fi
-            
-            local temp_json="temp_${name}.json"
-            
-            {
-              echo "["
-              local first=true
-              while IFS= read -r line || [[ -n "$line" ]]; do
-                line=$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
-                [[ -z "$line" || "$line" =~ ^# ]] && continue
-                
-                local rule_value=""
-                
-                case "$line" in
-                  ip_cidr:*|ip:*)
-                    rule_value="${line#*:}"
-                    ;;
-                  *)
-                    if [[ "$line" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/[0-9]+)?$ ]] || \
-                       [[ "$line" =~ ^[0-9a-fA-F:]+(/[0-9]+)?$ ]]; then
-                      rule_value="$line"
-                    else
-                      continue
-                    fi
-                    ;;
-                esac
-                
-                rule_value=$(echo "$rule_value" | sed 's/\\/\\\\/g; s/"/\\"/g')
-                
-                if [[ "$first" == "true" ]]; then
-                  first=false
-                else
-                  echo ","
-                fi
-                printf '  {"type":"ip_cidr","value":"%s"}' "$rule_value"
-              done < "$input_file"
-              echo ""
-              echo "]"
-            } > "$temp_json"
-            
-            if [[ ! -s "$temp_json" ]]; then
-              echo "   ⚠️  JSON file is empty"
-              rm -f "$temp_json"
-              return 1
-            fi
-            
-            local rule_count=$(grep -c '"type"' "$temp_json" 2>/dev/null || echo "0")
-            echo "   📄 Rules in JSON: $rule_count"
-            
-            if [[ "$rule_count" -eq 0 ]]; then
-              echo "   ⚠️  No valid IP rules in JSON"
-              rm -f "$temp_json"
-              return 1
-            fi
-            
-            if sing-box rule-set compile "$temp_json" -o "$output_file"; then
-              local size=$(du -h "$output_file" | cut -f1)
-              echo "   ✅ Created $(basename "$output_file") ($size, $rule_count rules)"
-              rm -f "$temp_json"
-              return 0
-            else
-              echo "   ❌ Failed to compile $name"
-              echo "   📋 JSON content (first 15 lines):"
-              head -15 "$temp_json" | sed 's/^/      /'
-              rm -f "$temp_json"
-              return 1
-            fi
-          }
-
-          echo "📍 Compiling GeoSite rules..."
-          for file in data/geosite/*; do
-            [ -f "$file" ] || continue
-            name=$(basename "$file")
-            echo ""
-            compile_geosite_to_srs "$file" "srs/geosite/${name}.srs" || true
-          done
-
-          echo ""
-          echo "📍 Compiling GeoIP rules..."
-          for file in data/geoip/*; do
-            [ -f "$file" ] || continue
-            name=$(basename "$file")
-            echo ""
-            compile_geoip_to_srs "$file" "srs/geoip/${name}.srs" || true
-          done
-
-          echo ""
-          echo "📊 SRS compilation summary:"
-          geosite_count=$(ls -1 srs/geosite/*.srs 2>/dev/null | wc -l)
-          geoip_count=$(ls -1 srs/geoip/*.srs 2>/dev/null | wc -l)
-          echo "   • GeoSite SRS: $geosite_count files"
-          echo "   • GeoIP SRS: $geoip_count files"
-          
-          if [[ "$geosite_count" -eq 0 && "$geoip_count" -eq 0 ]]; then
-            echo "❌ No SRS files generated!"
-            exit 1
-          fi
-
       - name: Build geosite.dat
         run: |
           echo "🔨 Building geosite.dat..."
@@ -587,18 +379,9 @@ jobs:
           echo "### 📦 Contents" >> changelog.md
           echo "- **Geosite categories:** $(ls -1 data/geosite 2>/dev/null | wc -l)" >> changelog.md
           echo "- **Geoip categories:** $(ls -1 data/geoip 2>/dev/null | wc -l)" >> changelog.md
-          echo "- **SRS files:** $(find srs -name "*.srs" 2>/dev/null | wc -l)" >> changelog.md
           echo "- **geosite.dat size:** $(du -h geosite.dat | cut -f1)" >> changelog.md
           echo "- **geoip.dat size:** $(du -h geoip.dat | cut -f1)" >> changelog.md
           echo "" >> changelog.md
-          echo "### 📁 GeoSite SRS" >> changelog.md
-          echo "\`\`\`" >> changelog.md
-          ls -1 srs/geosite/*.srs 2>/dev/null | xargs -n1 basename >> changelog.md || echo "(none)" >> changelog.md
-          echo "\`\`\`" >> changelog.md
-          echo "### 📁 GeoIP SRS" >> changelog.md
-          echo "\`\`\`" >> changelog.md
-          ls -1 srs/geoip/*.srs 2>/dev/null | xargs -n1 basename >> changelog.md || echo "(none)" >> changelog.md
-          echo "\`\`\`" >> changelog.md
           echo "### 🔐 Checksums" >> changelog.md
           echo "\`\`\`" >> changelog.md
           cat geosite.dat.sha256 geoip.dat.sha256 >> changelog.md
@@ -615,24 +398,22 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          echo "📁 Root files:"
-          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 2>/dev/null || true
+          echo "📁 Files:"
+          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
-          echo "📁 SRS files:"
-          find srs -type f -name "*.srs" 2>/dev/null | head -20 || echo "  (no srs files)"
+          echo "🗑️  Removing from Git index..."
+          git rm --cached -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 || true
           
-          echo "🗑️  Clearing old Git index..."
-          git rm --cached -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 2>/dev/null || true
-          git rm --cached -r srs 2>/dev/null || true
-          
-          echo "📋 Adding files..."
-          git add -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
-          git add -f srs/ 2>/dev/null || true
+          echo "📋 Adding as new files..."
+          git add -f geosite.dat
+          git add -f geoip.dat
+          git add -f geosite.dat.sha256
+          git add -f geoip.dat.sha256
           
           echo "📊 Status:"
           git status --short
           
-          COMMIT_MSG="🔄 Update dat + srs files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
+          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
           git commit -m "$COMMIT_MSG" || echo "⚠️ No changes"
           
           git push origin main --force
@@ -654,8 +435,6 @@ jobs:
             geoip.dat
             geosite.dat.sha256
             geoip.dat.sha256
-            srs/geosite/*.srs
-            srs/geoip/*.srs
-          fail_on_unmatched_files: false
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
