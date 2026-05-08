@@ -59,12 +59,21 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           
-          git add files/domain-list.json files/domain-list.srs
+          # Принудительно добавляем оба файла
+          git add -f files/domain-list.json files/domain-list.srs
           
-          if ! git diff --cached --quiet; then
-            git commit -m "🔄 Auto-update - ${{ steps.time.outputs.datetime }} [skip ci]"
-            git push
-            echo "✅ Pushed domain-list.json and domain-list.srs"
-          else
+          # Проверяем статус
+          git status --short
+          
+          # Проверяем, есть ли изменения
+          if ! git diff --cached --name-only | grep -q .; then
             echo "✅ No changes to commit"
+            exit 0
           fi
+          
+          # Коммитим
+          git commit -m "🔄 Auto-update JSON and SRS - ${{ steps.time.outputs.datetime }} [skip ci]"
+          
+          # Пушим
+          git push
+          echo "✅ Pushed domain-list.json and domain-list.srs"
