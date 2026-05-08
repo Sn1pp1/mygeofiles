@@ -1,0 +1,76 @@
+name: Convert Domain List to SRS
+
+on:
+  push:
+    paths:
+      - 'files/domain-list.json'
+  workflow_dispatch:
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      # ============================================
+      # 🔧 INSTALL SING-BOX
+      # ============================================
+      - name: Install sing-box
+        run: |
+          echo "📦 Installing latest sing-box..."
+          
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "📦 Version: $LATEST_VERSION"
+          
+          curl -sL "https://github.com/SagerNet/sing-box/releases/download/${LATEST_VERSION}/sing-box-${LATEST_VERSION#v}-linux-amd64.tar.gz" | \
+            tar xzf - -C /tmp --strip-components=1 "sing-box-${LATEST_VERSION#v}-linux-amd64/sing-box"
+          
+          sudo mv /tmp/sing-box /usr/local/bin/
+          sudo chmod +x /usr/local/bin/sing-box
+          
+          echo "✅ sing-box installed:"
+          sing-box version
+      
+      # ============================================
+      # 🔄 CONVERT TO SRS
+      # ============================================
+      - name: Convert JSON to SRS
+        run: |
+          python3 scripts/convert_to_srs.py
+      
+      # ============================================
+      # 🕐 GET MSK TIME
+      # ============================================
+      - name: Get current time in MSK
+        id: time
+        run: |
+          echo "datetime=$(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK')" >> $GITHUB_OUTPUT
+      
+      # ============================================
+      # 📤 COMMIT AND PUSH
+      # ============================================
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          git add files/domain-list.srs
+          
+          if ! git diff --quiet && ! git diff --staged --quiet; then
+            git commit -m "🔄 Auto-update SRS - ${{ steps.time.outputs.datetime }}"
+            git push
+            echo "✅ Pushed domain-list.srs"
+          else
+            echo "✅ No changes to push"
+          fi
