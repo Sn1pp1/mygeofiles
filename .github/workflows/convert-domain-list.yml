@@ -42,7 +42,7 @@ jobs:
       - name: Convert TXT → JSON
         run: |
           echo "🔄 Converting TXT to JSON..."
-          python3 scripts/convert_domains.py
+          python3 scripts/convert_to_json.py
       
       - name: Convert JSON → SRS
         run: |
