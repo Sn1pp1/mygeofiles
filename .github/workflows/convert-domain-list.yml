@@ -1,0 +1,70 @@
+name: Convert Domain List
+
+on:
+  push:
+    paths:
+      - 'files/domain-list.txt'
+  workflow_dispatch:
+
+jobs:
+  convert-all:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Install sing-box
+        run: |
+          echo "📦 Installing latest sing-box..."
+          
+          LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "📦 Version: $LATEST_VERSION"
+          
+          curl -sL "https://github.com/SagerNet/sing-box/releases/download/${LATEST_VERSION}/sing-box-${LATEST_VERSION#v}-linux-amd64.tar.gz" | \
+            tar xzf - -C /tmp --strip-components=1 "sing-box-${LATEST_VERSION#v}-linux-amd64/sing-box"
+          
+          sudo mv /tmp/sing-box /usr/local/bin/
+          sudo chmod +x /usr/local/bin/sing-box
+          
+          sing-box version
+      
+      - name: Convert TXT → JSON
+        run: |
+          echo "🔄 Converting TXT to JSON..."
+          python3 scripts/convert_domains.py
+      
+      - name: Convert JSON → SRS
+        run: |
+          echo "🔄 Converting JSON to SRS..."
+          python3 scripts/convert_to_srs.py
+      
+      - name: Get current time in MSK
+        id: time
+        run: |
+          echo "datetime=$(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK')" >> $GITHUB_OUTPUT
+      
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          git add files/domain-list.json files/domain-list.srs
+          
+          if ! git diff --cached --quiet; then
+            git commit -m "🔄 Auto-update - ${{ steps.time.outputs.datetime }} [skip ci]"
+            git push
+            echo "✅ Pushed domain-list.json and domain-list.srs"
+          else
+            echo "✅ No changes to commit"
+          fi
