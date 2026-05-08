@@ -72,7 +72,7 @@ jobs:
           fi
           
           # Коммитим
-          git commit -m "🔄 Auto-update JSON and SRS - ${{ steps.time.outputs.datetime }} [skip ci]"
+          git commit -m "🔄 Auto-update - ${{ steps.time.outputs.datetime }}"
           
           # Пушим
           git push
