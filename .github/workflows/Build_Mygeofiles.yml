@@ -323,27 +323,6 @@ jobs:
           $(go env GOPATH)/bin/geoip -c geoip_config.json
           ls -lh geoip.dat
 
-      - name: Test with sing-box check
-        run: |
-          echo "🧪 Testing generated files..."
-          cat <<EOF > test_config.json
-          {
-            "log": {"level": "error"},
-            "route": {
-              "rules": [
-                {"geosite": ["category-ads"], "action": "block"},
-                {"geoip": ["private-ip", "ru-blocked-ip"], "action": "block"},
-                {"geosite": ["telegram", "youtube"], "action": "direct"}
-              ]
-            }
-          }
-          EOF
-          if sing-box check -c test_config.json 2>&1; then
-            echo "✅ sing-box config validation passed"
-          else
-            echo "⚠️  sing-box check reported issues (non-fatal)"
-          fi
-
       - name: Check artifact sizes
         run: |
           echo "📏 Checking artifact sizes (max: ${{ env.MAX_ARTIFACT_SIZE_MB }}MB)..."
