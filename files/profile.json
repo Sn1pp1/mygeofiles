@@ -15,15 +15,11 @@
   "domesticDns": "https://77.88.8.8/dns-query",
   "geoipUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
   "geositeUrl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
-  "geoDataUpdatedAt": null,
-  "geoipHash": "194a676ee059b0794319b7506f82b057e5f0a04043f7377c6a1b2c142cbb3c84",
-  "geositeHash": "ad6f36eea6b153822a1309a1ed446a632e15790b569b127f7cfb75563b7fe8e5",
   "directDomains": [
     "geosite:CATEGORY-RU",
     "geosite:PRIVATE"
   ],
   "proxyDomains": [
-    "geosite:CLOUDFLARE",
     "geosite:DISCORD",
     "geosite:DOMAIN-LIST",
     "geosite:GITHUB",
@@ -42,7 +38,6 @@
     "geoip:PRIVATE-IP"
   ],
   "proxyIp": [
-    "geoip:CLOUDFLARE-IP",
     "geoip:DISCORD-IP",
     "geoip:META-IP",
     "geoip:RU-BLOCKED-COMMUNITY-IP",
@@ -52,7 +47,7 @@
   "blockIp": [],
   "domainStrategy": "IPIfNonMatch",
   "routeOrder": "block-proxy-direct",
-  "useChunkFiles": false,
+  "useChunkFiles": true,
   "bypassPrivateIps": true,
   "bypassLocalDns": false,
   "sourceUrl": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/profile.json",
