@@ -158,7 +158,6 @@ jobs:
             ["youtube"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-youtube.srs"
             ["google-deepmind"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-deepmind.srs"
             ["google-play"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-google-play.srs"
-            ["cloudflare"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-cloudflare.srs"
             ["github"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-github.srs"
             ["category-ru"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.lst"
           )
@@ -170,7 +169,6 @@ jobs:
             ["telegram-ip"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-telegram.srs"
             ["discord-ip"]="https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/discord.lst"
             ["meta-ip"]="https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Subnets/IPv4/meta.lst"
-            ["cloudflare-ip"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geoip/geoip-cloudflare.srs"
             ["category-ru-ip"]="https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.txt"
           )
 
