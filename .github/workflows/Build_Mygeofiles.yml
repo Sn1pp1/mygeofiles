@@ -144,7 +144,7 @@ jobs:
           }
 
           # ============================================
-          # 📋 КАТЕГОРИИ: ИМЯ → URL (ассоциативные массивы)
+          # 📋 КАТЕГОРИИ: ИМЯ → URL
           # ============================================
           declare -A GEOSITE=(
             ["category-ads"]="https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
@@ -241,7 +241,7 @@ jobs:
                 
               elif [[ "$ext" == "txt" || "$ext" == "lst" ]]; then
                 echo "  📝 Обрабатываем текстовый список..."
-                grep -v '^#' "temp_file" | sed 's/[[:space:]]//g' | grep -v '^$' > "$output_path" || true
+                grep -v '^#' "temp_file" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' > "$output_path" || true
                 count=$(wc -l < "$output_path" 2>/dev/null || echo 0)
                 echo "  ✅ Сохранено: $count записей → $output_path"
                 
@@ -293,7 +293,7 @@ jobs:
               s/^\*\.(.+)$/.\1/;
               s/\.\././g;
             ' "$file" | \
-            grep -E '^(full:|regexp:|keyword:)?[a-zA-Z0-9]' | \
+            grep -E '^(full:|regexp:|keyword:|domain:|domain_suffix:|domain_keyword:|domain_regex:)?[a-zA-Z0-9@.\-*]' | \
             sort -u > "$file.cleaned"
             
             mv "$file.cleaned" "$file"
@@ -328,14 +328,17 @@ jobs:
           for f in geosite.dat geoip.dat; do
             if [ -f "$f" ]; then
               size=$(du -m "$f" | cut -f1)
-              if [ "$size" -gt "${{ env.MAX_ARTIFACT_SIZE_MB }}" ]; then
-                echo "❌ $f is ${size}MB (exceeds limit)"
+              if [ -f "$f" ]; then
+                size=$(du -m "$f" | cut -f1)
+                if [ "$size" -gt "${{ env.MAX_ARTIFACT_SIZE_MB }}" ]; then
+                  echo "❌ $f is ${size}MB (exceeds limit)"
+                  exit 1
+                fi
+                echo "✅ $f: ${size}MB"
+              else
+                echo "❌ $f not found!"
                 exit 1
               fi
-              echo "✅ $f: ${size}MB"
-            else
-              echo "❌ $f not found!"
-              exit 1
             fi
           done
 
