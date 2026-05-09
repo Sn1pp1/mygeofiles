@@ -17,7 +17,7 @@ jobs:
       fail-fast: true
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -29,13 +29,14 @@ jobs:
           echo "✅ Using Go v$GO_VERSION"
 
       - name: Set up Go
-        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32  # v5.0.2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: true
 
+      # ИСПРАВЛЕНО: Используем v4 вместо устаревшего SHA
       - name: Cache Go modules
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9  # v4.0.2
+        uses: actions/cache@v4
         with:
           path: |
             ~/go/pkg/mod
@@ -90,7 +91,7 @@ jobs:
           fi
 
       - name: Cache sing-box binary
-        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9  # v4.0.2
+        uses: actions/cache@v4
         with:
           path: /usr/local/bin/sing-box
           key: ${{ runner.os }}-singbox-${{ env.SING_BOX_VERSION }}
@@ -103,7 +104,7 @@ jobs:
 
       - name: Setup debug logging
         run: |
-          echo "🔧 RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
+          echo " RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
           echo "🔧 RUN_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
           if [ "${{ env.DEBUG }}" = "true" ]; then
             set -x
@@ -294,7 +295,7 @@ jobs:
             
             count=$(wc -l < "$file")
             if [ "$count" -eq 0 ]; then
-              echo "     ⚠️  WARNING: File is empty after cleaning!"
+              echo "     ️  WARNING: File is empty after cleaning!"
             else
               echo "     ✅ Cleaned: $count entries"
             fi
@@ -436,7 +437,7 @@ jobs:
 
       - name: Check artifact sizes
         run: |
-          echo "📏 Checking artifact sizes (max: ${{ env.MAX_ARTIFACT_SIZE_MB }}MB)..."
+          echo " Checking artifact sizes (max: ${{ env.MAX_ARTIFACT_SIZE_MB }}MB)..."
           for f in geosite.dat geoip.dat; do
             if [ -f "$f" ]; then
               size=$(du -m "$f" | cut -f1)
@@ -453,7 +454,7 @@ jobs:
 
       - name: Generate SHA256
         run: |
-          echo "🔐 Generating checksums..."
+          echo " Generating checksums..."
           sha256sum geosite.dat > geosite.dat.sha256
           sha256sum geoip.dat > geoip.dat.sha256
           cat geosite.dat.sha256 geoip.dat.sha256
@@ -486,7 +487,7 @@ jobs:
 
       - name: Push Files to Branch
         run: |
-          echo "📤 Pushing artifacts..."
+          echo " Pushing artifacts..."
           
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -494,7 +495,7 @@ jobs:
           echo "📁 Files:"
           ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
           
-          echo "🗑️  Removing from Git index..."
+          echo "️  Removing from Git index..."
           git rm --cached -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 || true
           
           echo "📋 Adding as new files..."
@@ -514,7 +515,7 @@ jobs:
           echo "✅ Done!"
 
       - name: Create Release
-        uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c8879238e5435a13824  # v2.0.1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: latest
           name: "🔄 Auto-build #${{ github.run_number }} (${{ env.BUILD_DATE }})"
