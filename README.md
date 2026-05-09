@@ -56,7 +56,7 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
     "servers": [
       {
         "tag": "dns-direct",
-        "address": "1.1.1.1",
+        "address": "77.88.8.8",
         "detour": "direct"
       },
       {
@@ -87,7 +87,7 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
       "mtu": 1400,
       "auto_route": true,
       "strict_route": false,
-      "stack": "gvisor",
+      "stack": "mixed",
       "sniff": true,
       "sniff_override_destination": true
     }
