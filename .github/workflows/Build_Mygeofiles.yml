@@ -17,7 +17,7 @@ jobs:
       fail-fast: true
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
         with:
           fetch-depth: 2
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -29,13 +29,13 @@ jobs:
           echo "✅ Using Go v$GO_VERSION"
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32  # v5.0.2
         with:
           go-version: ${{ env.GO_VERSION }}
           cache: true
 
       - name: Cache Go modules
-        uses: actions/cache@v4
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9  # v4.0.2
         with:
           path: |
             ~/go/pkg/mod
@@ -90,7 +90,7 @@ jobs:
           fi
 
       - name: Cache sing-box binary
-        uses: actions/cache@v4
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9  # v4.0.2
         with:
           path: /usr/local/bin/sing-box
           key: ${{ runner.os }}-singbox-${{ env.SING_BOX_VERSION }}
@@ -252,7 +252,6 @@ jobs:
           echo "   • geosite: $(ls -1 data/geosite 2>/dev/null | wc -l) files"
           echo "   • geoip: $(ls -1 data/geoip 2>/dev/null | wc -l) files"
           
-          # ✅ Показываем содержимое файлов для отладки
           echo "📋 File contents preview:"
           for f in data/geosite/*; do
             if [ -f "$f" ]; then
@@ -279,7 +278,6 @@ jobs:
             filename=$(basename "$file")
             echo "   • Processing $filename..."
             
-            # ✅ Улучшенная очистка с поддержкой всех форматов
             sed -E '
               s/^[[:space:]"'"'"']+//
               s/[[:space:]"'"'"']+$//
@@ -308,7 +306,6 @@ jobs:
         run: |
           echo "🔨 Building geosite.dat..."
           
-          # ✅ Проверяем что файлы не пустые перед сборкой
           empty_files=0
           for f in data/geosite/*; do
             if [ -f "$f" ] && [ ! -s "$f" ]; then
@@ -342,6 +339,101 @@ jobs:
           $(go env GOPATH)/bin/geoip -c geoip_config.json
           ls -lh geoip.dat
 
+      - name: Validate generated files
+        run: |
+          echo "🔍 Validating generated files..."
+          
+          echo "Checking geosite.dat..."
+          if ! file geosite.dat | grep -q "data"; then
+            echo "❌ geosite.dat is invalid or corrupted"
+            exit 1
+          fi
+          
+          echo "Checking geoip.dat..."
+          if ! file geoip.dat | grep -q "data"; then
+            echo "❌ geoip.dat is invalid or corrupted"
+            exit 1
+          fi
+          
+          echo "✅ All files validated successfully"
+
+      - name: Health check
+        run: |
+          echo "🏥 Running health checks..."
+          
+          geosite_size=$(stat -c%s geosite.dat 2>/dev/null || stat -f%z geosite.dat 2>/dev/null)
+          geoip_size=$(stat -c%s geoip.dat 2>/dev/null || stat -f%z geoip.dat 2>/dev/null)
+          
+          echo "   • geosite.dat: ${geosite_size} bytes"
+          echo "   • geoip.dat: ${geoip_size} bytes"
+          
+          if [ "$geosite_size" -lt 1000 ]; then
+            echo "❌ geosite.dat too small (${geosite_size} bytes) - possible corruption"
+            exit 1
+          fi
+          
+          if [ "$geoip_size" -lt 1000 ]; then
+            echo "❌ geoip.dat too small (${geoip_size} bytes) - possible corruption"
+            exit 1
+          fi
+          
+          echo "✅ Health check passed"
+
+      - name: Generate statistics
+        run: |
+          echo "📊 Generating statistics..."
+          
+          {
+            echo "## 📈 Build Statistics"
+            echo ""
+            echo "### Geosite Categories"
+            echo ""
+            echo "| Category | Entries |"
+            echo "|----------|---------|"
+            for f in data/geosite/*; do
+              if [ -f "$f" ]; then
+                name=$(basename "$f")
+                count=$(wc -l < "$f")
+                echo "| $name | $count |"
+              fi
+            done
+            echo ""
+            echo "### Geoip Categories"
+            echo ""
+            echo "| Category | Entries |"
+            echo "|----------|---------|"
+            for f in data/geoip/*; do
+              if [ -f "$f" ]; then
+                name=$(basename "$f")
+                count=$(wc -l < "$f")
+                echo "| $name | $count |"
+              fi
+            done
+          } > statistics.md
+          
+          cat statistics.md
+
+      - name: Compress artifacts
+        run: |
+          echo " Compressing artifacts..."
+          
+          echo "Before compression:"
+          ls -lh geosite.dat geoip.dat
+          
+          gzip -9 geosite.dat
+          gzip -9 geoip.dat
+          
+          mv geosite.dat.gz geosite.dat
+          mv geoip.dat.gz geoip.dat
+          
+          echo "After compression:"
+          ls -lh geosite.dat geoip.dat
+          
+          geosite_orig=$(du -b geosite.dat | cut -f1)
+          geoip_orig=$(du -b geoip.dat | cut -f1)
+          
+          echo "✅ Compression complete"
+
       - name: Check artifact sizes
         run: |
           echo "📏 Checking artifact sizes (max: ${{ env.MAX_ARTIFACT_SIZE_MB }}MB)..."
@@ -368,22 +460,28 @@ jobs:
 
       - name: Generate changelog
         run: |
-          echo "## 🔄 Build #${{ github.run_number }}" > changelog.md
-          echo "" >> changelog.md
-          echo "**📅 Built:** $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')" >> changelog.md
-          echo "**🔗 Run:** [${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> changelog.md
-          echo "**🔖 Commit:** [\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> changelog.md
-          echo "" >> changelog.md
-          echo "### 📦 Contents" >> changelog.md
-          echo "- **Geosite categories:** $(ls -1 data/geosite 2>/dev/null | wc -l)" >> changelog.md
-          echo "- **Geoip categories:** $(ls -1 data/geoip 2>/dev/null | wc -l)" >> changelog.md
-          echo "- **geosite.dat size:** $(du -h geosite.dat | cut -f1)" >> changelog.md
-          echo "- **geoip.dat size:** $(du -h geoip.dat | cut -f1)" >> changelog.md
-          echo "" >> changelog.md
-          echo "### 🔐 Checksums" >> changelog.md
-          echo "\`\`\`" >> changelog.md
-          cat geosite.dat.sha256 geoip.dat.sha256 >> changelog.md
-          echo "\`\`\`" >> changelog.md
+          {
+            echo "## 🔄 Build #${{ github.run_number }}"
+            echo ""
+            echo "**📅 Built:** $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
+            echo "**🔗 Run:** [${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            echo "**🔖 Commit:** [\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})"
+            echo ""
+            echo "### 📦 Contents"
+            echo "- **Geosite categories:** $(ls -1 data/geosite 2>/dev/null | wc -l)"
+            echo "- **Geoip categories:** $(ls -1 data/geoip 2>/dev/null | wc -l)"
+            echo "- **geosite.dat size:** $(du -h geosite.dat | cut -f1) (compressed)"
+            echo "- **geoip.dat size:** $(du -h geoip.dat | cut -f1) (compressed)"
+            echo ""
+            echo "### 🔐 Checksums"
+            echo "\`\`\`"
+            cat geosite.dat.sha256 geoip.dat.sha256
+            echo "\`\`\`"
+            echo ""
+            echo "### 📊 Statistics"
+            cat statistics.md
+          } > changelog.md
+          
           cat changelog.md
 
       - name: Push Files to Branch
@@ -416,7 +514,7 @@ jobs:
           echo "✅ Done!"
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c8879238e5435a13824  # v2.0.1
         with:
           tag_name: latest
           name: "🔄 Auto-build #${{ github.run_number }} (${{ env.BUILD_DATE }})"
