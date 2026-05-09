@@ -22,18 +22,12 @@ jobs:
           fetch-depth: 2
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # ============================================
-      # 🔧 GET LATEST GO VERSION
-      # ============================================
       - name: Get latest Go version
         run: |
           GO_VERSION=$(curl -s https://go.dev/VERSION?m=text | head -n 1 | sed 's/go//' | cut -d. -f1,2)
           echo "GO_VERSION=$GO_VERSION" >> $GITHUB_ENV
           echo "✅ Using Go v$GO_VERSION"
 
-      # ============================================
-      # 🔧 SETUP GO
-      # ============================================
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -50,18 +44,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
 
-      # ============================================
-      # 🔧 GET LATEST SING-BOX VERSION
-      # ============================================
       - name: Get latest sing-box version
         run: |
           LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/' | cut -c2-)
           echo "SING_BOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
           echo "✅ Using sing-box v$LATEST_VERSION"
 
-      # ============================================
-      # 🔧 INSTALL SING-BOX
-      # ============================================
       - name: Install sing-box
         run: |
           echo "📦 Installing sing-box v${{ env.SING_BOX_VERSION }}..."
@@ -95,7 +83,7 @@ jobs:
             fi
             rm -rf sing-box.tar.gz 2>/dev/null || true
           else
-            echo "⚠️  Using go install as fallback"
+            echo "⚠️ Using go install as fallback"
             go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
             ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
             sing-box version
@@ -107,9 +95,6 @@ jobs:
           path: /usr/local/bin/sing-box
           key: ${{ runner.os }}-singbox-${{ env.SING_BOX_VERSION }}
 
-      # ============================================
-      # 📋 SET BUILD DATE (MSK TIME)
-      # ============================================
       - name: Set build date
         run: |
           echo "BUILD_DATE=$(TZ=Europe/Moscow date '+%Y-%m-%d')" >> $GITHUB_ENV
@@ -143,9 +128,6 @@ jobs:
             return 1
           }
 
-          # ============================================
-          # 📋 КАТЕГОРИИ: ИМЯ → URL (ассоциативные массивы)
-          # ============================================
           declare -A GEOSITE=(
             ["category-ads"]="https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
             ["private"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-private.srs"
@@ -270,6 +252,18 @@ jobs:
           echo "   • geosite: $(ls -1 data/geosite 2>/dev/null | wc -l) files"
           echo "   • geoip: $(ls -1 data/geoip 2>/dev/null | wc -l) files"
           
+          # ✅ Показываем содержимое файлов для отладки
+          echo "📋 File contents preview:"
+          for f in data/geosite/*; do
+            if [ -f "$f" ]; then
+              lines=$(wc -l < "$f")
+              echo "   • $(basename "$f"): $lines lines"
+              if [ "$lines" -eq 0 ]; then
+                echo "     ⚠️  WARNING: File is empty!"
+              fi
+            fi
+          done
+          
           if [ -z "$(ls -A data/geosite 2>/dev/null)" ]; then
             echo "❌ Error: No geosite data generated!"
             exit 1
@@ -285,13 +279,15 @@ jobs:
             filename=$(basename "$file")
             echo "   • Processing $filename..."
             
+            # ✅ Улучшенная очистка с поддержкой всех форматов
             sed -E '
-              s/^[[:space:]"'"'"']+//; s/[[:space:]"'"'"']+$//;
-              /^$/d;
-              /^#/d;
-              s/^\*\.(.+)\.\*$/.\1/;
-              s/^\*\.(.+)$/.\1/;
-              s/\.\././g;
+              s/^[[:space:]"'"'"']+//
+              s/[[:space:]"'"'"']+$//
+              /^$/d
+              /^#/d
+              s/^\*\.(.+)\.\*$/.\1/
+              s/^\*\.(.+)$/.\1/
+              s/\.\././g
             ' "$file" | \
             grep -E '^(full:|regexp:|keyword:|domain:|domain_suffix:|domain_keyword:|domain_regex:)?[a-zA-Z0-9@.*-]' | \
             sort -u > "$file.cleaned"
@@ -299,7 +295,11 @@ jobs:
             mv "$file.cleaned" "$file"
             
             count=$(wc -l < "$file")
-            echo "     ✅ Cleaned: $count entries"
+            if [ "$count" -eq 0 ]; then
+              echo "     ⚠️  WARNING: File is empty after cleaning!"
+            else
+              echo "     ✅ Cleaned: $count entries"
+            fi
           done
           
           echo "✅ Domain normalization complete"
@@ -307,9 +307,29 @@ jobs:
       - name: Build geosite.dat
         run: |
           echo "🔨 Building geosite.dat..."
+          
+          # ✅ Проверяем что файлы не пустые перед сборкой
+          empty_files=0
+          for f in data/geosite/*; do
+            if [ -f "$f" ] && [ ! -s "$f" ]; then
+              echo "⚠️  Warning: $(basename "$f") is empty"
+              ((empty_files++))
+            fi
+          done
+          
+          if [ "$empty_files" -gt 0 ]; then
+            echo "⚠️  $empty_files empty files found, but continuing..."
+          fi
+          
           go run github.com/v2fly/domain-list-community@latest \
             --datapath=data/geosite --outputname=geosite.dat
-          ls -lh geosite.dat
+          
+          if [ -f geosite.dat ]; then
+            ls -lh geosite.dat
+          else
+            echo "❌ geosite.dat was not created!"
+            exit 1
+          fi
 
       - name: Build geoip.dat
         run: |
@@ -366,9 +386,6 @@ jobs:
           echo "\`\`\`" >> changelog.md
           cat changelog.md
 
-      # ============================================
-      # 📤 PUSH FILES TO BRANCH
-      # ============================================
       - name: Push Files to Branch
         run: |
           echo "📤 Pushing artifacts..."
@@ -398,9 +415,6 @@ jobs:
           
           echo "✅ Done!"
 
-      # ============================================
-      # 📤 CREATE RELEASE
-      # ============================================
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
