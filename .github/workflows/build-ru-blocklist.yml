@@ -153,7 +153,7 @@ jobs:
         git add files/ru-blocklist.txt
 
         if ! git diff --staged --quiet; then
-          git commit -m "🔄 Update ru-blocklist.txt ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK')) [auto]"
+          git commit -m "🔄 Update ru-blocklist.txt ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
           for i in 1 2 3; do
             git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
           done
