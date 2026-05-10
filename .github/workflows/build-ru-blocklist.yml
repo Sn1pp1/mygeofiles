@@ -1,0 +1,168 @@
+name: Build RU Blocklist
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/build-ru-blocklist.yml']
+  workflow_dispatch:
+  schedule:
+    - cron: '30 1 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create output directory
+      run: mkdir -p files
+
+    - name: Download & Process Sources
+      run: |
+        set -euo pipefail
+
+        # ==========================================
+        # 📥 ВАШ СПИСОК ИСТОЧНИКОВ (в оригинальном порядке)
+        # ==========================================
+        SOURCES=(
+          "https://community.antifilter.download/list/domains.lst"
+          "https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst"
+          "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/inside-raw.lst"
+          "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/category-geoblock-ru"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.list"
+          "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/youtube"
+          "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Services/youtube.lst"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/discord.list"
+          "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Services/discord.lst"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/telegram.list"
+          "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/telegram"
+          "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Services/telegram.lst"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/meta.list"
+          "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Services/meta.lst"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-deepmind.list"
+          "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/google-deepmind"
+          "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/google_ai.lst"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-gemini.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-play.list"
+          "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/google-play"
+          "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/twitch-ads"
+        )
+        # ==========================================
+
+        TEMP_RAW=$(mktemp)
+        TEMP_CLEAN=$(mktemp)
+        trap "rm -f $TEMP_RAW $TEMP_CLEAN" EXIT
+
+        echo "📊 СТАТИСТИКА ЗАГРУЗКИ"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        
+        TOTAL_BEFORE=0
+        
+        for URL in "${SOURCES[@]}"; do
+          # Короткое имя для вывода
+          SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
+          
+          # Скачиваем, парсим и считаем валидные домены
+          COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
+          BEGIN { IGNORECASE=1; c=0 }
+          { gsub(/\r/, ""); gsub(/^\xEF\xBB\xBF/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+          /^[[:space:]]*$/ { next }
+          /^[[:space:]]*[#!\/]{1,2}/ { next }
+          /^(domain|full|keyword|regexp|include|host|suffix|root|process-name):/ { sub(/^[^:]+:/, "") }
+          /^\+\./ { sub(/^\+\./, "") }
+          /^@@/ { next }
+          /^\|\|/ { sub(/^\|\|/, ""); sub(/[\^~\$\/\*\?:&=].*$/, "") }
+          /^\|https?:\/\// { next }
+          /^\/.*\/\$?/ { next }
+          { gsub(/^["'"'"']+|["'"'"']+,?$/, ""); gsub(/^\[|\]|\{|\}|,/, "") }
+          /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[[:space:]]+/ { sub(/^[0-9.]+[[:space:]]+/, "") }
+          /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[\/0-9]*$/ { next }
+          /^[0-9a-f:]+::?[0-9a-f:\/]*$/ { next }
+          { sub(/^https?:\/\//, ""); sub(/:[0-9]+$/, ""); sub(/\/.*$/, ""); sub(/[?#].*$/, ""); sub(/^.*@/, "") }
+          /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?\.[a-z]{2,}$/ {
+            d = tolower($0)
+            if (d ~ /\.$/) next; if (d ~ /^[.-]/) next; if (d ~ /\.\./) next
+            if (d ~ /[^a-z0-9.\-]/) next; if (length(d) > 253) next; if (d !~ /[a-z]/) next
+            c++
+          }
+          END { print c }
+          ' 2>/dev/null) || COUNT=0
+          
+          # Скачиваем сырые данные
+          curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
+          
+          printf "  %-40s %6s доменов\n" "$SHORT_NAME..." "$COUNT"
+          TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
+        done
+        
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE доменов"
+        echo ""
+
+        echo "🧹 Очистка и извлечение доменов..."
+        
+        # === УНИВЕРСАЛЬНЫЙ ПАРСЕР ===
+        awk '
+        BEGIN { IGNORECASE=1 }
+        { gsub(/\r/, ""); gsub(/^\xEF\xBB\xBF/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+        /^[[:space:]]*$/ { next }
+        /^[[:space:]]*[#!\/]{1,2}/ { next }
+        /^[[:space:]]*\/\*/ { next }
+        /^(domain|full|keyword|regexp|include|host|suffix|root|process-name):/ { sub(/^[^:]+:/, ""); next }
+        /^\+\./ { sub(/^\+\./, ""); next }
+        /^@@/ { next }
+        /^\|\|/ { sub(/^\|\|/, ""); sub(/[\^~\$\/\*\?:&=].*$/, ""); next }
+        /^\|https?:\/\// { next }
+        /^\/.*\/\$?/ { next }
+        { gsub(/^["'"'"']+|["'"'"']+,?$/, ""); gsub(/^\[|\]|\{|\}|,/, "") }
+        /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[[:space:]]+/ { sub(/^[0-9.]+[[:space:]]+/, "") }
+        /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[\/0-9]*$/ { next }
+        /^[0-9a-f:]+::?[0-9a-f:\/]*$/ { next }
+        { sub(/^https?:\/\//, ""); sub(/:[0-9]+$/, ""); sub(/\/.*$/, ""); sub(/[?#].*$/, ""); sub(/^.*@/, "") }
+        /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?\.[a-z]{2,}$/ {
+          d = tolower($0)
+          if (d ~ /\.$/) next; if (d ~ /^[.-]/) next; if (d ~ /\.\./) next
+          if (d ~ /[^a-z0-9.\-]/) next; if (length(d) > 253) next; if (d !~ /[a-z]/) next
+          print d
+        }
+        ' "$TEMP_RAW" > "$TEMP_CLEAN"
+        
+        BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN")
+        
+        echo "🔍 Сортировка и удаление дубликатов..."
+        LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-blocklist.txt
+        
+        AFTER_DEDUP=$(wc -l < files/ru-blocklist.txt)
+        REMOVED=$((BEFORE_DEDUP - AFTER_DEDUP))
+        SIZE=$(du -h files/ru-blocklist.txt | cut -f1)
+        PCT=$(awk "BEGIN {printf \"%.1f\", $REMOVED * 100 / ($BEFORE_DEDUP + 0.001)}")
+        
+        echo ""
+        echo "📊 ИТОГОВАЯ СТАТИСТИКА"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        printf "  Доменов после парсинга:         %6s\n" "$BEFORE_DEDUP"
+        printf "  Удалено дубликатов:             %6s (%s%%)\n" "$REMOVED" "$PCT"
+        printf "  ✅ В итоговом файле:            %6s доменов\n" "$AFTER_DEDUP"
+        printf "  Размер файла:                   %6s\n" "$SIZE"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo "📄 Первые 5 записей из ru-blocklist.txt:"
+        head -5 files/ru-blocklist.txt | sed 's/^/   ✓ /'
+
+    - name: Commit and push result
+      run: |
+        git config user.name "RU Blocklist Bot"
+        git config user.email "blocklist-bot@github.com"
+        
+        if ! git diff --quiet files/ru-blocklist.txt 2>/dev/null; then
+          git add files/ru-blocklist.txt
+          git commit -m "🔄 Update ru-blocklist.txt ($(date -u +'%Y-%m-%d %H:%M UTC')) [auto]"
+          git push
+          echo "📤 Изменения отправлены"
+        else
+          echo "⏭️ Нет изменений, пропуск коммита"
+        fi
