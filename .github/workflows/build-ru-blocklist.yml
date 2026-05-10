@@ -55,6 +55,7 @@ jobs:
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/hdrezka.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/tiktok.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/twitter.lst"
+          "https://github.com/Davoyan/xray-routing/raw/refs/heads/main/domains/banned.txt"
         )
         # ==========================================
 
