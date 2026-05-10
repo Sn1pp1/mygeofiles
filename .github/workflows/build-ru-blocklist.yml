@@ -6,7 +6,7 @@ on:
     paths: ['.github/workflows/build-ru-blocklist.yml']
   workflow_dispatch:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */6 * * *'  # Каждые 6 часов (00:00, 06:00, 12:00, 18:00 UTC)
 
 jobs:
   build:
@@ -26,7 +26,7 @@ jobs:
         set -euo pipefail
 
         # ==========================================
-        #  ВАШ СПИСОК ИСТОЧНИКОВ
+        #  ВАШ СПИСОК ИСТОЧНИКОВ (в оригинальном порядке)
         # ==========================================
         SOURCES=(
           "https://community.antifilter.download/list/domains.lst"
@@ -87,10 +87,13 @@ jobs:
           /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[\/0-9]*$/ { next }
           /^[0-9a-f:]+::?[0-9a-f:\/]*$/ { next }
           { sub(/^https?:\/\//, ""); sub(/:[0-9]+$/, ""); sub(/\/.*$/, ""); sub(/[?#].*$/, ""); sub(/^.*@/, "") }
-          /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?\.[a-z]{2,}$/ {
+          /^[a-z0-9]([a-z0-9._-]*[a-z0-9])?\.[a-z0-9]{2,}$/ {
             d = tolower($0)
-            if (d ~ /\.$/) next; if (d ~ /^[.-]/) next; if (d ~ /\.\./) next
-            if (d ~ /[^a-z0-9.\-]/) next; if (length(d) > 253) next; if (d !~ /[a-z]/) next
+            if (d ~ /\.$/) next
+            if (d ~ /^[.-]/) next
+            if (d ~ /\.\./) next
+            if (length(d) > 253) next
+            if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
             c++
           }
           END { print c }
@@ -108,6 +111,7 @@ jobs:
 
         echo "🧹 Очистка и извлечение доменов..."
         
+        # === МЯГКАЯ ВАЛИДАЦИЯ ===
         awk '
         BEGIN { IGNORECASE=1 }
         { gsub(/\r/, ""); gsub(/^\xEF\xBB\xBF/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
@@ -125,10 +129,14 @@ jobs:
         /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[\/0-9]*$/ { next }
         /^[0-9a-f:]+::?[0-9a-f:\/]*$/ { next }
         { sub(/^https?:\/\//, ""); sub(/:[0-9]+$/, ""); sub(/\/.*$/, ""); sub(/[?#].*$/, ""); sub(/^.*@/, "") }
-        /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?\.[a-z]{2,}$/ {
+        
+        /^[a-z0-9]([a-z0-9._-]*[a-z0-9])?\.[a-z0-9]{2,}$/ {
           d = tolower($0)
-          if (d ~ /\.$/) next; if (d ~ /^[.-]/) next; if (d ~ /\.\./) next
-          if (d ~ /[^a-z0-9.\-]/) next; if (length(d) > 253) next; if (d !~ /[a-z]/) next
+          if (d ~ /\.$/) next
+          if (d ~ /^[.-]/) next
+          if (d ~ /\.\./) next
+          if (length(d) > 253) next
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
           print d
         }
         ' "$TEMP_RAW" > "$TEMP_CLEAN"
@@ -160,10 +168,8 @@ jobs:
         git config user.name "RU Blocklist Bot"
         git config user.email "blocklist-bot@github.com"
         
-        # Подтягиваем изменения, если другой воркфлоу уже запушил
         git pull --rebase origin main 2>/dev/null || true
         
-        # Проверяем, что файл создан
         if [ ! -f files/ru-blocklist.txt ]; then
           echo "❌ Ошибка: файл ru-blocklist.txt не найден!"
           exit 1
@@ -172,8 +178,7 @@ jobs:
         git add files/ru-blocklist.txt
 
         if ! git diff --staged --quiet; then
-          git commit -m "🔄 Update ru-blocklist.txt ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
-          # Повторная попытка пуша, если возникла гонка
+          git commit -m "🔄 Update ru-blocklist.txt ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK')) [auto]"
           for i in 1 2 3; do
             git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
           done
