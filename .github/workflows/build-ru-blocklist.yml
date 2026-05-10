@@ -6,7 +6,7 @@ on:
     paths: ['.github/workflows/build-ru-blocklist.yml']
   workflow_dispatch:
   schedule:
-    - cron: '30 1 * * *'
+    - cron: '0 */6 * * *'  # Каждые 6 часов (00:00, 06:00, 12:00, 18:00 UTC)
 
 jobs:
   build:
@@ -26,7 +26,7 @@ jobs:
         set -euo pipefail
 
         # ==========================================
-        # 📥 ВАШ СПИСОК ИСТОЧНИКОВ (в оригинальном порядке)
+        #  ВАШ СПИСОК ИСТОЧНИКОВ
         # ==========================================
         SOURCES=(
           "https://community.antifilter.download/list/domains.lst"
@@ -36,8 +36,10 @@ jobs:
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.list"
           "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/youtube"
           "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Services/youtube.lst"
+          "https://github.com/runetfreedom/russia-blocked-geosite/raw/refs/heads/release/youtube.txt"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/discord.list"
           "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Services/discord.lst"
+          "https://github.com/runetfreedom/russia-blocked-geosite/raw/refs/heads/release/discord.txt"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/telegram.list"
           "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/telegram"
           "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Services/telegram.lst"
@@ -50,6 +52,9 @@ jobs:
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-play.list"
           "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/google-play"
           "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/twitch-ads"
+          "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/hdrezka.lst"
+          "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/tiktok.lst"
+          "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/twitter.lst"
         )
         # ==========================================
 
@@ -63,10 +68,8 @@ jobs:
         TOTAL_BEFORE=0
         
         for URL in "${SOURCES[@]}"; do
-          # Короткое имя для вывода
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
           
-          # Скачиваем, парсим и считаем валидные домены
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           BEGIN { IGNORECASE=1; c=0 }
           { gsub(/\r/, ""); gsub(/^\xEF\xBB\xBF/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
@@ -92,7 +95,6 @@ jobs:
           END { print c }
           ' 2>/dev/null) || COUNT=0
           
-          # Скачиваем сырые данные
           curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
           
           printf "  %-40s %6s доменов\n" "$SHORT_NAME..." "$COUNT"
@@ -105,7 +107,6 @@ jobs:
 
         echo "🧹 Очистка и извлечение доменов..."
         
-        # === УНИВЕРСАЛЬНЫЙ ПАРСЕР ===
         awk '
         BEGIN { IGNORECASE=1 }
         { gsub(/\r/, ""); gsub(/^\xEF\xBB\xBF/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
@@ -150,7 +151,7 @@ jobs:
         printf "  Размер файла:                   %6s\n" "$SIZE"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
-        echo "📄 Первые 5 записей из ru-blocklist.txt:"
+        echo " Первые 5 записей из ru-blocklist.txt:"
         head -5 files/ru-blocklist.txt | sed 's/^/   ✓ /'
 
     - name: Commit and push result
@@ -158,11 +159,24 @@ jobs:
         git config user.name "RU Blocklist Bot"
         git config user.email "blocklist-bot@github.com"
         
-        if ! git diff --quiet files/ru-blocklist.txt 2>/dev/null; then
-          git add files/ru-blocklist.txt
-          git commit -m "🔄 Update ru-blocklist.txt ($(date -u +'%Y-%m-%d %H:%M UTC')) [auto]"
-          git push
-          echo "📤 Изменения отправлены"
+        # Подтягиваем изменения, если другой воркфлоу уже запушил
+        git pull --rebase origin main 2>/dev/null || true
+        
+        # Проверяем, что файл создан
+        if [ ! -f files/ru-blocklist.txt ]; then
+          echo "❌ Ошибка: файл ru-blocklist.txt не найден!"
+          exit 1
+        fi
+
+        git add files/ru-blocklist.txt
+
+        if ! git diff --staged --quiet; then
+          git commit -m "🔄 Update ru-blocklist.txt ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK')) [auto]"
+          # Повторная попытка пуша, если возникла гонка
+          for i in 1 2 3; do
+            git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
+          done
+          echo "📤 Файл успешно обновлён"
         else
-          echo "⏭️ Нет изменений, пропуск коммита"
+          echo "⏭️ Список не изменился, пропуск коммита"
         fi
