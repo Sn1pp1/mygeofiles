@@ -6,7 +6,7 @@ on:
     paths: ['.github/workflows/build-ru-blocklist.yml']
   workflow_dispatch:
   schedule:
-    - cron: '0 */6 * * *'  # Каждые 6 часов (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
 
 jobs:
   build:
@@ -25,9 +25,6 @@ jobs:
       run: |
         set -euo pipefail
 
-        # ==========================================
-        #  ВАШ СПИСОК ИСТОЧНИКОВ (в оригинальном порядке)
-        # ==========================================
         SOURCES=(
           "https://community.antifilter.download/list/domains.lst"
           "https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst"
@@ -57,7 +54,6 @@ jobs:
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/twitter.lst"
           "https://github.com/Davoyan/xray-routing/raw/refs/heads/main/domains/banned.txt"
         )
-        # ==========================================
 
         TEMP_RAW=$(mktemp)
         TEMP_CLEAN=$(mktemp)
@@ -71,73 +67,52 @@ jobs:
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
           
+          # Считаем строки после базовой чистки (как в оригинале)
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
-          BEGIN { IGNORECASE=1; c=0 }
-          { gsub(/\r/, ""); gsub(/^\xEF\xBB\xBF/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+          { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
           /^[[:space:]]*$/ { next }
-          /^[[:space:]]*[#!\/]{1,2}/ { next }
-          /^(domain|full|keyword|regexp|include|host|suffix|root|process-name):/ { sub(/^[^:]+:/, "") }
-          /^\+\./ { sub(/^\+\./, "") }
-          /^@@/ { next }
-          /^\|\|/ { sub(/^\|\|/, ""); sub(/[\^~\$\/\*\?:&=].*$/, "") }
-          /^\|https?:\/\// { next }
-          /^\/.*\/\$?/ { next }
-          { gsub(/^["'"'"']+|["'"'"']+,?$/, ""); gsub(/^\[|\]|\{|\}|,/, "") }
-          /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[[:space:]]+/ { sub(/^[0-9.]+[[:space:]]+/, "") }
-          /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[\/0-9]*$/ { next }
-          /^[0-9a-f:]+::?[0-9a-f:\/]*$/ { next }
-          { sub(/^https?:\/\//, ""); sub(/:[0-9]+$/, ""); sub(/\/.*$/, ""); sub(/[?#].*$/, ""); sub(/^.*@/, "") }
-          /^[a-z0-9]([a-z0-9._-]*[a-z0-9])?\.[a-z0-9]{2,}$/ {
-            d = tolower($0)
-            if (d ~ /\.$/) next
-            if (d ~ /^[.-]/) next
-            if (d ~ /\.\./) next
-            if (length(d) > 253) next
-            if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
-            c++
-          }
-          END { print c }
+          /^[[:space:]]*#/ { next }
+          /^regexp:/ { next }
+          /^include:/ { next }
+          { sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, ""); sub(/^full:/, ""); sub(/^\./, "") }
+          /^[[:space:]]*$/ { next }
+          /\.$/ { next }
+          { d=$0; if (d !~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ && d != "") c++ }
+          END { print c+0 }
           ' 2>/dev/null) || COUNT=0
           
           curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
           
-          printf "  %-40s %6s доменов\n" "$SHORT_NAME..." "$COUNT"
+          printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
           TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
         done
         
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE доменов"
+        echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE записей"
         echo ""
 
-        echo "🧹 Очистка и извлечение доменов..."
+        echo "🧹 Очистка в стиле оригинального banned.txt..."
         
-        # === МЯГКАЯ ВАЛИДАЦИЯ ===
+        # === ПАРСЕР КАК В ОРИГИНАЛЕ (максимально пермиссивный) ===
         awk '
-        BEGIN { IGNORECASE=1 }
-        { gsub(/\r/, ""); gsub(/^\xEF\xBB\xBF/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+        { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
-        /^[[:space:]]*[#!\/]{1,2}/ { next }
-        /^[[:space:]]*\/\*/ { next }
-        /^(domain|full|keyword|regexp|include|host|suffix|root|process-name):/ { sub(/^[^:]+:/, ""); next }
-        /^\+\./ { sub(/^\+\./, ""); next }
-        /^@@/ { next }
-        /^\|\|/ { sub(/^\|\|/, ""); sub(/[\^~\$\/\*\?:&=].*$/, ""); next }
-        /^\|https?:\/\// { next }
-        /^\/.*\/\$?/ { next }
-        { gsub(/^["'"'"']+|["'"'"']+,?$/, ""); gsub(/^\[|\]|\{|\}|,/, "") }
-        /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[[:space:]]+/ { sub(/^[0-9.]+[[:space:]]+/, "") }
-        /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+[\/0-9]*$/ { next }
-        /^[0-9a-f:]+::?[0-9a-f:\/]*$/ { next }
-        { sub(/^https?:\/\//, ""); sub(/:[0-9]+$/, ""); sub(/\/.*$/, ""); sub(/[?#].*$/, ""); sub(/^.*@/, "") }
-        
-        /^[a-z0-9]([a-z0-9._-]*[a-z0-9])?\.[a-z0-9]{2,}$/ {
-          d = tolower($0)
-          if (d ~ /\.$/) next
-          if (d ~ /^[.-]/) next
-          if (d ~ /\.\./) next
-          if (length(d) > 253) next
+        /^[[:space:]]*#/ { next }
+        /^regexp:/ { next }
+        /^include:/ { next }
+        {
+          sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
+          sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
+          sub(/^root:/, ""); sub(/^\./, "")
+        }
+        /^[[:space:]]*$/ { next }
+        /\.$/ { next }
+        {
+          d = $0
           if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
-          print d
+          if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next
+          if (d == "") next
+          print tolower(d)
         }
         ' "$TEMP_RAW" > "$TEMP_CLEAN"
         
@@ -154,7 +129,7 @@ jobs:
         echo ""
         echo "📊 ИТОГОВАЯ СТАТИСТИКА"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        printf "  Доменов после парсинга:         %6s\n" "$BEFORE_DEDUP"
+        printf "  Записей после чистки:           %6s\n" "$BEFORE_DEDUP"
         printf "  Удалено дубликатов:             %6s (%s%%)\n" "$REMOVED" "$PCT"
         printf "  ✅ В итоговом файле:            %6s доменов\n" "$AFTER_DEDUP"
         printf "  Размер файла:                   %6s\n" "$SIZE"
