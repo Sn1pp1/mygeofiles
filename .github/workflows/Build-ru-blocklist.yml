@@ -93,7 +93,7 @@ jobs:
 
         echo "🧹 Очистка в стиле оригинального banned.txt..."
         
-        # === ПАРСЕР КАК В ОРИГИНАЛЕ (максимально пермиссивный) ===
+        # === ПАРСЕР С ФИЛЬТРАЦИЕЙ БИТЫХ СТРОК ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -109,17 +109,19 @@ jobs:
         /\.$/ { next }
         {
           d = $0
+          # ❌ Убираем битые строки:
+          if (d ~ /@/) next
+          if (d ~ /domain:/) next
+          if (d ~ /keyword:/) next
+          if (d ~ /regexp:/) next
+          if (d ~ /full:/) next
+          if (d ~ /[[:space:]]/) next
           if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
           if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next
           if (d == "") next
           print tolower(d)
         }
         ' "$TEMP_RAW" > "$TEMP_CLEAN"
-        
-        BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN")
-        
-        echo "🔍 Сортировка и удаление дубликатов..."
-        LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-blocklist.txt
         
         AFTER_DEDUP=$(wc -l < files/ru-blocklist.txt)
         REMOVED=$((BEFORE_DEDUP - AFTER_DEDUP))
