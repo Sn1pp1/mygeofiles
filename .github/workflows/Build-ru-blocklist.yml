@@ -93,7 +93,7 @@ jobs:
 
         echo "🧹 Очистка и фильтрация битых строк..."
         
-        # === ПАРСЕР С УЛУЧШЕННОЙ ОЧИСТКОЙ WWW ===
+        # === ПАРСЕР С ИСПРАВЛЕННОЙ ОЧИСТКОЙ WWW ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -117,8 +117,10 @@ jobs:
           sub(/^www-/, "", d)
           # www3.corsair.com → corsair.com
           sub(/^www[0-9]+\./, "", d)
-          # wwwfacebook.com → facebook.com
-          sub(/^www([a-z])/, "\\1", d)
+          # wwwfacebook.com → facebook.com (ручная обработка, т.к. awk не поддерживает \1)
+          if (match(d, /^www[a-z]/)) {
+            d = substr(d, 4)
+          }
           
           # Обрезаем мусор
           sub(/@.*$/, "", d)
