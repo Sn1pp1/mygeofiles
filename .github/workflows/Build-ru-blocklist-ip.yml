@@ -3,7 +3,7 @@ name: Build-ru-blocklist-ip
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/build-ru-blocklist-ip.yml']
+    paths: ['.github/workflows/Build-ru-blocklist-ip.yml']
   workflow_dispatch:
   schedule:
     - cron: '0 */6 * * *'  # Каждые 6 часов (00:00, 06:00, 12:00, 18:00 UTC)
