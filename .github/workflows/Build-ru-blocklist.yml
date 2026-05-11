@@ -26,7 +26,6 @@ jobs:
         set -euo pipefail
 
         SOURCES=(
-          "https://github.com/Davoyan/xray-routing/raw/refs/heads/main/domains/banned.txt"
           "https://community.antifilter.download/list/domains.lst"
           "https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst"
           "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/inside-raw.lst"
@@ -53,6 +52,7 @@ jobs:
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/hdrezka.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/tiktok.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/twitter.lst"
+          "https://github.com/Davoyan/xray-routing/raw/refs/heads/main/domains/banned.txt"
         )
 
         TEMP_RAW=$(mktemp)
@@ -67,6 +67,7 @@ jobs:
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
           
+          # Считаем строки после базовой чистки
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
           /^[[:space:]]*$/ { next }
@@ -90,8 +91,9 @@ jobs:
         echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE записей"
         echo ""
 
-        echo "🧹 Очистка и фильтрация..."
+        echo "🧹 Очистка и нормализация..."
         
+        # === ПАРСЕР (ФИНАЛЬНАЯ ВЕРСИЯ) ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -108,17 +110,18 @@ jobs:
         {
           d = $0
           
-          # Очистка www-вариаций
-          sub(/^www\./, "", d)
-          sub(/^www-/, "", d)
-          sub(/^www[0-9]+\./, "", d)
+          # 1. Очистка WWW-вариаций
+          sub(/^www\./, "", d)        # www.example.com -> example.com
+          sub(/^www-/, "", d)         # www-example.com -> example.com
+          sub(/^www[0-9]+\./, "", d)  # www3.example.com -> example.com
+          # wwwfacebook.com -> facebook.com (без использования \1, который ломает awk)
           if (match(d, /^www[a-z]/)) {
             d = substr(d, 4)
           }
           
-          # Обрезаем мусор
-          sub(/@.*$/, "", d)
-          sub(/domain:.*$/, "", d)
+          # 2. Обрезка мусора в конце/середине
+          sub(/@.*$/, "", d)          # domain@tracking -> domain
+          sub(/domain:.*$/, "", d)    # domaindomain:tracker -> domain
           sub(/keyword:.*$/, "", d)
           sub(/regexp:.*$/, "", d)
           sub(/full:.*$/, "", d)
@@ -126,19 +129,73 @@ jobs:
           sub(/\+.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
           
-          # Финальная валидация
-          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
-          if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next
+          # 3. Финальная валидация
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # Убираем чистые IP
+          if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next       # Убираем IPv6
           if (d == "") next
-          if (d !~ /\./) next
-          if (d ~ /\.\./) next
-          if (length(d) > 253) next
+          if (d !~ /\./) next                               # Должна быть точка
+          if (d ~ /\.\./) next                              # Нет двойных точек
+          if (length(d) > 253) next                         # Не слишком длинный
+          
+          # (Убрана агрессивная проверка на склейку, чтобы не резать ai.google.dev)
           
           print tolower(d)
         }
         ' "$TEMP_RAW" > "$TEMP_CLEAN"
         
-        BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN")
+        BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN" | tr -d ' ')
         
         echo "🔍 Сортировка и удаление дубликатов..."
-        LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-blocklist
+        LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-blocklist.txt
+        
+        # Проверка, что файл создан
+        if [ ! -s files/ru-blocklist.txt ]; then
+          echo "❌ Ошибка: Файл пустой после обработки!"
+          exit 1
+        fi
+
+        AFTER_DEDUP=$(wc -l < files/ru-blocklist.txt | tr -d ' ')
+        REMOVED=$((BEFORE_DEDUP - AFTER_DEDUP))
+        SIZE=$(du -h files/ru-blocklist.txt | cut -f1)
+        
+        if [ "$BEFORE_DEDUP" -gt 0 ]; then
+          PCT=$(awk "BEGIN {printf \"%.1f\", $REMOVED * 100 / $BEFORE_DEDUP}")
+        else
+          PCT="0.0"
+        fi
+        
+        echo ""
+        echo "📊 ИТОГОВАЯ СТАТИСТИКА"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        printf "  Записей после чистки:           %6s\n" "$BEFORE_DEDUP"
+        printf "  Удалено дубликатов:             %6s (%s%%)\n" "$REMOVED" "$PCT"
+        printf "  ✅ В итоговом файле:            %6s доменов\n" "$AFTER_DEDUP"
+        printf "  Размер файла:                   %6s\n" "$SIZE"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo " Первые 5 записей из ru-blocklist.txt:"
+        head -5 files/ru-blocklist.txt | sed 's/^/   ✓ /'
+
+    - name: Commit and push result
+      run: |
+        git config user.name "RU Blocklist Bot"
+        git config user.email "blocklist-bot@github.com"
+        
+        git pull --rebase origin main 2>/dev/null || true
+        
+        if [ ! -f files/ru-blocklist.txt ]; then
+          echo "❌ Ошибка: файл ru-blocklist.txt не найден!"
+          exit 1
+        fi
+
+        git add files/ru-blocklist.txt
+
+        if ! git diff --staged --quiet; then
+          git commit -m "🔄 Update ru-blocklist.txt ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          for i in 1 2 3; do
+            git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
+          done
+          echo "📤 Файл успешно обновлён"
+        else
+          echo "⏭️ Список не изменился, пропуск коммита"
+        fi
