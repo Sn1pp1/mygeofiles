@@ -78,6 +78,8 @@ adobesunbreak.com
 adobetag.com
 ads-twitter.com
 ads.twitch.tv
+ads.youtube.com
+ads.youtube.com:
 adultmult.tv
 advancediddetection.com
 afcs.dellcdn.com
@@ -159,7 +161,6 @@ antizapret.prostovpn.org
 any.do
 anythingllm.com
 aol.com
-api.app.prod.grazie.aws.intellij.net
 api.fitbit.com
 api.github.com
 api.githubcopilot.com
@@ -388,7 +389,6 @@ chaos.com
 charhub.io
 chat.com
 chat.openai.com
-chat.openai.com.cdn.cloudflare.net
 chatfuel.com
 chatgpt.com
 chatgpt.livekit.cloud
@@ -1125,6 +1125,7 @@ getsafeonline.org
 gfacecbook.com
 gfn.am
 ggpht.cn
+ggpht.cn:
 ggpht.com
 ghidra-sre.org
 ghostrc.game.idtech.services
@@ -1229,7 +1230,6 @@ hhvm.com
 hifacebook.info
 hitomi.la
 hollisterco.com
-holod.global.ssl.fastly.net
 holod.media
 home-connect.cn
 home-connect.com
@@ -1244,6 +1244,7 @@ howtohackfacebook-account.com
 hpe.com
 hqporner.com
 hromadske.ua
+hrw.org
 hs.fi
 hsfacebook.com
 htmhell.dev
@@ -1315,10 +1316,6 @@ instagram-help.com
 instagram-press.com
 instagram-press.net
 instagram.com
-instagram.fhrk1-1.fna.fbcdn.net
-instagram.fkun2-1.fna.fbcdn.net
-instagram.frix7-1.fna.fbcdn.net
-instagram.fvno2-1.fna.fbcdn.net
 instagramci.com
 instagramcn.com
 instagramdi.com
@@ -1345,7 +1342,6 @@ instagrem.com
 instagrm.com
 instagtram.com
 instagy.com
-install.launcher.omniverse.nvidia.com
 instamgram.com
 instangram.com
 instanttelegram.com
@@ -1511,6 +1507,7 @@ lostfilm.tw
 lostfilm.uno
 lostfilm.win
 lostfilmtv2.site
+lostfilmtv5.site
 lowes.com
 lu4.org
 lucid.app
@@ -1606,7 +1603,6 @@ militarnyi.com
 mintmobile.com
 miracleptr.wordpress.com
 mixcloud.com
-mobile.events.data.microsoft.com
 mobilefacebook.com
 modartt.com
 modrinth.com
@@ -1619,6 +1615,7 @@ monoprice.com
 monotype.com
 monotypefonts.com
 monster.ie
+montechpc.com
 more.fm
 moscowtimes.ru
 mouser.com
@@ -1666,7 +1663,6 @@ netapp.com
 netflix.ca
 netflix.com
 netflix.net
-netflixdnstest
 netflixinvestor.com
 netflixstudios.com
 netflixtechblog.com
@@ -1744,6 +1740,7 @@ nippon.com
 nitropdf.com
 nnmclub.to
 nnmstatic.win
+noctua.at
 nordaccount.com
 nordcdn.com
 nordvpn.com
@@ -1824,11 +1821,9 @@ opal.google
 opal.google.com
 open.spotify.com
 openai.com
-openai.com.cdn.cloudflare.net
 openaiapi-site.azureedge.net
 openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 openaicom.imgix.net
-openaicomproductionae4b.blob.core.windows.net
 opencreate.org
 openculture.com
 opengraphprotocol.com
@@ -1885,7 +1880,6 @@ pay.buckaroo.nl
 paypal.com
 pb.wtf
 pbs.twimg.com
-pbs.twimg.com.cdn.cloudflare.net
 pcbway.com
 pcbway.ru
 pcgamesn.com
@@ -1904,7 +1898,6 @@ philiascans.org
 philscomputerlab.com
 phishtank.com
 phncdn.com
-phncdn.com.sds.rncdn7.com
 phoenixcontact.com
 photonengine.com
 photopea.com
@@ -1973,6 +1966,7 @@ porsche.com
 portal.bgpmon.net
 portal.lviv.ua
 posle.media
+postfix.org
 posthog.com
 postimees.ee
 powersunitedvr.com
@@ -2029,7 +2023,6 @@ qualtrics.com
 quicknode.com
 quiz.directory
 quora.com
-quora.com.cdn.cloudflare.net
 qwant.com
 r4.err.ee
 radarr.servarr.com
@@ -2248,8 +2241,6 @@ siemens.com
 signal.art
 signal.org
 signalusers.org
-signon.goliath.prod.deadorbit.net
-signon.goliath.prod.gravityshavings.net
 signon2.deadorbit.net
 signon2.gravityshavings.net
 simplex.chat
@@ -2274,6 +2265,7 @@ slifki.biz
 smartbear.co
 smartbear.com
 smartdeploy.com
+smashwords.com
 sms-activate.io
 snap-storage-cdn.l.google.com
 snap.com
@@ -2289,7 +2281,6 @@ snyk.io
 soapui.org
 sobesednik.com
 sobesednik.ru
-software-static.download.prss.microsoft.com
 software.cisco.com
 solarwinds.com
 sonara.ai
@@ -2303,7 +2294,6 @@ sovetromantica.com
 spacelift.io
 spaceship.com
 speechs3proto2-pa.googleapis.com
-speechs3proto2-pa.googleapis.comai.google.dev
 speedtest.net
 spektr.press
 spiceworks.com
@@ -2343,7 +2333,6 @@ startpage.com
 static-cdn.jtvnw.nethdrezka.ag
 static-ss.xvideos-cdn.com
 static.cdninstagram.com
-static.files.bbci.co.uk
 static.lostfilm.top
 static.rutracker.cc
 static1.e621.net
@@ -2356,7 +2345,7 @@ steganos.com
 stel.com
 stereophile.com
 stitch.withgoogle.com
-stitch.withgoogle.com+.googleplay.com
+stitch.withgoogle.com#
 stockx.com
 store.supercell.com
 strana.news
@@ -2573,7 +2562,6 @@ tx.me
 typekit.com
 typekit.net
 typing.com
-ua
 uaudio.com
 ubi.com
 ubnt.com
@@ -2622,7 +2610,6 @@ vhd.zetflix.online
 viber.com
 vice.com
 video.twimg.com
-video.twimg.com.cdn.cloudflare.net
 viewpointsfromfacebook.com
 vine.co
 vintagestory.at
@@ -2704,6 +2691,7 @@ wiisportsresort.com
 wiiugamepad.com
 wiivc.net
 wiki.fextralife.com
+wikiart.org
 wikidot.com
 wilsoncenter.org
 windguru.cz
@@ -2722,43 +2710,6 @@ worldhack.com
 wpengine.com
 wunderground.com
 www-facebook.com
-www.analog.com
-www.bbc.com
-www.cisco.com
-www.citrix.com
-www.currenttime.tv
-www.dell.com
-www.digikey.com
-www.digitalocean.com
-www.discord.com
-www.dw.com
-www.grammarly.com
-www.hetzner.com
-www.hrw.org
-www.intel.com
-www.jabra.com
-www.kavkazr.com
-www.lenovo.com
-www.lostfilm.tv
-www.lostfilmtv5.site
-www.microchip.com
-www.mongodb.com
-www.montechpc.com
-www.moscowtimes.ru
-www.mouser.com
-www.noctua.at
-www.postfix.org
-www.qualcomm.com
-www.smashwords.com
-www.stalker2.com
-www.support.xerox.com
-www.the-village.ru
-www.themoviedb.org
-www.ti.com
-www.torproject.org
-www.wikiart.org
-www.wunderground.com
-www.youtube.com
 www3.corsair.com
 wwwfacebok.com
 wwwfacebook.com
@@ -2799,7 +2750,6 @@ yogalayout.com
 yourdictionary.com
 youtrack.cloud
 youtu.be
-youtube
 youtube-nocookie.com
 youtube-ui.l.google.com
 youtube.ae
