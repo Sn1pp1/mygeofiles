@@ -93,7 +93,7 @@ jobs:
 
         echo "🧹 Очистка и фильтрация битых строк..."
         
-        # === ПАРСЕР С ИСПРАВЛЕНИЕМ СКЛЕЕННЫХ ДОМЕНОВ ===
+        # === ПАРСЕР С УЛУЧШЕННОЙ ОЧИСТКОЙ WWW ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -110,36 +110,36 @@ jobs:
         {
           d = $0
           
-          # === ИЗВЛЕКАЕМ ЧИСТЫЙ ДОМЕН ===
-          # Удаляем www. в начале (www.youtube.com → youtube.com)
+          # === ОЧИСТКА WWW-ВАРИАЦИЙ ===
+          # www.example.com → example.com
           sub(/^www\./, "", d)
+          # www-facebook.com → facebook.com
+          sub(/^www-/, "", d)
+          # www3.corsair.com → corsair.com
+          sub(/^www[0-9]+\./, "", d)
+          # wwwfacebook.com → facebook.com
+          sub(/^www([a-z])/, "\\1", d)
           
-          # Обрезаем всё после @ (ads.youtube.com:@ads → ads.youtube.com)
+          # Обрезаем мусор
           sub(/@.*$/, "", d)
-          
-          # Обрезаем всё после "domain:" (ads.youtube.comdomain:youtube → ads.youtube.com)
           sub(/domain:.*$/, "", d)
-          
-          # Обрезаем всё после "keyword:", "regexp:", "full:"
           sub(/keyword:.*$/, "", d)
           sub(/regexp:.*$/, "", d)
           sub(/full:.*$/, "", d)
-          
-          # Обрезаем по первому пробелу
+          sub(/:[[:space:]]*$/, "", d)
+          sub(/\+.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
           
-          # === ФИНАЛЬНАЯ ПРОВЕРКА ===
-          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # чистые IP
-          if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next       # IPv6
+          # Финальная проверка
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+          if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next
           if (d == "") next
-          if (d !~ /\./) next                               # должна быть точка
-          if (d ~ /\.\./) next                              # не должно быть ..
-          if (length(d) > 253) next                         # слишком длинный
+          if (d !~ /\./) next
+          if (d ~ /\.\./) next
+          if (length(d) > 253) next
           
-          # === ПРОВЕРКА НА СКЛЕЙКУ ДОМЕНОВ ===
-          # Если больше 3 точек — вероятно склеено несколько доменов
-          n = gsub(/\./, ".", d)
-          if (n > 3) next  # Пропускаем подозрительные строки
+          # Проверка на склейку доменов
+          if (d ~ /[a-z]\.[a-z]{2,}[a-z]\./) next
           
           print tolower(d)
         }
