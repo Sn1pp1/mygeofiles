@@ -29,7 +29,7 @@ jobs:
           "https://antifilter.download/list/allyouneed.lst"
           "https://community.antifilter.download/list/community.lst"
           "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/text/ru-blocked-community.txt"
-          "https://github.com/1andrevich/Re-filter-lists/blob/main/ipsum.lst"
+          "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/ipsum.lst"
           "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/community_ips.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/discord.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/discord.lst"
