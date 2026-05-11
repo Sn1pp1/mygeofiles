@@ -1,4 +1,4 @@
-name: Build-ru-blocklist-ip
+name: Build RU Blocklist IP
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     paths: ['.github/workflows/Build-ru-blocklist-ip.yml']
   workflow_dispatch:
   schedule:
-    - cron: '0 */6 * * *'  # Каждые 6 часов (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
 
 jobs:
   build:
@@ -25,12 +25,11 @@ jobs:
       run: |
         set -euo pipefail
 
-        # ==========================================
-        #  ВАШ СПИСОК ИСТОЧНИКОВ (в оригинальном порядке)
-        # ==========================================
         IP_SOURCES=(
           "https://antifilter.download/list/allyouneed.lst"
           "https://community.antifilter.download/list/community.lst"
+          "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/text/ru-blocked-community.txt"
+          "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/text/re-filter.txt"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/discord.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/discord.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/telegram.lst"
@@ -42,7 +41,6 @@ jobs:
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/google_meet.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/google_meet.lst"
         )
-        # ==========================================
 
         TEMP_RAW=$(mktemp)
         TEMP_CLEAN=$(mktemp)
@@ -56,35 +54,28 @@ jobs:
         for URL in "${IP_SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
           
-          # Считаем валидные CIDR после базовой чистки
+          # Считаем все непустые строки
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
           /^[[:space:]]*$/ { next }
           /^[[:space:]]*[#!\/]/ { next }
-          {
-            sub(/^ip-cidr,/i, ""); sub(/^ip-cidr6,/i, "")
-            sub(/^no-resolve,/i, ""); sub(/^cidr:/i, "")
-            sub(/^ipv4:/i, ""); sub(/^ipv6:/i, ""); gsub(/^[[:space:]]+|[[:space:]]+$/, "")
-          }
-          /^([0-9]{1,3}\.){3}[0-9]{1,3}\/[0-9]{1,2}$/ { c++ }
-          /^([0-9a-fA-F]{0,4}:){2,7}[0-9a-fA-F]{0,4}\/[0-9]{1,3}$/ { c++ }
-          /^::\/[0-9]+$/ { c++ }
+          { c++ }
           END { print c+0 }
           ' 2>/dev/null) || COUNT=0
           
           curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
           
-          printf "  %-40s %6s CIDR\n" "$SHORT_NAME..." "$COUNT"
+          printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
           TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
         done
         
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE CIDR"
+        echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE записей"
         echo ""
 
-        echo "🧹 Очистка и валидация IP/CIDR..."
+        echo "🧹 Очистка и сохранение всех IP..."
         
-        # === ПАРСЕР IP/CIDR (как в доменном скрипте — мягкая валидация) ===
+        # === МЯГКИЙ ПАРСЕР (сохраняет ВСЕ IP) ===
         awk '
         BEGIN { IGNORECASE=1 }
         {
@@ -93,30 +84,31 @@ jobs:
         }
         /^[[:space:]]*$/ { next }
         /^[[:space:]]*[#!\/]/ { next }
-        
-        # Убираем префиксы правил
         {
           sub(/^ip-cidr,/i, ""); sub(/^ip-cidr6,/i, "")
           sub(/^no-resolve,/i, ""); sub(/^cidr:/i, "")
           sub(/^ipv4:/i, ""); sub(/^ipv6:/i, "")
+          sub(/^domain:/i, ""); sub(/^full:/i, "")
+          sub(/^keyword:/i, ""); sub(/^host:/i, "")
           gsub(/^[[:space:]]+|[[:space:]]+$/, "")
         }
+        /^$/ { next }
+        /^[[:space:]]*$/ { next }
         
-        # IPv4 CIDR: базовая валидация
-        /^([0-9]{1,3}\.){3}[0-9]{1,3}\/[0-9]{1,2}$/ {
-          n = split($0, p, "[./]")
-          ok = 1
-          for (i = 1; i <= 4; i++) if (p[i] > 255) ok = 0
-          if (ok && p[5] <= 32) { print tolower($0); next }
-        }
+        # IPv4 с маской
+        /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/ { print tolower($0); next }
         
-        # IPv6 CIDR: принимаем большинство форматов
-        /^([0-9a-f:]+\/[0-9]{1,3})$/ {
-          if ($0 ~ /:/ && $0 ~ /\//) { print tolower($0); next }
-        }
+        # IPv4 без маски → /32
+        /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ { print $0 "/32"; next }
         
-        # Короткие IPv6
+        # IPv6 с маской
+        /^[0-9a-fA-F:]+\/[0-9]+$/ { if ($0 ~ /:/) { print tolower($0); next } }
+        
+        # IPv6 без маски → /128
+        /^[0-9a-fA-F:]+$/ { if ($0 ~ /:/ && $0 !~ /\./) { print tolower($0) "/128"; next } }
+        
         /^::\/[0-9]+$/ { print tolower($0); next }
+        /^::$/ { print "::/128"; next }
         ' "$TEMP_RAW" > "$TEMP_CLEAN"
         
         BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN")
@@ -129,14 +121,13 @@ jobs:
         SIZE=$(du -h files/ru-blocklist-ip.txt | cut -f1)
         PCT=$(awk "BEGIN {printf \"%.1f\", $REMOVED * 100 / ($BEFORE_DEDUP + 0.001)}")
         
-        # Считаем IPv4 и IPv6 отдельно
         IPV4_COUNT=$(grep -cE '^([0-9]{1,3}\.){3}[0-9]{1,3}/' files/ru-blocklist-ip.txt || echo 0)
         IPV6_COUNT=$(grep -cE ':/' files/ru-blocklist-ip.txt || echo 0)
         
         echo ""
         echo "📊 ИТОГОВАЯ СТАТИСТИКА"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        printf "  CIDR после очистки:             %6s\n" "$BEFORE_DEDUP"
+        printf "  Записей после очистки:          %6s\n" "$BEFORE_DEDUP"
         printf "  Удалено дубликатов:             %6s (%s%%)\n" "$REMOVED" "$PCT"
         printf "  ✅ В итоговом файле:            %6s CIDR\n" "$AFTER_DEDUP"
         printf "    ├─ IPv4:                      %6s\n" "$IPV4_COUNT"
