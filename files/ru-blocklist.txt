@@ -78,8 +78,6 @@ adobesunbreak.com
 adobetag.com
 ads-twitter.com
 ads.twitch.tv
-ads.youtube.com:@ads
-ads.youtube.comdomain:youtube
 adultmult.tv
 advancediddetection.com
 afcs.dellcdn.com
@@ -540,7 +538,6 @@ digitalocean.com
 dis.gd
 discord-activities.com
 discord-attachments-uploads-prd.storage.googleapis.com
-discord-attachments-uploads-prd.storage.googleapis.comfull:discord-attachments-uploads-prd.storage.googleapis.com
 discord.co
 discord.com
 discord.design
@@ -1128,7 +1125,6 @@ getsafeonline.org
 gfacecbook.com
 gfn.am
 ggpht.cn
-ggpht.cn:@cn
 ggpht.com
 ghidra-sre.org
 ghostrc.game.idtech.services
@@ -2074,7 +2070,6 @@ redditstatic.com
 redditstatus.com
 reddxxx.com
 redgifs.com
-redirector.c.play.google.com# google play pcap
 redis.com
 redis.io
 redislabs.com
@@ -2361,7 +2356,6 @@ steganos.com
 stel.com
 stereophile.com
 stitch.withgoogle.com
-stitch.withgoogle.com# google deepmind (gemini)
 stitch.withgoogle.com+.googleplay.com
 stockx.com
 store.supercell.com
@@ -2610,7 +2604,6 @@ urlr.me
 usa.one
 usatoday.com
 usercontent.dev
-usercontent.devdomain:cdn-telegram.org
 usher.ttvnw.net
 v.vrv.co
 v16-tiktokcdn-com.akamaized.net
@@ -2774,7 +2767,6 @@ wwwmfacebook.com
 x-minus.pro
 x.ai
 x.com
-x.comdomain:10minutemail.com
 xboxdesignlab.xbox.com
 xenoblade.com
 xerox.com
@@ -2979,7 +2971,6 @@ yt-video-upload.l.google.com
 yt.be
 yt3.ggpht.com
 yt3.googleusercontent.com
-yt3.googleusercontent.comfull:yt3.googleusercontent.com
 yt3.googleusercontent.comyoutube.com
 ytimg.com
 ytimg.l.google.com
