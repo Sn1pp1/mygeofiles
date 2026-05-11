@@ -9,6 +9,7 @@ gql.twitch.tv
 ads.twitch.tv
 playlist.ttvnw.net
 static-cdn.jtvnw.net
+status.play2go.cloud
 play2go.cloud
 oisd.nl
 incy.cc
