@@ -3,7 +3,7 @@ name: Build RU Blocklist
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/build-ru-blocklist.yml']
+    paths: ['.github/workflows/Build-ru-blocklist.yml']
   workflow_dispatch:
   schedule:
     - cron: '0 */6 * * *'
