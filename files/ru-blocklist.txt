@@ -15,10 +15,6 @@
 7tv.io
 8chan.moe
 9tv.co.il
-\1acebok.com
-\1acebook.com
-\1facebook.com
-\1nstagram.com
 a360.co
 abercrombie.com
 abook-club.ru
@@ -1377,6 +1373,7 @@ metal-archives.com
 metla.press
 metopera.org
 mezha.net
+mfacebook.com
 michaelkors.global
 microchip.com
 middlewareinventory.com
