@@ -91,7 +91,7 @@ jobs:
         echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE записей"
         echo ""
 
-        echo "🧹 Очистка в стиле оригинального banned.txt..."
+        echo "🧹 Очистка и фильтрация битых строк..."
         
         # === ПАРСЕР С ФИЛЬТРАЦИЕЙ БИТЫХ СТРОК ===
         awk '
@@ -110,18 +110,23 @@ jobs:
         {
           d = $0
           # ❌ Убираем битые строки:
-          if (d ~ /@/) next
-          if (d ~ /domain:/) next
-          if (d ~ /keyword:/) next
-          if (d ~ /regexp:/) next
-          if (d ~ /full:/) next
-          if (d ~ /[[:space:]]/) next
-          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
-          if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next
+          if (d ~ /@/) next                    # ads.youtube.com:@ads
+          if (d ~ /domain:/) next              # ads.youtube.comdomain:youtube
+          if (d ~ /keyword:/) next             # склеенные правила
+          if (d ~ /regexp:/) next              # склеенные правила
+          if (d ~ /full:/) next                # склеенные правила
+          if (d ~ /[[:space:]]/) next          # пробелы внутри строки
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # чистые IP
+          if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next       # IPv6
           if (d == "") next
           print tolower(d)
         }
         ' "$TEMP_RAW" > "$TEMP_CLEAN"
+        
+        BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN")
+        
+        echo "🔍 Сортировка и удаление дубликатов..."
+        LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-blocklist.txt
         
         AFTER_DEDUP=$(wc -l < files/ru-blocklist.txt)
         REMOVED=$((BEFORE_DEDUP - AFTER_DEDUP))
