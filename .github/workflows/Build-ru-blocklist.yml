@@ -93,7 +93,7 @@ jobs:
 
         echo "🧹 Очистка и фильтрация битых строк..."
         
-        # === ПАРСЕР С ФИЛЬТРАЦИЕЙ БИТЫХ СТРОК ===
+        # === ПАРСЕР С ИСПРАВЛЕНИЕМ СКЛЕЕННЫХ ДОМЕНОВ ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -109,16 +109,38 @@ jobs:
         /\.$/ { next }
         {
           d = $0
-          # ❌ Убираем битые строки:
-          if (d ~ /@/) next                    # ads.youtube.com:@ads
-          if (d ~ /domain:/) next              # ads.youtube.comdomain:youtube
-          if (d ~ /keyword:/) next             # склеенные правила
-          if (d ~ /regexp:/) next              # склеенные правила
-          if (d ~ /full:/) next                # склеенные правила
-          if (d ~ /[[:space:]]/) next          # пробелы внутри строки
+          
+          # === ИЗВЛЕКАЕМ ЧИСТЫЙ ДОМЕН ===
+          # Удаляем www. в начале (www.youtube.com → youtube.com)
+          sub(/^www\./, "", d)
+          
+          # Обрезаем всё после @ (ads.youtube.com:@ads → ads.youtube.com)
+          sub(/@.*$/, "", d)
+          
+          # Обрезаем всё после "domain:" (ads.youtube.comdomain:youtube → ads.youtube.com)
+          sub(/domain:.*$/, "", d)
+          
+          # Обрезаем всё после "keyword:", "regexp:", "full:"
+          sub(/keyword:.*$/, "", d)
+          sub(/regexp:.*$/, "", d)
+          sub(/full:.*$/, "", d)
+          
+          # Обрезаем по первому пробелу
+          sub(/[[:space:]].*$/, "", d)
+          
+          # === ФИНАЛЬНАЯ ПРОВЕРКА ===
           if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # чистые IP
           if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next       # IPv6
           if (d == "") next
+          if (d !~ /\./) next                               # должна быть точка
+          if (d ~ /\.\./) next                              # не должно быть ..
+          if (length(d) > 253) next                         # слишком длинный
+          
+          # === ПРОВЕРКА НА СКЛЕЙКУ ДОМЕНОВ ===
+          # Если больше 3 точек — вероятно склеено несколько доменов
+          n = gsub(/\./, ".", d)
+          if (n > 3) next  # Пропускаем подозрительные строки
+          
           print tolower(d)
         }
         ' "$TEMP_RAW" > "$TEMP_CLEAN"
