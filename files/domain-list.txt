@@ -20,6 +20,7 @@ boberlogs.top
 uwu-logs.xyz
 mmoui.com
 wowinterface.com
+trinitycore.info
 telepost.me
 tampermonkey.net
 userscript.zone
