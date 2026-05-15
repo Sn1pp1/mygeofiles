@@ -1162,7 +1162,7 @@ gr-assets.com
 grafana.com
 grammarly.com
 grani.ru
-graph-fallback.instagram.cominstagram.com
+graph-fallback.instagram.com
 graph.instagram.com
 graph.org
 graph.whatsapp.com
@@ -1921,7 +1921,7 @@ pinata.cloud
 pingdom.com
 piratbit.top
 pixabay.com
-pixel.facebook.com
+pixel.facebook.cominstagram.com
 pixiv.net
 pkgs.tailscale.com
 plab.site
