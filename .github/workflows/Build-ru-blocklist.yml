@@ -26,7 +26,6 @@ jobs:
         set -euo pipefail
 
         SOURCES=(
-          "https://github.com/Davoyan/xray-routing/raw/refs/heads/main/domains/banned.txt"
           "https://community.antifilter.download/list/domains.lst"
           "https://raw.githubusercontent.com/1andrevich/Re-filter-lists/refs/heads/main/community.lst"
           "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/inside-raw.lst"
