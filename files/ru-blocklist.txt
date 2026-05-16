@@ -254,7 +254,6 @@ bbci.co.uk
 bcbits.com
 bdurl.net
 beacon3d.com
-beacons.gvt2.com
 beammp.com
 beamng.com
 beamng.gmbh
@@ -2310,7 +2309,6 @@ sovanews.tv
 sovetromantica.com
 spacelift.io
 spaceship.com
-speechs3proto2-pa.googleapis.com
 speechs3proto2-pa.googleapis.comai.google.dev
 speedtest.net
 spektr.press
