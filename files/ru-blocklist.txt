@@ -1129,6 +1129,7 @@ gelbooru.com
 geller-pa.googleapis.com
 gemini.google
 gemini.google.com
+gen.jut.su
 generativeai.google
 generativelanguage.googleapis.com
 geni.us
