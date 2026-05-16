@@ -1,0 +1,115 @@
+# .github/workflows/sync-and-convert-community.yml
+name: Sync & Convert community.lst to .srs
+
+on:
+  schedule:
+    - cron: '0 3,9,15,21 * * *'  # Каждые 6 часов по MSK
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-and-convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Install sing-box
+        run: |
+          SING_BOX_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep '"tag_name":' | cut -d'"' -f4)
+          curl -Lo sing-box.tar.gz "https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION#v}-linux-amd64.tar.gz"
+          tar -xzf sing-box.tar.gz
+          sudo mv sing-box*/sing-box /usr/local/bin/
+          rm -rf sing-box*
+
+      - name: Download & sync community.lst
+        id: sync
+        run: |
+          SOURCE_URL="https://community.antifilter.download/list/community.lst"
+          TARGET_FILE="files/community.lst"
+          TEMP_FILE="files/community.lst.tmp"
+          
+          echo "📥 Скачиваю: $SOURCE_URL"
+          curl -fsSL "$SOURCE_URL" -o "$TEMP_FILE" || {
+            echo "❌ Ошибка загрузки"
+            exit 1
+          }
+          
+          # Нормализация: убираем пустые строки и комментарии
+          grep -v '^#' "$TEMP_FILE" | grep -v '^$' | grep -v '^!' | sort -u > "$TEMP_FILE.clean" || true
+          
+          if [ -f "$TARGET_FILE" ]; then
+            if diff -q "$TARGET_FILE" "$TEMP_FILE.clean" >/dev/null 2>&1; then
+              echo "changed=false" >> $GITHUB_OUTPUT
+              echo "⏭️ Файл не изменился"
+              rm -f "$TEMP_FILE" "$TEMP_FILE.clean"
+              exit 0
+            fi
+          fi
+          
+          mv "$TEMP_FILE.clean" "$TARGET_FILE"
+          rm -f "$TEMP_FILE"
+          echo "changed=true" >> $GITHUB_OUTPUT
+          echo "✅ community.lst обновлён: $(wc -l < "$TARGET_FILE") подсетей"
+
+      - name: Convert IP subnets to .srs
+        if: steps.sync.outputs.changed == 'true'
+        run: |
+          echo "🔨 Конвертирую IP подсети в .srs формат..."
+          
+          python3 << 'EOF'
+          import json
+          
+          ip_cidrs = []
+          with open('files/community.lst', 'r') as f:
+              for line in f:
+                  line = line.strip()
+                  if line and not line.startswith('#') and not line.startswith('!'):
+                      # Проверяем, что это CIDR (содержит /)
+                      if '/' in line:
+                          ip_cidrs.append(line)
+          
+          rule_set = {
+              "version": 1,
+              "rules": [
+                  {
+                      "ip_cidr": ip_cidrs
+                  }
+              ]
+          }
+          
+          with open('files/community.srs.json', 'w') as f:
+              json.dump(rule_set, f, indent=2)
+          
+          print(f"✅ JSON создан: {len(ip_cidrs)} IP подсетей")
+          EOF
+          
+          # Компиляция в бинарный .srs
+          sing-box rule-set compile --output files/community.srs files/community.srs.json
+          rm -f files/community.srs.json
+          echo "✅ Скомпилирован community.srs"
+
+      - name: Commit and push result
+        if: steps.sync.outputs.changed == 'true'
+        run: |
+          git config user.name "RU Blocklist Bot"
+          git config user.email "blocklist-bot@github.com"
+          
+          git pull --rebase origin main 2>/dev/null || true
+          
+          git add files/community.lst files/community.srs
+          
+          if ! git diff --staged --quiet; then
+            git commit -m "🔄 Update community.lst ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+            for i in 1 2 3; do
+              git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
+            done
+            echo "📤 Файлы успешно обновлены"
+          else
+            echo "⏭️ Нет изменений для коммита"
+          fi
