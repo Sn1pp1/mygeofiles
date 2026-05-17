@@ -534,6 +534,7 @@ designify.com
 devart.com
 developer.nvidia.com
 developerprofiles-pa.googleapis.com
+developers.facebook.com
 developers.instagram.com
 devexpress.com
 deviantart.com
@@ -957,7 +958,6 @@ fb.watch
 fbacebook.com
 fbbmarket.com
 fbboostyourbusiness.com
-fbcdn-a.akamaihd.net
 fbcdn.com
 fbcdn.net
 fbf8.com
@@ -1185,7 +1185,7 @@ gr-assets.com
 grafana.com
 grammarly.com
 grani.ru
-graph-fallback.instagram.com
+graph-fallback.instagram.cominstagram.com
 graph.instagram.com
 graph.org
 graph.whatsapp.com
@@ -1984,7 +1984,7 @@ pinata.cloud
 pingdom.com
 piratbit.top
 pixabay.com
-pixel.facebook.cominstagram.com
+pixel.facebook.com
 pixiv.net
 pkgs.tailscale.com
 plab.site
@@ -2592,7 +2592,7 @@ tmdb.org
 tokenized.play.google.com
 tommy.com
 ton.org
-ton.orgdevelopers.facebook.com
+ton.orgfbcdn-a.akamaihd.net
 toolbox.app
 tools.cisco.com
 toplayerserver.com
