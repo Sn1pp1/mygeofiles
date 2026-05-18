@@ -1,5 +1,5 @@
 # .github/workflows/sync-and-convert-community.yml
-name: Sync & Convert community.lst to .srs
+name: Convert community.lst to .srs
 
 on:
   schedule:
