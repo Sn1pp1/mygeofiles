@@ -1119,7 +1119,6 @@ gelbooru.com
 geller-pa.googleapis.com
 gemini.google
 gemini.google.com
-gen.jut.su
 generativeai.google
 generativelanguage.googleapis.com
 geni.us
@@ -2398,7 +2397,6 @@ static1.e621.net
 statology.org
 status.discord.com
 status.discordapp.com
-status.play2go.cloud
 steamidfinder.com
 steamstat.info
 steganos.com
