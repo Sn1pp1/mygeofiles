@@ -82,7 +82,7 @@ adobesunbreak.com
 adobetag.com
 ads-twitter.com
 ads.twitch.tv
-ads.youtube.com
+ads.youtube.comdiscord-attachments-uploads-prd.storage.googleapis.com
 adultmult.tv
 advancediddetection.com
 afcs.dellcdn.com
@@ -133,8 +133,6 @@ amx.com
 analog.com
 analytics.facebook.com
 andrevi.ch
-android-safebrowsing.google.com
-android.clients.google.com
 angryemailtranslator.com
 anidub.com
 anilib.me
@@ -169,7 +167,6 @@ api.fitbit.com
 api.github.com
 api.githubcopilot.com
 api.home-connect.com
-api.imem.app
 api.instagram.com
 api.ip.sb
 api.jetbrains.ai
@@ -179,7 +176,6 @@ api.protonmail.ch
 api.pwnedpasswords.com
 api.radarr.video
 api.service-kp.com
-api.swiftgram.app
 api.theins.info
 api.themoviedb.org
 api.twitter.com
@@ -188,7 +184,6 @@ apis.google.com
 apkmirror.com
 aplawrence.com
 apogeoapi.com
-app-measurement.com
 app.4pda.to
 app.amplitude.com
 app.m3u.in
@@ -417,7 +412,6 @@ cici.com
 ciciai.com
 ciciaicdn.com
 circlecrewpinkcrowd.com
-circlecrewpinkcrowd.comai.google.dev
 cisco.com
 ciscobinary.openh264.org
 cisecurity.org
@@ -467,7 +461,6 @@ community.sophos.com
 como-hackearfacebook.com
 componentkit.org
 connect.ngrok-agent.com
-connectivitycheck.gstatic.com
 consent.trustarc.com
 contabo.com
 contest.com
@@ -534,7 +527,6 @@ designify.com
 devart.com
 developer.nvidia.com
 developerprofiles-pa.googleapis.com
-developers.facebook.com
 developers.instagram.com
 devexpress.com
 deviantart.com
@@ -548,7 +540,6 @@ diffblue.com
 digash.live
 digikey.com
 digital-cdn.net
-digitalassetlinks.googleapis.com
 digitalcontent.sky
 digitalocean.com
 dis.gd
@@ -571,7 +562,6 @@ discordapp.io
 discordapp.net
 discordapp.org
 discordcdn.com
-discordcdn.comdis.gd
 discordmerch.com
 discordpartygames.com
 discordsays.com
@@ -958,6 +948,7 @@ fb.watch
 fbacebook.com
 fbbmarket.com
 fbboostyourbusiness.com
+fbcdn-a.akamaihd.net
 fbcdn.com
 fbcdn.net
 fbf8.com
@@ -1021,7 +1012,6 @@ filmix.fm
 filmix.la
 findagrave.com
 fingerium.stream.voidboost.cc
-firebaseinstallations.googleapis.com
 firefly-ps.adobe.io
 fitbit-pa.googleapis.com
 fitbit.google.com
@@ -1170,9 +1160,6 @@ golosameriki.com
 gonift.com
 gonitro.com
 goodreads.com
-google-ohttp-relay-safebrowsing.fastly-edge.com
-googleads.g.doubleclick.net
-googleplay.com
 googletagmanager.com
 googlevideo.com
 gordonua.com
@@ -1185,7 +1172,7 @@ gr-assets.com
 grafana.com
 grammarly.com
 grani.ru
-graph-fallback.instagram.cominstagram.com
+graph-fallback.instagram.com
 graph.instagram.com
 graph.org
 graph.whatsapp.com
@@ -1324,7 +1311,6 @@ incy.cc
 indeed.com
 indiehackers.com
 infineon.com
-infinitedata-pa.googleapis.com
 informit.com
 insanelymac.com
 insearch.site
@@ -1515,7 +1501,6 @@ ldoceonline.com
 le-production.tv
 leafletjs.com
 legalshield.com
-legra.ph
 leica-geosystems.com
 lenovo.com
 lenso.ai
@@ -1524,7 +1509,6 @@ lf16-pkgcdn.pitaya-clientai.com
 lf19-pkgcdn.pitaya-clientai.com
 lgeapi.com
 lgthinq.com
-lh3.googleusercontent.com
 lib.rus.ec
 libgen.li
 libgen.rs
@@ -1619,7 +1603,6 @@ maxmind.com
 mbamupdates.com
 mbed.com
 mbk-news.appspot.com
-mbrx.app
 mchost.guru
 mcrouter.net
 mcrouter.org
@@ -1688,7 +1671,6 @@ mouser.com
 mouser.fi
 mrakopedia.net
 mssg.me
-mtalk.google.com
 mullvad.net
 multisim.com
 multporn.net
@@ -1913,10 +1895,6 @@ oracle.com
 oraclecloud.com
 orbit-games.com
 os.mbed.com
-ota-cache1.googlezip.net
-ota-cache2.googlezip.net
-ota-cache3.googlezip.net
-ota.googlezip.net
 ottg.app
 outflank.nl
 ovd.info
@@ -1984,13 +1962,12 @@ pinata.cloud
 pingdom.com
 piratbit.top
 pixabay.com
-pixel.facebook.com
+pixel.facebook.comai.google.dev
 pixiv.net
 pkgs.tailscale.com
 plab.site
 platform.activestate.com
 platform.twitter.com
-play-apps-features.googleusercontent.com
 play-fe.googleapis.com
 play-games.googleusercontent.com
 play-lh.googleusercontent.com
@@ -1998,11 +1975,8 @@ play.google.com
 play.googleapis.com
 play2go.cloud
 playboy.com
-playconsole.static.usercontent.goog
-playgateway-pa.googleapis.com
 playlist.ttvnw.net
 playnintendo.com
-playstoregatewayadapter-pa.googleapis.com
 plugin-alliance.com
 plugins.jetbrains.com
 plugshare.com
@@ -2056,7 +2030,6 @@ primevue.org
 privatekeys.pw
 prnt.sc
 proactivebackend-pa.googleapis.com
-prod-lt-playstoregatewayadapter-pa.googleapis.com
 prod-network-api.wbagora.com
 production-openaicom-storage.azureedge.net
 proekt.media
@@ -2095,7 +2068,6 @@ qobuz.com
 qodana.cloud
 qoder.com
 qt.io
-quake-pa.googleapis.com
 qualcomm.com
 qualtrics.com
 quicknode.com
@@ -2143,7 +2115,7 @@ redditstatic.com
 redditstatus.com
 reddxxx.com
 redgifs.com
-redirector.c.play.google.com#
+redirector.c.play.google.com
 redis.com
 redis.io
 redislabs.com
@@ -2230,7 +2202,6 @@ rutracker.ru
 rutracker.wiki
 s3-1.amazonaws.com
 saerasoft.com
-safebrowsing.googleapis.com
 sakhalin.info
 sakharovfoundation.org
 salesforce-experience.com
@@ -2378,7 +2349,6 @@ sovanews.tv
 sovetromantica.com
 spacelift.io
 spaceship.com
-speechs3proto2-pa.googleapis.comai.google.dev
 speedtest.net
 spektr.press
 spiceworks.com
@@ -2432,10 +2402,8 @@ status.play2go.cloud
 steamidfinder.com
 steamstat.info
 steganos.com
-stel.com
 stereophile.com
 stitch.withgoogle.com
-stitch.withgoogle.com#
 stockx.com
 store.supercell.com
 strana.news
@@ -2446,7 +2414,6 @@ streamable.com
 studychat.app
 stulchik.net
 suggestqueries.google.com
-suggestqueries.google.comdeepmind.com
 summerana.com
 supercell.com
 supermario.com
@@ -2507,7 +2474,6 @@ telegram.dog
 telegram.me
 telegram.org
 telegram.space
-telegramdownload.com
 telegraph.co.uk
 telemetr.io
 telepost.me
@@ -2592,7 +2558,6 @@ tmdb.org
 tokenized.play.google.com
 tommy.com
 ton.org
-ton.orgfbcdn-a.akamaihd.net
 toolbox.app
 tools.cisco.com
 toplayerserver.com
@@ -2685,7 +2650,7 @@ upwork.com
 urlr.me
 usa.one
 usatoday.com
-usercontent.dev
+usercontent.devdevelopers.facebook.com
 userscript.zone
 usher.ttvnw.net
 utils.docs.rw
@@ -2720,7 +2685,6 @@ vndb.org
 voanews.com
 vod-fy.crunchyrollcdn.com
 voidboost.cc
-voledevice-pa.googleapis.com
 volkswagen-classic-parts.com
 vot-tak.tv
 vpngate.net
@@ -3018,7 +2982,6 @@ yt-video-upload.l.google.com
 yt.be
 yt3.ggpht.com
 yt3.googleusercontent.com
-yt3.googleusercontent.comyoutube.com
 ytimg.com
 ytimg.l.google.com
 yting.com
