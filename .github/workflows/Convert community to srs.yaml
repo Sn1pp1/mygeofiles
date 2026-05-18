@@ -1,4 +1,3 @@
-# .github/workflows/sync-and-convert-community.yml
 name: Convert community.lst to .srs
 
 on:
