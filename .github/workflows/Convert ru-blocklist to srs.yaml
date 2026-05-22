@@ -3,8 +3,10 @@ name: Convert ru-blocklist to .srs
 on:
   push:
     paths:
-      - 'files/ru-blocklist.txt'
-  workflow_dispatch:
+      - 'files/ru-blocklist.txt'  # Запуск при изменении этого файла
+  schedule:
+    - cron: '0 0,12 * * *'         # Каждые 12 часов по UTC (03:00 и 15:00 MSK)
+  workflow_dispatch:               # Ручной запуск
 
 permissions:
   contents: write
@@ -79,7 +81,9 @@ jobs:
           git add files/ru-blocklist.srs
 
           if ! git diff --staged --quiet; then
-            git commit -m "🔄 Update ru-blocklist.srs ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+            # [skip ci] предотвращает бесконечный цикл запусков
+            git commit -m "🔄 Update ru-blocklist.srs ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK')) [skip ci]"
+            
             for i in 1 2 3; do
               git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
             done
