@@ -3,10 +3,10 @@ name: Convert ru-blocklist to .srs
 on:
   push:
     paths:
-      - 'files/ru-blocklist.txt'  # Запуск при изменении этого файла
+      - 'files/ru-blocklist.txt'
   schedule:
-    - cron: '0 0,12 * * *'         # Каждые 12 часов по UTC (03:00 и 15:00 MSK)
-  workflow_dispatch:               # Ручной запуск
+    - cron: '0 0,12 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: write
