@@ -1,9 +1,12 @@
 name: Convert community.lst to .srs
 
 on:
+  push:
+    paths:
+      - 'files/community.lst'  # Запуск при изменении этого файла
   schedule:
-    - cron: '0 3,9,15,21 * * *'  # Каждые 6 часов по MSK
-  workflow_dispatch:
+    - cron: '0 0,12 * * *'     # Каждые 12 часов по UTC (03:00 и 15:00 MSK)
+  workflow_dispatch:           # Ручной запуск
 
 permissions:
   contents: write
@@ -104,7 +107,9 @@ jobs:
           git add files/community.lst files/community.srs
           
           if ! git diff --staged --quiet; then
-            git commit -m "🔄 Update community.lst ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+            # [skip ci] предотвращает бесконечный цикл запусков
+            git commit -m "🔄 Update community.lst ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK')) [skip ci]"
+            
             for i in 1 2 3; do
               git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
             done
