@@ -1176,7 +1176,6 @@ graph.instagram.com
 graph.org
 graph.whatsapp.com
 graph.whatsapp.net
-graph.whatsapp.netai.google.dev
 graty.me
 graylog.org
 grazie.ai
@@ -1962,7 +1961,7 @@ pinata.cloud
 pingdom.com
 piratbit.top
 pixabay.com
-pixel.facebook.com
+pixel.facebook.comai.google.dev
 pixiv.net
 pkgs.tailscale.com
 plab.site
