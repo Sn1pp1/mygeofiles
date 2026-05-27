@@ -266,6 +266,7 @@ bell-sw.com
 bellingcat.com
 bestbuy.com
 bestchange.ru
+beszel.dev
 beyond.hg-cdn.com
 bigbeans.solutions
 bihus.info
@@ -527,7 +528,6 @@ designify.com
 devart.com
 developer.nvidia.com
 developerprofiles-pa.googleapis.com
-developers.facebook.com
 developers.instagram.com
 devexpress.com
 deviantart.com
@@ -949,6 +949,7 @@ fb.watch
 fbacebook.com
 fbbmarket.com
 fbboostyourbusiness.com
+fbcdn-a.akamaihd.net
 fbcdn.com
 fbcdn.net
 fbf8.com
@@ -1119,6 +1120,7 @@ gelbooru.com
 geller-pa.googleapis.com
 gemini.google
 gemini.google.com
+gemini.gstatic.com
 generativeai.google
 generativelanguage.googleapis.com
 geni.us
@@ -2648,7 +2650,7 @@ upwork.com
 urlr.me
 usa.one
 usatoday.com
-usercontent.devfbcdn-a.akamaihd.net
+usercontent.devdevelopers.facebook.com
 userscript.zone
 usher.ttvnw.net
 utils.docs.rw
