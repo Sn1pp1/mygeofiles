@@ -9,6 +9,8 @@ gql.twitch.tv
 ads.twitch.tv
 playlist.ttvnw.net
 static-cdn.jtvnw.net
+archive.ph
+archive.is
 play2go.cloud
 beszel.dev
 oisd.nl
