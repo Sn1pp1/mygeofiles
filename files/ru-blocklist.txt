@@ -195,6 +195,7 @@ aqicn.org
 arbat.media
 arc.intel.com
 arc.net
+archive.is
 archive.org
 archive.ph
 archiveofourown.org
