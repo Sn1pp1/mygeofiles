@@ -1,3 +1,6 @@
+kino.pub
+kinopub.online
+kpdl.link
 kpapp.link
 srvkp.com
 digital-cdn.net
@@ -5,6 +8,12 @@ ios-kp.store
 pushbr.com
 cdn2cdn.com
 cdn-service.space
+ahc.ovh
+gfw.ovh
+mos-gorsud.co
+mos-gorsud.com
+cdn2site.com
+smarttvcdn.online
 firebaseremoteconfigrealtime.googleapis.com
 usher.ttvnw.net
 gql.twitch.tv
