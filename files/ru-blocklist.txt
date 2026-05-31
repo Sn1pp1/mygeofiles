@@ -92,6 +92,7 @@ aftermarket.zf.com
 agar.io
 agents.media
 agentura.ru
+ahc.ovh
 ahrefs.com
 ai-chat.bsg.brave.com
 ai.com
@@ -1141,6 +1142,7 @@ getoutline.org
 getsafeonline.org
 gfacecbook.com
 gfn.am
+gfw.ovh
 ggpht.cn
 ggpht.com
 ghidra-sre.org
@@ -1472,6 +1474,7 @@ kinogo.la
 kinogo.uk
 kinokopilka.pro
 kinopub.me
+kinopub.online
 kinovod.net
 kinozal.guru
 kinozal.me
@@ -1489,6 +1492,7 @@ korrespondent.net
 kovcheg.live
 kowalski7cc.xyz
 kpapp.link
+kpdl.link
 kroger.com
 krymr.com
 kupujemprodajem.com
@@ -1671,6 +1675,8 @@ monotypefonts.com
 monster.ie
 montechpc.com
 more.fm
+mos-gorsud.co
+mos-gorsud.com
 moscowtimes.ru
 mouser.com
 mouser.fi
@@ -2325,6 +2331,7 @@ slifki.biz
 smartbear.co
 smartbear.com
 smartdeploy.com
+smarttvcdn.online
 smashwords.com
 sms-activate.io
 snap-storage-cdn.l.google.com
