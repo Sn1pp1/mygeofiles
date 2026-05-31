@@ -5,6 +5,7 @@ ios-kp.store
 pushbr.com
 cdn2cdn.com
 cdn-service.space
+firebaseremoteconfigrealtime.googleapis.com
 usher.ttvnw.net
 gql.twitch.tv
 ads.twitch.tv
