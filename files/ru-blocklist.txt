@@ -373,6 +373,7 @@ carstagram.com
 cats.com
 cbilling.eu
 cbilling.vip
+cdn-service.space
 cdn-spotify-experiments.conductrics.com
 cdn-telegram.org
 cdn.betterttv.net
@@ -1014,6 +1015,7 @@ filmix.fm
 filmix.la
 findagrave.com
 fingerium.stream.voidboost.cc
+firebaseremoteconfigrealtime.googleapis.com
 firefly-ps.adobe.io
 fitbit-pa.googleapis.com
 fitbit.google.com
