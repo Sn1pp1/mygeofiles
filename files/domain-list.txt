@@ -9,6 +9,7 @@ gql.twitch.tv
 ads.twitch.tv
 playlist.ttvnw.net
 static-cdn.jtvnw.net
+liquipedia.net
 archive.ph
 archive.is
 play2go.cloud
