@@ -17,6 +17,7 @@
 7tv.io
 8chan.moe
 9tv.co.il
+<title>meta-rules-dat/geo/geosite/kinopub.list
 a-vrv.akamaized.net
 a360.co
 ab.chatgpt.com
@@ -505,6 +506,14 @@ darkproject.eu
 dashboard.algolia.com
 dashboard.gitguardian.com
 data-cdn.mbamupdates.com
+data-hydro-click="{&quot;event_type&quot;:&quot;authentication.click&quot;,&quot;payload&quot;:{&quot;location_in_page&quot;:&quot;site
+data-target="custom-scopes.customscopesnamefield"
+data-target="custom-scopes.customscopesqueryfield"
+data-target="qbsearch-input.inputbutton"
+data-target="qbsearch-input.querybuildercontainer"
+data-target="query-builder.resultslist"
+data-target="query-builder.styledinput"
+data-target="query-builder.styledinputcontent"
 data.cline.bot
 database.clamav.net
 databricks.com
@@ -1261,6 +1270,7 @@ housebrand.com
 howtohackfacebook-account.com
 hpe.com
 hqporner.com
+href="/login?return_to=https%3a%2f%2fgithub.com%2fmetacubex%2fmeta-rules-dat%2fblob%2fmeta%2fgeo%2fgeosite%2fkinopub.list"
 hromadske.ua
 hrw.org
 hs.fi
@@ -1318,6 +1328,7 @@ indeed.com
 indiehackers.com
 infineon.com
 informit.com
+initial-path="/metacubex/meta-rules-dat/blob/meta/geo/geosite/kinopub.list"
 insanelymac.com
 insearch.site
 insideevs.com
