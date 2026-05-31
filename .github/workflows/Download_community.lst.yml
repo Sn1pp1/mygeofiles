@@ -58,7 +58,7 @@ jobs:
           
           if ! git diff --staged --quiet; then
             # [skip ci] предотвращает бесконечный цикл запусков
-            git commit -m "🔄 Update community.lst ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK')) [skip ci]"
+            git commit -m "🔄 Update community.lst ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
             
             for i in 1 2 3; do
               git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
