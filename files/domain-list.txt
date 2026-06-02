@@ -15,6 +15,12 @@ mos-gorsud.com
 cdn2site.com
 smarttvcdn.online
 firebaseremoteconfigrealtime.googleapis.com
+iptv.online
+cdn4t.xyz
+smarttv.zeasn.tv
+media.service-kp.com
+api.alador.space
+i0.wp.com
 usher.ttvnw.net
 gql.twitch.tv
 ads.twitch.tv
