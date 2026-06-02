@@ -531,7 +531,6 @@ designify.com
 devart.com
 developer.nvidia.com
 developerprofiles-pa.googleapis.com
-developers.facebook.com
 developers.instagram.com
 devexpress.com
 deviantart.com
@@ -953,6 +952,7 @@ fb.watch
 fbacebook.com
 fbbmarket.com
 fbboostyourbusiness.com
+fbcdn-a.akamaihd.net
 fbcdn.com
 fbcdn.net
 fbf8.com
@@ -1178,7 +1178,7 @@ gr-assets.com
 grafana.com
 grammarly.com
 grani.ru
-graph-fallback.instagram.comai.google.dev
+graph-fallback.instagram.com
 graph.instagram.com
 graph.org
 graph.whatsapp.com
@@ -1234,6 +1234,7 @@ hdstudio.org
 heads-ak-spotify-com.akamaized.net
 heads4-ak-spotify-com.akamaized.net
 healthline.com
+helioadditive.com
 hellonotion.com
 helm.releases.hashicorp.com
 help.instagram.com
@@ -1973,7 +1974,7 @@ pinata.cloud
 pingdom.com
 piratbit.top
 pixabay.com
-pixel.facebook.com
+pixel.facebook.comai.google.dev
 pixiv.net
 pkgs.tailscale.com
 plab.site
@@ -2661,7 +2662,7 @@ upwork.com
 urlr.me
 usa.one
 usatoday.com
-usercontent.devfbcdn-a.akamaihd.net
+usercontent.devdevelopers.facebook.com
 userscript.zone
 usher.ttvnw.net
 utils.docs.rw
