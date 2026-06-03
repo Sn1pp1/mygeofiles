@@ -41,6 +41,10 @@
     "bypassLocalDNS": false,
     "isDefault": false,
     "isEditable": true,
+    "sortOrder": 0,
+    "createdAt": 1780529492748,
+    "updatedAt": 1780529492748,
     "sourceURL": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/incy.json",
-    "updateInterval": 43200
+    "updateInterval": 43200,
+    "sourceLastUpdated": null
 }
