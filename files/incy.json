@@ -41,10 +41,5 @@
     "bypassLocalDNS": false,
     "isDefault": false,
     "isEditable": true,
-    "sortOrder": 0,
-    "createdAt": 1780463301830,
-    "updatedAt": 1780463338555,
-    "sourceURL": null,
-    "updateInterval": 43200,
-    "sourceLastUpdated": null
+    "updateInterval": 43200
 }
