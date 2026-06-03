@@ -491,6 +491,7 @@ designify.com
 devart.com
 developer.nvidia.com
 developerprofiles-pa.googleapis.com
+developers.facebook.com
 devexpress.com
 deviantart.com
 devops.com
@@ -892,7 +893,6 @@ fb.watch
 fbacebook.com
 fbbmarket.com
 fbboostyourbusiness.com
-fbcdn-a.akamaihd.net
 fbcdn.com
 fbcdn.net
 fbf8.com
@@ -1111,7 +1111,7 @@ gr-assets.com
 grafana.com
 grammarly.com
 grani.ru
-graph-fallback.instagram.com
+graph-fallback.instagram.comai.google.dev
 graph.instagram.com
 graph.org
 graph.whatsapp.com
@@ -1823,7 +1823,7 @@ pinata.cloud
 pingdom.com
 piratbit.top
 pixabay.com
-pixel.facebook.comai.google.dev
+pixel.facebook.com
 pixiv.net
 pkgs.tailscale.com
 plab.site
@@ -2352,6 +2352,7 @@ tmdb.org
 tokenized.play.google.com
 tommy.com
 ton.org
+toncenter.com
 toolbox.app
 tools.cisco.com
 toplayerserver.com
@@ -2440,7 +2441,7 @@ upwork.com
 urlr.me
 usa.one
 usatoday.com
-usercontent.devdevelopers.facebook.com
+usercontent.devfbcdn-a.akamaihd.net
 userscript.zone
 usher.ttvnw.net
 utils.docs.rw
