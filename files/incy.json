@@ -1,5 +1,4 @@
 {
-    "id": "bccb5023-599c-4bc2-b6d4-af6cb299114f",
     "Name": "snp",
     "description": "",
     "type": "GLOBAL",
@@ -12,8 +11,8 @@
     "DomesticDNSIP": "77.88.8.8",
     "FakeDNS": false,
     "DnsHosts": {},
-    "RemoteDns": "https://1.1.1.1/dns-query",
-    "DomesticDns": "8.8.8.8",
+    "RemoteDns": "https://8.8.8.8/dns-query",
+    "DomesticDns": "https://77.88.8.8/dns-query",
     "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
     "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
     "LastUpdated": "1778983256",
@@ -42,10 +41,6 @@
     "bypassLocalDNS": false,
     "isDefault": false,
     "isEditable": true,
-    "sortOrder": 0,
-    "createdAt": 1780528836038,
-    "updatedAt": 1780528862246,
     "sourceURL": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/incy.json",
-    "updateInterval": 43200,
-    "sourceLastUpdated": null
+    "updateInterval": 43200
 }
