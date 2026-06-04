@@ -3,6 +3,7 @@ kinopub.online
 kpdl.link
 kpapp.link
 srvkp.com
+api.srvkp.com
 digital-cdn.net
 ios-kp.store
 pushbr.com
@@ -21,6 +22,12 @@ smarttv.zeasn.tv
 media.service-kp.com
 api.alador.space
 i0.wp.com
+m.teleos.club
+teleos.club
+m.alador.space
+alador.space
+m.boramoraboom.ru
+boramoraboom.ru
 usher.ttvnw.net
 gql.twitch.tv
 ads.twitch.tv
