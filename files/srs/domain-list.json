@@ -141,7 +141,30 @@
         "c1.microsoft.com",
         "c.bing.com",
         "store-images.microsoft.com",
-        "oneocsp.microsoft.com"
+        "oneocsp.microsoft.com",
+        "qwen.ai",
+        "tongyi.ai",
+        "tongyi.aliyun.com",
+        "qwen.cloud",
+        "dashscope.aliyuncs.com",
+        "dashscope-intl.aliyuncs.com",
+        "ap-southeast-1.maas.aliyuncs.com",
+        "bailian.console.aliyun.com",
+        "alicdn.com",
+        "alibabacloud.com",
+        "account.aliyun.com",
+        "account.alibabacloud.com",
+        "signin.aliyun.com",
+        "signin.alibabacloud.com",
+        "passport.aliyun.com",
+        "passport.alibabacloud.com",
+        "mmstat.com",
+        "tdum.alibaba.com",
+        "lingma-api.tongyi.aliyun.com",
+        "qoder.console.aliyun.com",
+        "codeup-algo.oss-cn-hangzhou.aliyuncs.com",
+        "huggingface.co",
+        "modelscope.cn"
       ]
     }
   ]
