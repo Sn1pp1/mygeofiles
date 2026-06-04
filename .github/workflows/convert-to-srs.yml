@@ -32,69 +32,25 @@ jobs:
       
       - name: Convert community.lst to SRS (IP CIDR)
         run: |
-          # Create source format JSON for IP CIDR
-          echo '{"version":1,"rules":[{"ip_cidr":[' > files/srs/community.json
-          
-          # Add IP CIDR entries
-          first=true
-          while IFS= read -r line || [[ -n "$line" ]]; do
-            if [[ -n "$line" ]]; then
-              if [ "$first" = true ]; then
-                echo -n "\"$line\"" >> files/srs/community.json
-                first=false
-              else
-                echo -n ",\"$line\"" >> files/srs/community.json
-              fi
-            fi
-          done < files/community.lst
-          
-          echo ']}]}' >> files/srs/community.json
+          # Read IPs into JSON array, then build proper JSON with jq
+          ips=$(grep -v '^$' files/community.lst | jq -R -s 'split("\n") | map(select(length > 0))')
+          echo "{\"version\":1,\"rules\":[{\"ip_cidr\":$ips}]}" | jq '.' > files/srs/community.json
           
           # Compile to SRS
           sing-box rule-set compile --output files/srs/community.srs files/srs/community.json
       
       - name: Convert domain-list.txt to SRS (domain suffix)
         run: |
-          # Create source format JSON for domain suffix
-          echo '{"version":1,"rules":[{"domain_suffix":[' > files/srs/domain-list.json
-          
-          # Add domain entries
-          first=true
-          while IFS= read -r line || [[ -n "$line" ]]; do
-            if [[ -n "$line" ]]; then
-              if [ "$first" = true ]; then
-                echo -n "\"$line\"" >> files/srs/domain-list.json
-                first=false
-              else
-                echo -n ",\"$line\"" >> files/srs/domain-list.json
-              fi
-            fi
-          done < files/domain-list.txt
-          
-          echo ']}]}' >> files/srs/domain-list.json
+          domains=$(grep -v '^$' files/domain-list.txt | jq -R -s 'split("\n") | map(select(length > 0))')
+          echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > files/srs/domain-list.json
           
           # Compile to SRS
           sing-box rule-set compile --output files/srs/domain-list.srs files/srs/domain-list.json
       
       - name: Convert ru-blocklist.txt to SRS (domain suffix)
         run: |
-          # Create source format JSON for domain suffix
-          echo '{"version":1,"rules":[{"domain_suffix":[' > files/srs/ru-blocklist.json
-          
-          # Add domain entries
-          first=true
-          while IFS= read -r line || [[ -n "$line" ]]; do
-            if [[ -n "$line" ]]; then
-              if [ "$first" = true ]; then
-                echo -n "\"$line\"" >> files/srs/ru-blocklist.json
-                first=false
-              else
-                echo -n ",\"$line\"" >> files/srs/ru-blocklist.json
-              fi
-            fi
-          done < files/ru-blocklist.txt
-          
-          echo ']}]}' >> files/srs/ru-blocklist.json
+          domains=$(grep -v '^$' files/ru-blocklist.txt | jq -R -s 'split("\n") | map(select(length > 0))')
+          echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > files/srs/ru-blocklist.json
           
           # Compile to SRS
           sing-box rule-set compile --output files/srs/ru-blocklist.srs files/srs/ru-blocklist.json
@@ -105,7 +61,8 @@ jobs:
           git config --local user.name "GitHub Action"
           git add files/srs/
           if ! git diff --cached --quiet; then
-            git commit -m "Auto-update SRS files ($(date '+%Y-%m-%d %H:%M:%S'))"
+            MSK_TIME=$(TZ='Europe/Moscow' date '+%Y-%m-%d %H:%M MSK')
+            git commit -m "🤖 Update SRS files ($MSK_TIME)"
             git push
           else
             echo "No changes to commit"
