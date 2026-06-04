@@ -21,6 +21,16 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
+      - name: Download latest sing-box binary
+        run: |
+          LATEST_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
+          echo "Latest version: $LATEST_TAG"
+          wget -q "https://github.com/SagerNet/sing-box/releases/download/${LATEST_TAG}/sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+          tar -xzf "sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+          sudo mv "sing-box-${LATEST_TAG#v}-linux-amd64/sing-box" /usr/local/bin/
+          chmod +x /usr/local/bin/sing-box
+          sing-box version
+
       - name: Download & sync community.lst
         id: sync
         run: |
@@ -46,6 +56,22 @@ jobs:
           echo "changed=true" >> $GITHUB_OUTPUT
           echo "✅ community.lst обновлён: $(wc -l < "$TARGET_FILE") строк"
 
+      - name: Convert to SRS format
+        if: steps.sync.outputs.changed == 'true'
+        run: |
+          echo "🔄 Генерация SRS файла..."
+          mkdir -p files/srs
+          
+          # Создаём временный JSON для sing-box (IP CIDR)
+          ips=$(grep -v '^$' files/community.lst | jq -R -s 'split("\n") | map(select(length > 0))')
+          echo "{\"version\":1,\"rules\":[{\"ip_cidr\":$ips}]}" | jq '.' > /tmp/community.json
+          
+          # Компилируем в SRS
+          sing-box rule-set compile --output files/srs/community.srs /tmp/community.json
+          
+          SRS_SIZE=$(du -h files/srs/community.srs | cut -f1)
+          echo "✅ SRS файл создан: files/srs/community.srs ($SRS_SIZE)"
+
       - name: Commit and push result
         if: steps.sync.outputs.changed == 'true'
         run: |
@@ -54,16 +80,16 @@ jobs:
           
           git pull --rebase origin main 2>/dev/null || true
           
-          git add files/community.lst
+          git add files/community.lst files/srs/community.srs
           
           if ! git diff --staged --quiet; then
             # [skip ci] предотвращает бесконечный цикл запусков
-            git commit -m "🔄 Update community.lst ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+            git commit -m "🔄 Update community.lst and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
             
             for i in 1 2 3; do
               git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
             done
-            echo "📤 Файл успешно обновлён"
+            echo "📤 Файлы успешно обновлены"
           else
             echo "⏭️ Нет изменений для коммита"
           fi
