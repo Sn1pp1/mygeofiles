@@ -1,13 +1,13 @@
 name: Convert to SRS Format
 
 on:
-  push:
-    paths:
-      - 'files/community.lst'
-      - 'files/domain-list.txt'
-      - 'files/ru-blocklist.txt'
-      - 'files/*.lst'
-      - 'files/*.txt'
+  workflow_run:
+    workflows:
+      - "Build ru-blocklist"
+      - "Build Mygeofiles"
+      - "Download community.lst"
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
@@ -23,15 +23,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 2
       
-      - name: Check if source files changed
-        id: check
-        run: |
-          if git diff HEAD~1 --name-only | grep -qE 'files/(community\.lst|domain-list\.txt|ru-blocklist\.txt)'; then
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "changed=false" >> $GITHUB_OUTPUT
-          fi
-      
       - name: Create srs directory
         run: mkdir -p files/srs
       
@@ -46,7 +37,6 @@ jobs:
           sing-box version
       
       - name: Convert community.lst to SRS (IP CIDR)
-        if: steps.check.outputs.changed == 'true'
         run: |
           if [ -f files/community.lst ]; then
             ips=$(grep -v '^$' files/community.lst | jq -R -s 'split("\n") | map(select(length > 0))')
@@ -56,7 +46,6 @@ jobs:
           fi
       
       - name: Convert domain-list.txt to SRS (domain suffix)
-        if: steps.check.outputs.changed == 'true'
         run: |
           if [ -f files/domain-list.txt ]; then
             domains=$(grep -v '^$' files/domain-list.txt | jq -R -s 'split("\n") | map(select(length > 0))')
@@ -66,7 +55,6 @@ jobs:
           fi
       
       - name: Convert ru-blocklist.txt to SRS (domain suffix)
-        if: steps.check.outputs.changed == 'true'
         run: |
           if [ -f files/ru-blocklist.txt ]; then
             domains=$(grep -v '^$' files/ru-blocklist.txt | jq -R -s 'split("\n") | map(select(length > 0))')
@@ -76,7 +64,6 @@ jobs:
           fi
       
       - name: Commit JSON files
-        if: steps.check.outputs.changed == 'true'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
@@ -90,7 +77,6 @@ jobs:
           fi
       
       - name: Commit SRS files
-        if: steps.check.outputs.changed == 'true'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
