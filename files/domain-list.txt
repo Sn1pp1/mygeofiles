@@ -130,3 +130,8 @@ msftncsi.com
 xboxlive.com
 xboxservices.com
 dlassets-ssl.xboxlive.com
+storeedge.microsoft.com
+graph.microsoft.com
+bat.bing.com
+c1.microsoft.com
+c.bing.com
