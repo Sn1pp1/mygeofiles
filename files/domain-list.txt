@@ -135,3 +135,4 @@ graph.microsoft.com
 bat.bing.com
 c1.microsoft.com
 c.bing.com
+store-images.microsoft.com
