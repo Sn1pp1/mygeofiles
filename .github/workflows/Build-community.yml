@@ -1,4 +1,4 @@
-name: Download community.lst
+name: Build community.lst
 
 on:
   push:
