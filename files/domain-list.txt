@@ -160,3 +160,5 @@ qoder.console.aliyun.com
 codeup-algo.oss-cn-hangzhou.aliyuncs.com
 huggingface.co
 modelscope.cn
+cdn.qwenlm.ai
+qwenlm.ai
