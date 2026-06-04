@@ -174,6 +174,7 @@ baginya.org
 baikal-journal.ru
 bard.google.com
 basicattentiontoken.org
+bat.bing.com
 bato.to
 bbc.co.uk
 bbc.com
@@ -232,6 +233,8 @@ buyingfacebooklikes.com
 buymeacoffee.com
 buyoculus.com
 byteoversea.com
+c.bing.com
+c1.microsoft.com
 canva.com
 canva.dev
 capacitorjs.com
@@ -945,6 +948,7 @@ grammarly.com
 grani.ru
 graph-fallback.instagram.com
 graph.instagram.com
+graph.microsoft.com
 graph.org
 graph.whatsapp.com
 graph.whatsapp.net
@@ -1848,6 +1852,7 @@ steamstat.info
 stitch.withgoogle.com
 store-images.s-microsoft.com
 store.supercell.com
+storeedge.microsoft.com
 storeedgefd.dsx.mp.microsoft.com
 storesdk.dsx.mp.microsoft.com
 strana.news
