@@ -20,102 +20,87 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Setup sing-box
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.21'
+      - name: Create srs directory
+        run: mkdir -p files/srs
       
-      - name: Install sing-box
+      - name: Download sing-box binary
         run: |
-          go install github.com/SagerNet/sing-box/cmd/sing-box@latest
-          echo "$HOME/go/bin" >> $GITHUB_PATH
+          wget https://github.com/SagerNet/sing-box/releases/download/v1.10.0/sing-box-1.10.0-linux-amd64.tar.gz
+          tar -xzf sing-box-1.10.0-linux-amd64.tar.gz
+          sudo mv sing-box-1.10.0-linux-amd64/sing-box /usr/local/bin/
+          chmod +x /usr/local/bin/sing-box
       
-      - name: Convert community.lst to JSON and compile to SRS
+      - name: Convert community.lst to SRS
         run: |
-          # Create JSON from community.lst (IP CIDR)
-          echo '{' > files/srs/community.json
-          echo '  "version": 3,' >> files/srs/community.json
-          echo '  "rules": [' >> files/srs/community.json
-          echo '    {' >> files/srs/community.json
-          echo -n '      "ip_cidr": [' >> files/srs/community.json
+          # Create JSON for IP CIDR
+          cat > files/srs/community.json << 'EOF'
+          {
+            "version": 3,
+            "rules": [
+              {
+                "ip_cidr": [
+          EOF
           
-          # Read community.lst and format as JSON array
-          first=true
-          while IFS= read -r line || [[ -n "$line" ]]; do
-            if [[ -n "$line" ]]; then
-              if [ "$first" = true ]; then
-                echo -n "\"$line\"" >> files/srs/community.json
-                first=false
-              else
-                echo -n ",\"$line\"" >> files/srs/community.json
-              fi
-            fi
-          done < files/community.lst
+          # Add IP CIDR entries
+          sed 's/^/                  "/; s/$/",/' files/community.lst | head -n -1 >> files/srs/community.lst
+          sed -n '$ s/^/                  "/; s/$/"\n/' files/community.lst >> files/srs/community.json
           
-          echo ']' >> files/srs/community.json
-          echo '    }' >> files/srs/community.json
-          echo '  ]' >> files/srs/community.json
-          echo '}' >> files/srs/community.json
+          cat >> files/srs/community.json << 'EOF'
+                ]
+              }
+            ]
+          }
+          EOF
           
           # Compile to SRS
           sing-box rule-set compile --output files/srs/community.srs files/srs/community.json
       
-      - name: Convert domain-list.txt to JSON and compile to SRS
+      - name: Convert domain-list.txt to SRS
         run: |
-          # Create JSON from domain-list.txt (domain suffix)
-          echo '{' > files/srs/domain-list.json
-          echo '  "version": 3,' >> files/srs/domain-list.json
-          echo '  "rules": [' >> files/srs/domain-list.json
-          echo '    {' >> files/srs/domain-list.json
-          echo -n '      "domain_suffix": [' >> files/srs/domain-list.json
+          # Create JSON for domain suffix
+          cat > files/srs/domain-list.json << 'EOF'
+          {
+            "version": 3,
+            "rules": [
+              {
+                "domain_suffix": [
+          EOF
           
-          # Read domain-list.txt and format as JSON array
-          first=true
-          while IFS= read -r line || [[ -n "$line" ]]; do
-            if [[ -n "$line" ]]; then
-              if [ "$first" = true ]; then
-                echo -n "\"$line\"" >> files/srs/domain-list.json
-                first=false
-              else
-                echo -n ",\"$line\"" >> files/srs/domain-list.json
-              fi
-            fi
-          done < files/domain-list.txt
+          # Add domain entries
+          sed 's/^/                  "/; s/$/",/' files/domain-list.txt | head -n -1 >> files/srs/domain-list.json
+          sed -n '$ s/^/                  "/; s/$/"\n/' files/domain-list.txt >> files/srs/domain-list.json
           
-          echo ']' >> files/srs/domain-list.json
-          echo '    }' >> files/srs/domain-list.json
-          echo '  ]' >> files/srs/domain-list.json
-          echo '}' >> files/srs/domain-list.json
+          cat >> files/srs/domain-list.json << 'EOF'
+                ]
+              }
+            ]
+          }
+          EOF
           
           # Compile to SRS
           sing-box rule-set compile --output files/srs/domain-list.srs files/srs/domain-list.json
       
-      - name: Convert ru-blocklist.txt to JSON and compile to SRS
+      - name: Convert ru-blocklist.txt to SRS
         run: |
-          # Create JSON from ru-blocklist.txt (domain suffix)
-          echo '{' > files/srs/ru-blocklist.json
-          echo '  "version": 3,' >> files/srs/ru-blocklist.json
-          echo '  "rules": [' >> files/srs/ru-blocklist.json
-          echo '    {' >> files/srs/ru-blocklist.json
-          echo -n '      "domain_suffix": [' >> files/srs/ru-blocklist.json
+          # Create JSON for domain suffix
+          cat > files/srs/ru-blocklist.json << 'EOF'
+          {
+            "version": 3,
+            "rules": [
+              {
+                "domain_suffix": [
+          EOF
           
-          # Read ru-blocklist.txt and format as JSON array
-          first=true
-          while IFS= read -r line || [[ -n "$line" ]]; do
-            if [[ -n "$line" ]]; then
-              if [ "$first" = true ]; then
-                echo -n "\"$line\"" >> files/srs/ru-blocklist.json
-                first=false
-              else
-                echo -n ",\"$line\"" >> files/srs/ru-blocklist.json
-              fi
-            fi
-          done < files/ru-blocklist.txt
+          # Add domain entries
+          sed 's/^/                  "/; s/$/",/' files/ru-blocklist.txt | head -n -1 >> files/srs/ru-blocklist.json
+          sed -n '$ s/^/                  "/; s/$/"\n/' files/ru-blocklist.txt >> files/srs/ru-blocklist.json
           
-          echo ']' >> files/srs/ru-blocklist.json
-          echo '    }' >> files/srs/ru-blocklist.json
-          echo '  ]' >> files/srs/ru-blocklist.json
-          echo '}' >> files/srs/ru-blocklist.json
+          cat >> files/srs/ru-blocklist.json << 'EOF'
+                ]
+              }
+            ]
+          }
+          EOF
           
           # Compile to SRS
           sing-box rule-set compile --output files/srs/ru-blocklist.srs files/srs/ru-blocklist.json
@@ -125,5 +110,9 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add files/srs/
-          git diff --cached --quiet || git commit -m "Auto-update SRS files ($(date '+%Y-%m-%d %H:%M:%S'))"
-          git push
+          if ! git diff --cached --quiet; then
+            git commit -m "Auto-update SRS files ($(date '+%Y-%m-%d %H:%M:%S'))"
+            git push
+          else
+            echo "No changes to commit"
+          fi
