@@ -1,13 +1,9 @@
 name: Convert to SRS Format
 
 on:
-  workflow_run:
-    workflows:
-      - "Build ru-blocklist"
-      - "Build Mygeofiles"
-      - "Download community.lst"
-    types:
-      - completed
+  push:
+    paths:
+      - 'files/domain-list.txt'
   workflow_dispatch:
 
 jobs:
@@ -21,7 +17,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 2
       
       - name: Create srs directory
         run: mkdir -p files/srs
@@ -36,55 +31,25 @@ jobs:
           chmod +x /usr/local/bin/sing-box
           sing-box version
       
-      - name: Convert community.lst to SRS (IP CIDR)
+      - name: Convert domain-list.txt to SRS
         run: |
-          if [ -f files/community.lst ]; then
-            ips=$(grep -v '^$' files/community.lst | jq -R -s 'split("\n") | map(select(length > 0))')
-            echo "{\"version\":1,\"rules\":[{\"ip_cidr\":$ips}]}" | jq '.' > files/srs/community.json
-            sing-box rule-set compile --output files/srs/community.srs files/srs/community.json
-            echo "✓ community.lst converted"
-          fi
+          # Create temporary JSON
+          domains=$(grep -v '^$' files/domain-list.txt | jq -R -s 'split("\n") | map(select(length > 0))')
+          echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/domain-list.json
+          
+          # Compile to SRS
+          sing-box rule-set compile --output files/srs/domain-list.srs /tmp/domain-list.json
+          echo "✓ domain-list.srs created"
       
-      - name: Convert domain-list.txt to SRS (domain suffix)
-        run: |
-          if [ -f files/domain-list.txt ]; then
-            domains=$(grep -v '^$' files/domain-list.txt | jq -R -s 'split("\n") | map(select(length > 0))')
-            echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > files/srs/domain-list.json
-            sing-box rule-set compile --output files/srs/domain-list.srs files/srs/domain-list.json
-            echo "✓ domain-list.txt converted"
-          fi
-      
-      - name: Convert ru-blocklist.txt to SRS (domain suffix)
-        run: |
-          if [ -f files/ru-blocklist.txt ]; then
-            domains=$(grep -v '^$' files/ru-blocklist.txt | jq -R -s 'split("\n") | map(select(length > 0))')
-            echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > files/srs/ru-blocklist.json
-            sing-box rule-set compile --output files/srs/ru-blocklist.srs files/srs/ru-blocklist.json
-            echo "✓ ru-blocklist.txt converted"
-          fi
-      
-      - name: Commit JSON files
+      - name: Commit SRS file
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add files/srs/*.json
+          git add files/srs/domain-list.srs
           if ! git diff --cached --quiet; then
             MSK_TIME=$(TZ='Europe/Moscow' date '+%Y-%m-%d %H:%M MSK')
-            git commit -m "🔄 Update JSON files ($MSK_TIME)"
+            git commit -m "🔄 Update domain-list.srs ($MSK_TIME)"
             git push
           else
-            echo "No JSON changes to commit"
-          fi
-      
-      - name: Commit SRS files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add files/srs/*.srs
-          if ! git diff --cached --quiet; then
-            MSK_TIME=$(TZ='Europe/Moscow' date '+%Y-%m-%d %H:%M MSK')
-            git commit -m "🔄 Update SRS files ($MSK_TIME)"
-            git push
-          else
-            echo "No SRS changes to commit"
+            echo "No changes to commit"
           fi
