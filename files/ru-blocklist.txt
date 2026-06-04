@@ -1474,6 +1474,7 @@ okx.com
 olx.ua
 omnissa.com
 omv-extras.org
+oneocsp.microsoft.com
 onfastspring.com
 oninstagram.com
 online-deals.net
@@ -1850,6 +1851,7 @@ statology.org
 status.discordapp.com
 steamstat.info
 stitch.withgoogle.com
+store-images.microsoft.com
 store-images.s-microsoft.com
 store.supercell.com
 storeedge.microsoft.com
