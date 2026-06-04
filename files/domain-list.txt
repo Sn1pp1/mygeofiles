@@ -162,3 +162,4 @@ huggingface.co
 modelscope.cn
 cdn.qwenlm.ai
 qwenlm.ai
+qwen-webui-prod.oss-accelerate.aliyuncs.com
