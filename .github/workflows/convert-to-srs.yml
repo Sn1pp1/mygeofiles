@@ -23,47 +23,59 @@ jobs:
       - name: Create srs directory
         run: mkdir -p files/srs
       
-      - name: Download sing-box binary
+      - name: Download latest sing-box binary
         run: |
-          wget -q https://github.com/SagerNet/sing-box/releases/download/v1.10.0/sing-box-1.10.0-linux-amd64.tar.gz
-          tar -xzf sing-box-1.10.0-linux-amd64.tar.gz
-          sudo mv sing-box-1.10.0-linux-amd64/sing-box /usr/local/bin/
+          # Get latest release tag
+          LATEST_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
+          echo "Latest version: $LATEST_TAG"
+          
+          # Download and install
+          wget -q "https://github.com/SagerNet/sing-box/releases/download/${LATEST_TAG}/sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+          tar -xzf "sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+          sudo mv "sing-box-${LATEST_TAG#v}-linux-amd64/sing-box" /usr/local/bin/
           chmod +x /usr/local/bin/sing-box
+          sing-box version
       
       - name: Convert community.lst to SRS (IP CIDR)
         run: |
-          # Read IPs into JSON array, then build proper JSON with jq
           ips=$(grep -v '^$' files/community.lst | jq -R -s 'split("\n") | map(select(length > 0))')
           echo "{\"version\":1,\"rules\":[{\"ip_cidr\":$ips}]}" | jq '.' > files/srs/community.json
-          
-          # Compile to SRS
           sing-box rule-set compile --output files/srs/community.srs files/srs/community.json
       
       - name: Convert domain-list.txt to SRS (domain suffix)
         run: |
           domains=$(grep -v '^$' files/domain-list.txt | jq -R -s 'split("\n") | map(select(length > 0))')
           echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > files/srs/domain-list.json
-          
-          # Compile to SRS
           sing-box rule-set compile --output files/srs/domain-list.srs files/srs/domain-list.json
       
       - name: Convert ru-blocklist.txt to SRS (domain suffix)
         run: |
           domains=$(grep -v '^$' files/ru-blocklist.txt | jq -R -s 'split("\n") | map(select(length > 0))')
           echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > files/srs/ru-blocklist.json
-          
-          # Compile to SRS
           sing-box rule-set compile --output files/srs/ru-blocklist.srs files/srs/ru-blocklist.json
       
-      - name: Commit and push changes
+      - name: Commit JSON files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add files/srs/
+          git add files/srs/*.json
           if ! git diff --cached --quiet; then
             MSK_TIME=$(TZ='Europe/Moscow' date '+%Y-%m-%d %H:%M MSK')
-            git commit -m "🤖 Update SRS files ($MSK_TIME)"
+            git commit -m "🔄 Update JSON files ($MSK_TIME)"
             git push
           else
-            echo "No changes to commit"
+            echo "No JSON changes to commit"
+          fi
+      
+      - name: Commit SRS files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add files/srs/*.srs
+          if ! git diff --cached --quiet; then
+            MSK_TIME=$(TZ='Europe/Moscow' date '+%Y-%m-%d %H:%M MSK')
+            git commit -m " Update SRS files ($MSK_TIME)"
+            git push
+          else
+            echo "No SRS changes to commit"
           fi
