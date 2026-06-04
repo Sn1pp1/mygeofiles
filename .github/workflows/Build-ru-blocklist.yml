@@ -19,7 +19,17 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Create output directory
-      run: mkdir -p files
+      run: mkdir -p files/srs
+
+    - name: Download latest sing-box binary
+      run: |
+        LATEST_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
+        echo "Latest version: $LATEST_TAG"
+        wget -q "https://github.com/SagerNet/sing-box/releases/download/${LATEST_TAG}/sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+        tar -xzf "sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+        sudo mv "sing-box-${LATEST_TAG#v}-linux-amd64/sing-box" /usr/local/bin/
+        chmod +x /usr/local/bin/sing-box
+        sing-box version
 
     - name: Download & Process Sources
       run: |
@@ -163,6 +173,20 @@ jobs:
         echo " Первые 5 записей из ru-blocklist.txt:"
         head -5 files/ru-blocklist.txt | sed 's/^/   ✓ /'
 
+    - name: Convert to SRS format
+      run: |
+        echo "🔄 Генерация SRS файла..."
+        
+        # Создаём временный JSON для sing-box
+        domains=$(grep -v '^$' files/ru-blocklist.txt | jq -R -s 'split("\n") | map(select(length > 0))')
+        echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/ru-blocklist.json
+        
+        # Компилируем в SRS
+        sing-box rule-set compile --output files/srs/ru-blocklist.srs /tmp/ru-blocklist.json
+        
+        SRS_SIZE=$(du -h files/srs/ru-blocklist.srs | cut -f1)
+        echo "✅ SRS файл создан: files/srs/ru-blocklist.srs ($SRS_SIZE)"
+
     - name: Commit and push result
       run: |
         git config user.name "RU Blocklist Bot"
@@ -175,14 +199,14 @@ jobs:
           exit 1
         fi
 
-        git add files/ru-blocklist.txt
+        git add files/ru-blocklist.txt files/srs/ru-blocklist.srs
 
         if ! git diff --staged --quiet; then
-          git commit -m "🔄 Update ru-blocklist.txt ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          git commit -m "🔄 Update ru-blocklist.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
           for i in 1 2 3; do
             git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
           done
-          echo "📤 Файл успешно обновлён"
+          echo "📤 Файлы успешно обновлены"
         else
-          echo "⏭️ Список не изменился, пропуск коммита"
+          echo "⏭️ Списки не изменились, пропуск коммита"
         fi
