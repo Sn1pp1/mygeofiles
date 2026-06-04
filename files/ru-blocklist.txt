@@ -358,6 +358,7 @@ deezer.com
 delfi.lt
 delfi.lv
 delivery.2d.net.co
+delivery.mp.microsoft.com
 dell.com
 dellcdn.com
 depositphotos.com
@@ -400,8 +401,11 @@ discordstatus.com
 discours.io
 disctech.com
 disneyplus.com
+displaycatalog.mp.microsoft.com
 dist.torproject.org
+dl.delivery.mp.microsoft.com
 dl.discordapp.net
+dlassets-ssl.xboxlive.com
 dlfacebook.com
 dnsleaktest.com
 dnsperf.com
@@ -1043,6 +1047,8 @@ ikea.com
 ilook.tv
 image.tmdb.org
 images.discordapp.net
+img-prod-cms-rt-microsoft-com.akamaized.net
+img-s-msn-com.akamaized.net
 imgur.com
 important-stories.com
 imstagram.com
@@ -1238,6 +1244,7 @@ linuxiac.com
 liquipedia.net
 liverail.com
 liverail.tv
+livetileedge.dsx.mp.microsoft.com
 livetv.sx
 liveuamap.com
 llama.com
@@ -1247,6 +1254,8 @@ locals.md
 log.rw
 login-account.net
 login.amd.com
+login.live.com
+logincdn.msauth.net
 lolz.guru
 lookerstudio.google.com
 lostfilm.download
@@ -1342,6 +1351,8 @@ moscowtimes.ru
 mouser.com
 mouser.fi
 mrakopedia.net
+msftconnecttest.com
+msftncsi.com
 mssg.me
 mullvad.net
 multisim.com
@@ -1576,6 +1587,7 @@ primevue.org
 privatekeys.pw
 prnt.sc
 proactivebackend-pa.googleapis.com
+prod.do.dsp.mp.microsoft.com
 production-openaicom-storage.azureedge.net
 proekt.media
 profitwell.com
@@ -1834,7 +1846,10 @@ statology.org
 status.discordapp.com
 steamstat.info
 stitch.withgoogle.com
+store-images.s-microsoft.com
 store.supercell.com
+storeedgefd.dsx.mp.microsoft.com
+storesdk.dsx.mp.microsoft.com
 strana.news
 strana.today
 strava.com
@@ -2104,6 +2119,8 @@ wunderground.com
 x-minus.pro
 x.ai
 x.com
+xboxlive.com
+xboxservices.com
 xerox.com
 xhamster.com
 xhamsterlive.com
