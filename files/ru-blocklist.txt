@@ -25,6 +25,8 @@ abuseipdb.com
 academy.terrasoft.ua
 accessfacebookfromschool.com
 account-api.protonmail.com
+account.alibabacloud.com
+account.aliyun.com
 account.jetbrains.com
 account.protonmail.com
 accountkit.com
@@ -69,6 +71,8 @@ aisandbox-pa.googleapis.com
 aistudio.google.com
 akc.org
 alberta.ca
+alibabacloud.com
+alicdn.com
 alkalicore-pa.clients6.google.com
 alkalimakersuite-pa.clients6.google.com
 all3dp.com
@@ -110,6 +114,7 @@ antigravity.googleapis.com
 antizapret.prostovpn.org
 any.do
 aol.com
+ap-southeast-1.maas.aliyuncs.com
 api.alador.space
 api.app.prod.grazie.aws.intellij.net
 api.github.com
@@ -172,6 +177,7 @@ babook.org
 backend-v2.crixet.com
 baginya.org
 baikal-journal.ru
+bailian.console.aliyun.com
 bard.google.com
 basicattentiontoken.org
 bat.bing.com
@@ -302,6 +308,7 @@ cock.li
 code.gist.build
 codeium.com
 codelinaro.org
+codeup-algo.oss-cn-hangzhou.aliyuncs.com
 coingate.com
 coinpayments.net
 coinsbee.com
@@ -347,6 +354,8 @@ dailylviv.com
 danbooru.donmai.us
 dashboard.algolia.com
 dashboard.gitguardian.com
+dashscope-intl.aliyuncs.com
+dashscope.aliyuncs.com
 data-cdn.mbamupdates.com
 data.cline.bot
 database.clamav.net
@@ -1023,6 +1032,7 @@ httpfacebook.com
 httpsfacebook.com
 httptoolkit.com
 httpwwwfacebook.com
+huggingface.co
 hume.ai
 hybrid-analysis.com
 hyperhost.ua
@@ -1241,6 +1251,7 @@ lifehacker.com
 liga.net
 lightning.ai
 linear.app
+lingma-api.tongyi.aliyun.com
 lingq.com
 linkedin.com
 linktr.ee
@@ -1339,9 +1350,11 @@ mintmobile.com
 miracleptr.wordpress.com
 mixcloud.com
 mmoui.com
+mmstat.com
 mobatek.net
 mobile.events.data.microsoft.com
 mobilefacebook.com
+modelscope.cn
 modrinth.com
 moneywithfacebook.com
 mongodb.com
@@ -1524,6 +1537,8 @@ parallels.net
 parallelsaccess.com
 paritydeals.com
 parse.com
+passport.alibabacloud.com
+passport.aliyun.com
 pastes.io
 path3.xtracloud.net
 patreon.com
@@ -1614,6 +1629,7 @@ pvpessence.com
 pyrobot.org
 qodana.cloud
 qoder.com
+qoder.console.aliyun.com
 qt.io
 qualcomm.com
 quicknode.com
@@ -1621,6 +1637,8 @@ quiz.directory
 quora.com
 quora.com.cdn.cloudflare.net
 qwant.com
+qwen.ai
+qwen.cloud
 r4.err.ee
 radarr.servarr.com
 radiojar.com
@@ -1777,6 +1795,8 @@ showip.net
 sibreal.org
 siemens-home.bsh-group.com
 signal.org
+signin.alibabacloud.com
+signin.aliyun.com
 simplex.chat
 simplex.im
 simplix.info
@@ -1893,6 +1913,7 @@ tampermonkey.net
 tayga.info
 tcr9i.chat.openai.com
 tdesktop.com
+tdum.alibaba.com
 te-st.org
 teamviewer.com
 techbargains.com
@@ -1958,6 +1979,8 @@ tmdb.org
 tokenized.play.google.com
 ton.org
 toncenter.com
+tongyi.ai
+tongyi.aliyun.com
 toolbox.app
 tools.cisco.com
 toplayerserver.com
