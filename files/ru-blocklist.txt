@@ -70,6 +70,7 @@ airhornbot.com
 aisandbox-pa.googleapis.com
 aistudio.google.com
 akc.org
+alador.space
 alberta.ca
 alibabacloud.com
 alicdn.com
@@ -127,6 +128,7 @@ api.openai.com
 api.protonmail.ch
 api.radarr.video
 api.service-kp.com
+api.srvkp.com
 api.theins.info
 api.themoviedb.org
 api.twitter.com
@@ -209,6 +211,7 @@ boominfo.org
 boosteroid.com
 booth.pm
 booth.pximg.net
+boramoraboom.ru
 bosch-home.com
 bosch.com
 boschaftermarket.com
@@ -378,6 +381,7 @@ depositphotos.com
 designer.microsoft.com
 designify.com
 developer.nvidia.com
+developers.facebook.com
 devexpress.com
 deviantart.com
 devops.com
@@ -759,7 +763,6 @@ fb.watch
 fbacebook.com
 fbbmarket.com
 fbboostyourbusiness.com
-fbcdn-a.akamaihd.net
 fbcdn.com
 fbcdn.net
 fbf8.com
@@ -961,7 +964,7 @@ graph.instagram.com
 graph.microsoft.com
 graph.org
 graph.whatsapp.com
-graph.whatsapp.net
+graph.whatsapp.netai.google.dev
 graty.me
 graylog.org
 grazie.ai
@@ -1286,8 +1289,11 @@ lostfilmtv5.site
 lu4.org
 lucid.app
 lyst.com
+m.alador.space
+m.boramoraboom.ru
 m.me
 m.strava.com
+m.teleos.club
 macpaw.com
 macvendors.com
 magaz.global
@@ -1569,7 +1575,7 @@ pimpletv.ru
 pingdom.com
 piratbit.top
 pixabay.com
-pixel.facebook.comai.google.dev
+pixel.facebook.com
 pixiv.net
 pkgs.tailscale.com
 plab.site
@@ -1931,6 +1937,7 @@ telegram.org
 telegram.space
 telegraph.co.uk
 telemetr.io
+teleos.club
 telepost.me
 telesco.pe
 tellapart.com
@@ -2055,7 +2062,7 @@ upwork.com
 urlr.me
 usa.one
 usatoday.com
-usercontent.devdevelopers.facebook.com
+usercontent.devfbcdn-a.akamaihd.net
 userscript.zone
 usher.ttvnw.net
 utils.docs.rw
