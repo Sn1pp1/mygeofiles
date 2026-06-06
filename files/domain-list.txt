@@ -144,6 +144,7 @@ c1.microsoft.com
 c.bing.com
 store-images.microsoft.com
 oneocsp.microsoft.com
+recent.svc.cloud.microsoft
 qwen.ai
 tongyi.ai
 tongyi.aliyun.com
