@@ -1663,6 +1663,7 @@ reactjs.com
 reactjs.org
 realbooru.com
 realist.online
+recent.svc.cloud.microsoft
 recoiljs.org
 recraft.ai
 reddxxx.com
