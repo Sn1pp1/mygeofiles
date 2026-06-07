@@ -118,3 +118,4 @@ wowinterface.com
 xboxlive.com
 xboxservices.com
 yandexwebcache.org
+api-ipv4.ip.sb
