@@ -83,6 +83,8 @@ ip.sb
 2ipcore.com
 whatismyip.com
 whatismyipaddress.com
+myip.ipip.net
+ipip.net
 myip.com
 iplocation.net
 ip-address.com
@@ -173,3 +175,4 @@ modelscope.cn
 cdn.qwenlm.ai
 qwenlm.ai
 qwen-webui-prod.oss-accelerate.aliyuncs.com
+flclashx.app
