@@ -25,7 +25,6 @@ abuseipdb.com
 academy.terrasoft.ua
 accessfacebookfromschool.com
 account-api.protonmail.com
-account.alibabacloud.com
 account.aliyun.com
 account.jetbrains.com
 account.protonmail.com
@@ -116,23 +115,19 @@ antizapret.prostovpn.org
 any.do
 aol.com
 ap-southeast-1.maas.aliyuncs.com
-api-ipv4.ip.sb
-api.alador.space
 api.app.prod.grazie.aws.intellij.net
 api.github.com
 api.githubcopilot.com
 api.home-connect.com
-api.ip.sb
 api.jetbrains.ai
-api.myip.com
 api.openai.com
 api.protonmail.ch
 api.radarr.video
 api.service-kp.com
-api.srvkp.com
 api.theins.info
 api.themoviedb.org
 api.twitter.com
+apiip.net
 apkmirror.com
 aplawrence.com
 apogeoapi.com
@@ -364,6 +359,7 @@ dashscope.aliyuncs.com
 data-cdn.mbamupdates.com
 data.cline.bot
 database.clamav.net
+db-ip.com
 debian.map.fastlydns.net
 deckbrew.xyz
 decrypt.day
@@ -421,9 +417,7 @@ disctech.com
 disneyplus.com
 displaycatalog.mp.microsoft.com
 dist.torproject.org
-dl.delivery.mp.microsoft.com
 dl.discordapp.net
-dlassets-ssl.xboxlive.com
 dlfacebook.com
 dnsleaktest.com
 dnsperf.com
@@ -970,6 +964,7 @@ graph.whatsapp.net
 graty.me
 graylog.org
 grazie.ai
+greip.io
 grizzlysms.com
 grok.com
 grok.x.com
@@ -1048,6 +1043,7 @@ i.sakh.com
 i0.wp.com
 ibm.com
 ibytedtos.com
+icanhazip.com
 ichef.bbci.co.uk
 id.cisco.com
 idelreal.org
@@ -1056,6 +1052,7 @@ iditelesombase.org
 idolcomplex.com
 iedb.org
 ifconfig.co
+ifconfig.me
 ig.me
 igcdn.com
 ign.com
@@ -1152,6 +1149,7 @@ ip-api.com
 ip.sb
 ip2location.io
 ip2proxy.com
+ipaddr.ms
 ipapi.co
 ipapi.com
 ipapi.is
@@ -1164,6 +1162,7 @@ ipify.org
 ipinfo.io
 ipip.net
 ipleak.net
+iplocate.io
 iplocation.com
 iplocation.net
 iplookup.io
@@ -1259,7 +1258,6 @@ lifehacker.com
 liga.net
 lightning.ai
 linear.app
-lingma-api.tongyi.aliyun.com
 lingq.com
 linkedin.com
 linktr.ee
@@ -1293,11 +1291,8 @@ lostfilmtv5.site
 lu4.org
 lucid.app
 lyst.com
-m.alador.space
-m.boramoraboom.ru
 m.me
 m.strava.com
-m.teleos.club
 macpaw.com
 macvendors.com
 magaz.global
@@ -1390,13 +1385,13 @@ musical.ly
 musicbrainz.org
 musixmatch.com
 mw2.wiki
+mxtoolbox.com
 my.atlassian.com
 myanimelist.net
 mydoramy.club
 myfbfans.com
 myheritage.com
 myip.com
-myip.ipip.net
 myjetbrains.com
 myparallels.com
 myqrcode.com
@@ -1549,7 +1544,6 @@ parallels.net
 parallelsaccess.com
 paritydeals.com
 parse.com
-passport.alibabacloud.com
 passport.aliyun.com
 pastes.io
 path3.xtracloud.net
@@ -1790,6 +1784,7 @@ sebeanus.online
 seconddinnertech.com
 secure-web.cisco.com
 seedoff.zannn.top
+seeip.org
 selezen.org
 semnasem.org
 semrush.com
@@ -1810,7 +1805,6 @@ showip.net
 sibreal.org
 siemens-home.bsh-group.com
 signal.org
-signin.alibabacloud.com
 signin.aliyun.com
 simplex.chat
 simplex.im
@@ -2071,7 +2065,6 @@ usatoday.com
 usercontent.devfbcdn-a.akamaihd.net
 userscript.zone
 usher.ttvnw.net
-utils.docs.rw
 uwu-logs.xyz
 v.vrv.co
 vagrantcloud.com
