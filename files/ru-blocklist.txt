@@ -116,6 +116,7 @@ antizapret.prostovpn.org
 any.do
 aol.com
 ap-southeast-1.maas.aliyuncs.com
+api-ipv4.ip.sb
 api.alador.space
 api.app.prod.grazie.aws.intellij.net
 api.github.com
@@ -1147,6 +1148,7 @@ ios-kp.store
 ios.chat.openai.com
 ip-address.com
 ip-api.com
+ip.sb
 ip2location.io
 ip2proxy.com
 ipapi.co
