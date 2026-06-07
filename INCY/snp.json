@@ -1,4 +1,5 @@
 {
+    "id": "89680e07-dc17-487c-8c74-805ef4d4cd90",
     "Name": "snp",
     "description": "",
     "type": "GLOBAL",
@@ -10,17 +11,11 @@
     "DomesticDNSDomain": "https://77.88.8.8/dns-query",
     "DomesticDNSIP": "77.88.8.8",
     "FakeDNS": false,
-    "DnsHosts": {
-        "cloudflare-dns.com": "1.1.1.1",
-        "dns.google": "8.8.8.8"
-    },
     "RemoteDns": "https://8.8.8.8/dns-query",
     "DomesticDns": "https://77.88.8.8/dns-query",
     "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
     "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
     "LastUpdated": "1780799202",
-    "GeoipHash": "",
-    "GeositeHash": "",
     "ProxySites": [
         "geosite:RU-BLOCKLIST"
     ],
