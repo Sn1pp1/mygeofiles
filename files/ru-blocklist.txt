@@ -113,6 +113,7 @@ any.do
 aol.com
 ap-southeast-1.maas.aliyuncs.com
 api-ipv4.ip.sb
+api-ipv6.ip.sb
 api.app.prod.grazie.aws.intellij.net
 api.github.com
 api.githubcopilot.com
@@ -189,6 +190,7 @@ bestchange.ru
 beszel.dev
 bigbeans.solutions
 bihus.info
+bing.com
 binoculus.com
 bitbucket.org
 bitcoin.org
