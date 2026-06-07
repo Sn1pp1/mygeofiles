@@ -77,6 +77,8 @@ ident.me
 ip-api.com
 ipinfo.io
 api.ip.sb
+api-ipv4.ip.sb
+ip.sb
 2ip.io
 2ipcore.com
 whatismyip.com
