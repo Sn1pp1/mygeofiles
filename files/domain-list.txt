@@ -119,3 +119,5 @@ xboxlive.com
 xboxservices.com
 yandexwebcache.org
 api-ipv4.ip.sb
+api-ipv6.ip.sb
+bing.com
