@@ -11,20 +11,29 @@
     "DomesticDNSDomain": "https://77.88.8.8/dns-query",
     "DomesticDNSIP": "77.88.8.8",
     "FakeDNS": false,
+    "DnsHosts": {
+        "cloudflare-dns.com": "1.1.1.1",
+        "dns.google": "8.8.8.8"
+    },
     "RemoteDns": "https://8.8.8.8/dns-query",
     "DomesticDns": "https://77.88.8.8/dns-query",
     "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
     "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
     "LastUpdated": "1780799202",
+    "GeoipHash": "3518df520ae4fce59b2323c8d7facdee07e06b526679beed496d0f6b94a359f5",
+    "GeositeHash": "f41a2d4f424477813d2a38ef8674f7c02ffce8a4243f25af9221afdc6e297c99",
+    "DirectSites": [],
     "ProxySites": [
         "geosite:RU-BLOCKLIST"
     ],
     "BlockSites": [
         "geosite:CATEGORY-ADS"
     ],
+    "DirectIp": [],
     "ProxyIp": [
         "geoip:COMMUNITY-IP"
     ],
+    "BlockIp": [],
     "DomainStrategy": "IPIfNonMatch",
     "RouteOrder": "block-proxy-direct",
     "UseChunkFiles": false,
@@ -37,5 +46,5 @@
     "updatedAt": 1780799202,
     "sourceURL": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/INCY/snp.json",
     "updateInterval": 43200,
-    "sourceLastUpdated": 1780799202
+    "sourceLastUpdated": 1780887256832
 }
