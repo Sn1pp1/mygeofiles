@@ -22,7 +22,6 @@ abstractapi.com
 academy.terrasoft.ua
 accessfacebookfromschool.com
 account-api.protonmail.com
-account.aliyun.com
 account.jetbrains.com
 account.protonmail.com
 accountkit.com
@@ -68,8 +67,6 @@ aistudio.google.com
 akc.org
 alador.space
 alberta.ca
-alibabacloud.com
-alicdn.com
 alkalicore-pa.clients6.google.com
 alkalimakersuite-pa.clients6.google.com
 all3dp.com
@@ -111,7 +108,6 @@ antigravity.googleapis.com
 antizapret.prostovpn.org
 any.do
 aol.com
-ap-southeast-1.maas.aliyuncs.com
 api-ipv4.ip.sb
 api-ipv6.ip.sb
 api.app.prod.grazie.aws.intellij.net
@@ -174,10 +170,8 @@ babook.org
 backend-v2.crixet.com
 baginya.org
 baikal-journal.ru
-bailian.console.aliyun.com
 bard.google.com
 basicattentiontoken.org
-bat.bing.com
 bato.to
 bbc.co.uk
 bbc.com
@@ -190,7 +184,6 @@ bestchange.ru
 beszel.dev
 bigbeans.solutions
 bihus.info
-bing.com
 binoculus.com
 bitbucket.org
 bitcoin.org
@@ -238,8 +231,6 @@ buyingfacebooklikes.com
 buymeacoffee.com
 buyoculus.com
 byteoversea.com
-c.bing.com
-c1.microsoft.com
 canva.com
 canva.dev
 capacitorjs.com
@@ -254,7 +245,6 @@ cdn-service.space
 cdn.id.supercell.com
 cdn.jsdelivr.net
 cdn.oaistatic.com
-cdn.qwenlm.ai
 cdn.web-platform.io
 cdn2cdn.com
 cdn2site.com
@@ -307,7 +297,6 @@ cock.li
 code.gist.build
 codeium.com
 codelinaro.org
-codeup-algo.oss-cn-hangzhou.aliyuncs.com
 coingate.com
 coinpayments.net
 coinsbee.com
@@ -352,8 +341,6 @@ dailylviv.com
 danbooru.donmai.us
 dashboard.algolia.com
 dashboard.gitguardian.com
-dashscope-intl.aliyuncs.com
-dashscope.aliyuncs.com
 data-cdn.mbamupdates.com
 data.cline.bot
 database.clamav.net
@@ -368,7 +355,6 @@ deezer.com
 delfi.lt
 delfi.lv
 delivery.2d.net.co
-delivery.mp.microsoft.com
 dell.com
 dellcdn.com
 depositphotos.com
@@ -412,11 +398,9 @@ discordstatus.com
 discours.io
 disctech.com
 disneyplus.com
-displaycatalog.mp.microsoft.com
 dist.torproject.org
 dl.discordapp.net
 dlfacebook.com
-dnsleaktest.com
 docker.elastic.co
 docs.liquibase.com
 docs.redis.com
@@ -948,9 +932,8 @@ gr-assets.com
 grafana.com
 grammarly.com
 grani.ru
-graph-fallback.instagram.comai.google.dev
+graph-fallback.instagram.com
 graph.instagram.com
-graph.microsoft.com
 graph.org
 graph.whatsapp.com
 graph.whatsapp.net
@@ -1225,7 +1208,6 @@ linuxiac.com
 liquipedia.net
 liverail.com
 liverail.tv
-livetileedge.dsx.mp.microsoft.com
 livetv.sx
 liveuamap.com
 llama.com
@@ -1235,8 +1217,6 @@ locals.md
 log.rw
 login-account.net
 login.amd.com
-login.live.com
-logincdn.msauth.net
 lolz.guru
 lookerstudio.google.com
 lostfilm.download
@@ -1315,11 +1295,9 @@ mintmobile.com
 miracleptr.wordpress.com
 mixcloud.com
 mmoui.com
-mmstat.com
 mobatek.net
 mobile.events.data.microsoft.com
 mobilefacebook.com
-modelscope.cn
 modrinth.com
 moneywithfacebook.com
 mongodb.com
@@ -1333,8 +1311,6 @@ moscowtimes.ru
 mouser.com
 mouser.fi
 mrakopedia.net
-msftconnecttest.com
-msftncsi.com
 mssg.me
 mullvad.net
 multisim.com
@@ -1452,7 +1428,6 @@ okx.com
 olx.ua
 omnissa.com
 omv-extras.org
-oneocsp.microsoft.com
 onfastspring.com
 oninstagram.com
 online-deals.net
@@ -1502,7 +1477,6 @@ parallels.net
 parallelsaccess.com
 paritydeals.com
 parse.com
-passport.aliyun.com
 pastes.io
 path3.xtracloud.net
 patreon.com
@@ -1532,7 +1506,7 @@ pimpletv.ru
 pingdom.com
 piratbit.top
 pixabay.com
-pixel.facebook.com
+pixel.facebook.comai.google.dev
 pixiv.net
 pkgs.tailscale.com
 plab.site
@@ -1571,7 +1545,6 @@ primevue.org
 privatekeys.pw
 prnt.sc
 proactivebackend-pa.googleapis.com
-prod.do.dsp.mp.microsoft.com
 production-openaicom-storage.azureedge.net
 proekt.media
 profitwell.com
@@ -1592,7 +1565,6 @@ pvpessence.com
 pyrobot.org
 qodana.cloud
 qoder.com
-qoder.console.aliyun.com
 qt.io
 qualcomm.com
 quicknode.com
@@ -1600,10 +1572,6 @@ quiz.directory
 quora.com
 quora.com.cdn.cloudflare.net
 qwant.com
-qwen-webui-prod.oss-accelerate.aliyuncs.com
-qwen.ai
-qwen.cloud
-qwenlm.ai
 r4.err.ee
 radarr.servarr.com
 radiojar.com
@@ -1618,7 +1586,6 @@ reactjs.com
 reactjs.org
 realbooru.com
 realist.online
-recent.svc.cloud.microsoft
 recoiljs.org
 recraft.ai
 reddxxx.com
@@ -1760,7 +1727,6 @@ showip.net
 sibreal.org
 siemens-home.bsh-group.com
 signal.org
-signin.aliyun.com
 simplex.chat
 simplex.im
 simplix.info
@@ -1834,12 +1800,7 @@ statology.org
 status.discordapp.com
 steamstat.info
 stitch.withgoogle.com
-store-images.microsoft.com
-store-images.s-microsoft.com
 store.supercell.com
-storeedge.microsoft.com
-storeedgefd.dsx.mp.microsoft.com
-storesdk.dsx.mp.microsoft.com
 strana.news
 strana.today
 strava.com
@@ -1876,7 +1837,6 @@ tampermonkey.net
 tayga.info
 tcr9i.chat.openai.com
 tdesktop.com
-tdum.alibaba.com
 te-st.org
 teamviewer.com
 techbargains.com
@@ -1943,8 +1903,6 @@ tmdb.org
 tokenized.play.google.com
 ton.org
 toncenter.com
-tongyi.ai
-tongyi.aliyun.com
 toolbox.app
 tools.cisco.com
 toplayerserver.com
@@ -2110,8 +2068,6 @@ wunderground.com
 x-minus.pro
 x.ai
 x.com
-xboxlive.com
-xboxservices.com
 xerox.com
 xhamster.com
 xhamsterlive.com
