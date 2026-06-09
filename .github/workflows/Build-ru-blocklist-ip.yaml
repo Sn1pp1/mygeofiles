@@ -34,7 +34,7 @@ jobs:
 
       - name: Fetch and process IP lists
         run: |
-          mkdir -p output
+          mkdir -p files/srs
           TEMP_FILE=$(mktemp)
 
           # === ИСТОЧНИКИ ДАННЫХ ===
@@ -75,19 +75,25 @@ jobs:
             curl -sL --connect-timeout 10 "$url" >> "$TEMP_FILE"
           done
 
-          echo "🧹 Очистка, фильтрация и сортировка..."
-          # Строгая валидация CIDR:
-          # 1. Удаляем комментарии и пустые строки
-          # 2. Оставляем только строки с '/'
-          # 3. Проверяем что после '/' только цифры (валидная маска CIDR)
-          # 4. Сортируем и удаляем дубликаты
+          echo "🧹 Очистка, фильтрация и сортировка (IPv4 сверху, IPv6 снизу)..."
+          # Строгая валидация CIDR + раздельная сортировка IPv4 и IPv6
+          # IPv4 (не содержат двоеточий) — сверху
           grep -v '^#' "$TEMP_FILE" | \
           grep -v '^[[:space:]]*$' | \
           grep '/' | \
           grep -E '^[0-9a-fA-F.:]+/[0-9]+$' | \
-          sort -u -V > output/ru-blocklist-ip.txt
+          grep -v ':' | \
+          sort -u -V > files/ru-blocklist-ip.txt
+          
+          # IPv6 (содержат двоеточия) — снизу
+          grep -v '^#' "$TEMP_FILE" | \
+          grep -v '^[[:space:]]*$' | \
+          grep '/' | \
+          grep -E '^[0-9a-fA-F.:]+/[0-9]+$' | \
+          grep ':' | \
+          sort -u -V >> files/ru-blocklist-ip.txt
 
-          TOTAL_IPS=$(wc -l < output/ru-blocklist-ip.txt | tr -d ' ')
+          TOTAL_IPS=$(wc -l < files/ru-blocklist-ip.txt | tr -d ' ')
           echo "✅ Собрано уникальных диапазонов: $TOTAL_IPS"
           
           # Проверяем, что список не пустой
@@ -102,7 +108,7 @@ jobs:
           
           # Генерируем JSON во временный файл (не сохраняется в репозиторий)
           TEMP_JSON=$(mktemp)
-          jq -R -s -c 'split("\n") | map(select(length > 0))' output/ru-blocklist-ip.txt | \
+          jq -R -s -c 'split("\n") | map(select(length > 0))' files/ru-blocklist-ip.txt | \
             jq '{
               "version": 1,
               "rules": [
@@ -112,11 +118,11 @@ jobs:
               ]
             }' > "$TEMP_JSON"
 
-          # Компилируем .srs с правильным именем
-          ./sing-box rule-set compile "$TEMP_JSON" -o output/ru-blocklist-ip.srs
+          # Компилируем .srs в папку files/srs/
+          ./sing-box rule-set compile "$TEMP_JSON" -o files/srs/ru-blocklist-ip.srs
           
-          if [ -f output/ru-blocklist-ip.srs ]; then
-            SRS_SIZE=$(du -h output/ru-blocklist-ip.srs | cut -f1)
+          if [ -f files/srs/ru-blocklist-ip.srs ]; then
+            SRS_SIZE=$(du -h files/srs/ru-blocklist-ip.srs | cut -f1)
             echo "✅ Файл ru-blocklist-ip.srs успешно создан (Размер: $SRS_SIZE)"
           else
             echo "❌ Ошибка компиляции .srs"
@@ -131,16 +137,16 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Получаем текущее время по Москве (МСК)
-          MSK_TIME=$(TZ='Europe/Moscow' date '+%d.%m.%Y %H:%M')
+          # Получаем текущее время по Москве (МСК) в формате как в других коммитах
+          MSK_TIME=$(TZ='Europe/Moscow' date '+%Y-%m-%d %H:%M MSK')
           
-          # Добавляем только .txt и .srs файлы с новым именем (JSON игнорируется)
-          git add output/ru-blocklist-ip.txt output/ru-blocklist-ip.srs
+          # Добавляем только .txt и .srs файлы (JSON игнорируется)
+          git add files/ru-blocklist-ip.txt files/srs/ru-blocklist-ip.srs
           
           if git diff --staged --quiet; then
             echo "⏭️ Нет изменений для коммита (списки не изменились)."
           else
-            git commit -m "🇷🇺 🔄 Обновление ru-blocklist-ip (МСК: $MSK_TIME)"
+            git commit -m "🔄 Update ru-blocklist-ip and SRS ($MSK_TIME)"
             git push
             echo "🚀 Изменения успешно отправлены в репозиторий!"
           fi
