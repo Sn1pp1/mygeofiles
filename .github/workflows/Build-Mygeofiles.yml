@@ -129,12 +129,11 @@ jobs:
           }
 
           declare -A GEOSITE=(
-            ["category-ads"]="https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/release/sing-box/category-ads.srs"
             ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"  
           )
 
           declare -A GEOIP=(
-            ["community-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/community.lst"
+            ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
           )
 
           cat <<'EOF' > parser.py
