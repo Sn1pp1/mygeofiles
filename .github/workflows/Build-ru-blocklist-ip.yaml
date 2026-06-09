@@ -1,4 +1,4 @@
-name: Generate RU Blocklist IP
+name: Build RU Blocklist IP
 
 on:
   schedule:
@@ -76,10 +76,25 @@ jobs:
           done
 
           echo "🧹 Очистка, фильтрация и сортировка..."
-          grep -v '^#' "$TEMP_FILE" | grep -v '^[[:space:]]*$' | grep '/' | sort -u -V > output/ru-blocklist-ip.txt
+          # Строгая валидация CIDR:
+          # 1. Удаляем комментарии и пустые строки
+          # 2. Оставляем только строки с '/'
+          # 3. Проверяем что после '/' только цифры (валидная маска CIDR)
+          # 4. Сортируем и удаляем дубликаты
+          grep -v '^#' "$TEMP_FILE" | \
+          grep -v '^[[:space:]]*$' | \
+          grep '/' | \
+          grep -E '^[0-9a-fA-F.:]+/[0-9]+$' | \
+          sort -u -V > output/ru-blocklist-ip.txt
 
           TOTAL_IPS=$(wc -l < output/ru-blocklist-ip.txt | tr -d ' ')
           echo "✅ Собрано уникальных диапазонов: $TOTAL_IPS"
+          
+          # Проверяем, что список не пустой
+          if [ "$TOTAL_IPS" -eq 0 ]; then
+            echo "❌ Ошибка: список IP пустой после фильтрации"
+            exit 1
+          fi
 
       - name: Generate JSON and Compile to .srs
         run: |
