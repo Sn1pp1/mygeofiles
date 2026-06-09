@@ -18,11 +18,8 @@
     "ProxySites": [
         "geosite:RU-BLOCKLIST"
     ],
-    "BlockSites": [
-        "geosite:CATEGORY-ADS"
-    ],
     "ProxyIp": [
-        "geoip:COMMUNITY-IP"
+        "geoip:RU-BLOCKLIST-IP"
     ],
     "DomainStrategy": "IPIfNonMatch",
     "RouteOrder": "block-proxy-direct",
