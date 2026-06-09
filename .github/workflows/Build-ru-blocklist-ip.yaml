@@ -1,0 +1,131 @@
+name: Generate RU Blocklist IP
+
+on:
+  schedule:
+    # Запуск каждые 6 часов (в 00:00, 06:00, 12:00, 18:00 по UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Возможность ручного запуска через вкладку Actions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Разрешение на коммит и пуш файлов обратно в репозиторий
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+
+      - name: Download sing-box
+        run: |
+          # Получаем версию последнего релиза sing-box
+          SING_BOX_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "Downloading sing-box version: $SING_BOX_VERSION"
+          
+          # Скачиваем и распаковываем бинарный файл для linux-amd64
+          curl -sL "https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION#v}-linux-amd64.tar.gz" | tar xz -C /tmp
+          mv /tmp/sing-box-${SING_BOX_VERSION#v}-linux-amd64/sing-box ./sing-box
+          chmod +x ./sing-box
+
+      - name: Fetch and process IP lists
+        run: |
+          mkdir -p output
+          TEMP_FILE=$(mktemp)
+
+          # === ИСТОЧНИКИ ДАННЫХ ===
+          SOURCES=(
+            "https://community.antifilter.download/list/community.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/Discord.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/discord.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/Discord.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/discord.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/Meta.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/meta.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/Meta.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/meta.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/Twitter.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/twitter.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/Twitter.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/twitter.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/cloudflare.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/cloudflare.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/cloudfront.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/cloudfront.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/digitalocean.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/digitalocean.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/google_meet.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/google_meet.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/hetzner.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/hetzner.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/ovh.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/ovh.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/roblox.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/telegram.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/telegram.lst"
+            "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.list"
+          )
+
+          echo "📥 Загрузка данных из источников..."
+          for url in "${SOURCES[@]}"; do
+            curl -sL --connect-timeout 10 "$url" >> "$TEMP_FILE"
+          done
+
+          echo "🧹 Очистка, фильтрация и сортировка..."
+          grep -v '^#' "$TEMP_FILE" | grep -v '^[[:space:]]*$' | grep '/' | sort -u -V > output/ru-blocklist-ip.txt
+
+          TOTAL_IPS=$(wc -l < output/ru-blocklist-ip.txt | tr -d ' ')
+          echo "✅ Собрано уникальных диапазонов: $TOTAL_IPS"
+
+      - name: Generate JSON and Compile to .srs
+        run: |
+          echo "⚙️ Генерация JSON и компиляция в бинарный формат..."
+          
+          # Генерируем JSON во временный файл (не сохраняется в репозиторий)
+          TEMP_JSON=$(mktemp)
+          jq -R -s -c 'split("\n") | map(select(length > 0))' output/ru-blocklist-ip.txt | \
+            jq '{
+              "version": 1,
+              "rules": [
+                {
+                  "ip_cidr": .
+                }
+              ]
+            }' > "$TEMP_JSON"
+
+          # Компилируем .srs с правильным именем
+          ./sing-box rule-set compile "$TEMP_JSON" -o output/ru-blocklist-ip.srs
+          
+          if [ -f output/ru-blocklist-ip.srs ]; then
+            SRS_SIZE=$(du -h output/ru-blocklist-ip.srs | cut -f1)
+            echo "✅ Файл ru-blocklist-ip.srs успешно создан (Размер: $SRS_SIZE)"
+          else
+            echo "❌ Ошибка компиляции .srs"
+            exit 1
+          fi
+          
+          # Очищаем временный JSON
+          rm -f "$TEMP_JSON"
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Получаем текущее время по Москве (МСК)
+          MSK_TIME=$(TZ='Europe/Moscow' date '+%d.%m.%Y %H:%M')
+          
+          # Добавляем только .txt и .srs файлы с новым именем (JSON игнорируется)
+          git add output/ru-blocklist-ip.txt output/ru-blocklist-ip.srs
+          
+          if git diff --staged --quiet; then
+            echo "⏭️ Нет изменений для коммита (списки не изменились)."
+          else
+            git commit -m "🇷🇺 🔄 Обновление ru-blocklist-ip (МСК: $MSK_TIME)"
+            git push
+            echo "🚀 Изменения успешно отправлены в репозиторий!"
+          fi
