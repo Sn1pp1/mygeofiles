@@ -137,7 +137,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "⏭️ Нет изменений для коммита (списки не изменились)."
           else
-            git commit -m "🔄 Update ru-blocklist-ip and SRS ($MSK_TIME)"
+            git commit -m "🔄 Update ru-blocklist-ip.txt and SRS ($MSK_TIME)"
             git push
             echo "🚀 Изменения успешно отправлены в репозиторий!"
           fi
