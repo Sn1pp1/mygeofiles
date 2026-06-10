@@ -50,6 +50,7 @@ jobs:
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/tiktok.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/twitter.lst"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/kinopub.list"
+          "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/ooni_domains.lst"
         )
 
         TEMP_RAW=$(mktemp)
