@@ -45,6 +45,7 @@ jobs:
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/discord.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/Discord.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/discord.lst"
+            "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/discord_ips.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/Meta.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/meta.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/Meta.lst"
@@ -59,6 +60,7 @@ jobs:
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/telegram.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/telegram.lst"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.list"
+            "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/community_ips.lst"
           )
 
           echo "📥 Загрузка данных из источников..."
