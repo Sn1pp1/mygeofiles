@@ -18,7 +18,7 @@
   "DomesticDns": "https://77.88.8.8/dns-query",
   "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
   "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
-  "LastUpdated": "1781543041",
+  "LastUpdated": "1781556544",
   "GeoipHash": "aea704429b502fab6d14bcbd929c9041adc38d742651c603b64d737be87a69d9",
   "GeositeHash": "e55999e8f86b67e607ad81a48edc90b1595c78e8fbd89589396b22b94abd57d8",
   "ProxySites": [
@@ -33,5 +33,5 @@
   "bypassPrivateIPs": true,
   "bypassLocalDNS": true,
   "createdAt": 1781536967627,
-  "updatedAt": 1781543041039
+  "updatedAt": 1781556544988
 }
