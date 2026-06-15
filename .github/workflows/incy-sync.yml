@@ -55,6 +55,6 @@ jobs:
           
           # Проверяем, изменился ли JSON, чтобы не плодить пустые коммиты
           if ! git diff-index --quiet HEAD; then
-            git commit -m "auto-sync INCY config"
+            git commit -m "🔄 Auto-update INCY config"
             git push origin main
           fi
