@@ -1,37 +1,37 @@
 {
-    "id": "89680e07-dc17-487c-8c74-805ef4d4cd90",
-    "Name": "snp",
-    "type": "GLOBAL",
-    "GlobalProxy": false,
-    "RemoteDNSType": "DoH",
-    "RemoteDNSDomain": "https://8.8.8.8/dns-query",
-    "RemoteDNSIP": "8.8.8.8",
-    "DomesticDNSType": "DoH",
-    "DomesticDNSDomain": "https://77.88.8.8/dns-query",
-    "DomesticDNSIP": "77.88.8.8",
-    "FakeDNS": false,
-    "DnsHosts": {
-        "cloudflare-dns.com": "1.1.1.1",
-        "dns.google": "8.8.8.8"
-    },
-    "RemoteDns": "https://8.8.8.8/dns-query",
-    "DomesticDns": "https://77.88.8.8/dns-query",
-    "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
-    "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
-    "LastUpdated": "1781544231",
-    "GeoipHash": "42bedb70ffaa68696111b6c3573b03bac44830c0c09ed089a7a4d5433116582a",
-    "GeositeHash": "e55999e8f86b67e607ad81a48edc90b1595c78e8fbd89589396b22b94abd57d8",
-    "ProxySites": [
-        "geosite:RU-BLOCKLIST"
-    ],
-    "ProxyIp": [
-        "geoip:RU-BLOCKLIST-IP"
-    ],
-    "DomainStrategy": "IPIfNonMatch",
-    "RouteOrder": "block-proxy-direct",
-    "UseChunkFiles": false,
-    "bypassPrivateIPs": true,
-    "bypassLocalDNS": true,
-    "createdAt": 1781536967627,
-    "updatedAt": 1781536967627
+  "id": "89680e07-dc17-487c-8c74-805ef4d4cd90",
+  "Name": "snp",
+  "type": "GLOBAL",
+  "GlobalProxy": false,
+  "RemoteDNSType": "DoH",
+  "RemoteDNSDomain": "https://8.8.8.8/dns-query",
+  "RemoteDNSIP": "8.8.8.8",
+  "DomesticDNSType": "DoH",
+  "DomesticDNSDomain": "https://77.88.8.8/dns-query",
+  "DomesticDNSIP": "77.88.8.8",
+  "FakeDNS": false,
+  "DnsHosts": {
+    "cloudflare-dns.com": "1.1.1.1",
+    "dns.google": "8.8.8.8"
+  },
+  "RemoteDns": "https://8.8.8.8/dns-query",
+  "DomesticDns": "https://77.88.8.8/dns-query",
+  "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
+  "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
+  "LastUpdated": "1781543041",
+  "GeoipHash": "aea704429b502fab6d14bcbd929c9041adc38d742651c603b64d737be87a69d9",
+  "GeositeHash": "e55999e8f86b67e607ad81a48edc90b1595c78e8fbd89589396b22b94abd57d8",
+  "ProxySites": [
+    "geosite:RU-BLOCKLIST"
+  ],
+  "ProxyIp": [
+    "geoip:RU-BLOCKLIST-IP"
+  ],
+  "DomainStrategy": "IPIfNonMatch",
+  "RouteOrder": "block-proxy-direct",
+  "UseChunkFiles": false,
+  "bypassPrivateIPs": true,
+  "bypassLocalDNS": true,
+  "createdAt": 1781536967627,
+  "updatedAt": 1781543041039
 }
