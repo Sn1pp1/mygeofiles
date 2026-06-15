@@ -1,0 +1,60 @@
+name: Independent INCY Config Sync
+
+on:
+  workflow_run:
+    # Скрипт запустится автоматически сразу после завершения "Build Mygeofiles"
+    workflows: ["Build Mygeofiles"]
+    types:
+      - completed
+  workflow_dispatch:
+    # Кнопка ручного запуска во вкладке Actions (на всякий случай)
+
+jobs:
+  sync-config:
+    runs-on: ubuntu-latest
+    # Запускаем только если основной воркфлоу завершился УСПЕШНО
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Принудительно берем ветку main, куда основной билд только что загрузил свежие .dat файлы
+          ref: main
+
+      - name: Calculate hashes and update JSON
+        run: |
+          # Проверяем, что файлы действительно на месте
+          if [ ! -f geosite.dat ] || [ ! -f geoip.dat ]; then
+            echo "❌ Ошибка: Файлы .dat не найдены в корне репозитория!"
+            exit 1
+          fi
+
+          # 1. Вычисляем актуальные SHA256 хэши локальных файлов
+          GEOIP_HASH=$(sha256sum geoip.dat | awk '{print $1}')
+          GEOSITE_HASH=$(sha256sum geosite.dat | awk '{print $1}')
+
+          # 2. Генерируем текущие таймстампы
+          TIMESTAMP=$(date +%s)
+          TIMESTAMP_MS=$(date +%s%3N)
+
+          # 3. Записываем всё в ваш snp.json через утилиту jq
+          jq --arg gh "$GEOIP_HASH" \
+             --arg sh "$GEOSITE_HASH" \
+             --arg ts "$TIMESTAMP" \
+             --arg ts_ms "$TIMESTAMP_MS" \
+             '.GeoipHash = $gh | .GeositeHash = $sh | .LastUpdated = $ts | .updatedAt = ($ts_ms | tonumber)' \
+             INCY/snp.json > tmp.json && mv tmp.json INCY/snp.json
+
+      - name: Commit and Push changes to GitHub
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add INCY/snp.json
+          
+          # Проверяем, изменился ли JSON, чтобы не плодить пустые коммиты
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "chore: auto-sync INCY hashes and timestamp [skip ci]"
+            git push origin main
+          fi
