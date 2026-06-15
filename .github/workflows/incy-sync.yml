@@ -1,4 +1,4 @@
-name: Independent INCY Config Sync
+name: INCY Config Sync
 
 on:
   workflow_run:
@@ -55,6 +55,6 @@ jobs:
           
           # Проверяем, изменился ли JSON, чтобы не плодить пустые коммиты
           if ! git diff-index --quiet HEAD; then
-            git commit -m "chore: auto-sync INCY hashes and timestamp [skip ci]"
+            git commit -m "auto-sync INCY config"
             git push origin main
           fi
