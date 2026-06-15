@@ -1,7 +1,6 @@
 {
     "id": "89680e07-dc17-487c-8c74-805ef4d4cd90",
     "Name": "snp",
-    "description": "",
     "type": "GLOBAL",
     "GlobalProxy": false,
     "RemoteDNSType": "DoH",
@@ -22,27 +21,17 @@
     "LastUpdated": "1781544231",
     "GeoipHash": "42bedb70ffaa68696111b6c3573b03bac44830c0c09ed089a7a4d5433116582a",
     "GeositeHash": "e55999e8f86b67e607ad81a48edc90b1595c78e8fbd89589396b22b94abd57d8",
-    "DirectSites": [],
     "ProxySites": [
         "geosite:RU-BLOCKLIST"
     ],
-    "BlockSites": [],
-    "DirectIp": [],
     "ProxyIp": [
         "geoip:RU-BLOCKLIST-IP"
     ],
-    "BlockIp": [],
     "DomainStrategy": "IPIfNonMatch",
     "RouteOrder": "block-proxy-direct",
     "UseChunkFiles": false,
     "bypassPrivateIPs": true,
     "bypassLocalDNS": true,
-    "isDefault": false,
-    "isEditable": true,
-    "sortOrder": 0,
     "createdAt": 1781536967627,
-    "updatedAt": 1781536967627,
-    "sourceURL": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/INCY/snp.json",
-    "updateInterval": 43200,
-    "sourceLastUpdated": null
+    "updatedAt": 1781536967627
 }
