@@ -35,6 +35,7 @@ acheterdesfollowersinstagram.com
 acheterfollowersinstagram.com
 activatica.org
 adblockplus.org
+adguard-vpn.com
 adguard.com
 adidas.com
 adminforge.de
@@ -328,6 +329,9 @@ csskor.ill.in.ua
 cub.red
 currenttime.tv
 curseforge.com
+cursor-cdn.com
+cursor.sh
+cursorapi.com
 cursorinfo.co.il
 cvedetails.com
 cyberghostvpn.com
@@ -459,6 +463,7 @@ etahub.com
 etsy.com
 eu-iot-prod.aws.tcljd.com
 euronews.com
+europesays.com
 euroradio.fm
 eutrp.eu
 event.on24.com
@@ -839,7 +844,12 @@ fpacebook.com
 fqcebook.com
 fracebook.com
 fragment.com
+framer.app
 framer.com
+framercanvas.com
+framercdn.com
+framerstatic.com
+framerusercontent.com
 freeb.com
 freebasics.com
 freebasics.net
@@ -1128,6 +1138,7 @@ jabra.com
 jamf.com
 jetbrains.com
 jetbrains.space
+jetbrains.team
 jnn-pa.googleapis.com
 joesandbox.com
 jskor.ill.in.ua
@@ -1135,8 +1146,6 @@ jules.google
 jules.google.com
 jut-su.net
 jut.su
-jw-russia.org
-jw.org
 kaktus.media
 kaleido.ai
 kamatera.com
@@ -1247,6 +1256,7 @@ make.com
 makeitopen.com
 makersuite.google.com
 malwarebytes.com
+manga-chan.me
 mangadex.org
 mangahub.ru
 mangapark.net
@@ -1295,6 +1305,7 @@ mignews.com
 mintmobile.com
 miracleptr.wordpress.com
 mixcloud.com
+mmcdn.com
 mmoui.com
 mobatek.net
 mobile.events.data.microsoft.com
@@ -1485,6 +1496,7 @@ patreonusercontent.com
 patriot.dp.ua
 pay.buckaroo.nl
 paypal.com
+paywithmoon.com
 pb.wtf
 pbs.twimg.com
 pcbway.com
@@ -1564,6 +1576,7 @@ public.parsec.app
 pushbr.com
 pvpessence.com
 pyrobot.org
+qobuz.com
 qodana.cloud
 qoder.com
 qt.io
@@ -1718,6 +1731,8 @@ serpstat.com
 servarr.com
 severreal.org
 sfdcopens.com
+sharefile.com
+sharefile.io
 shikimori.me
 shikimori.one
 shinyhardware.co.uk
@@ -1728,6 +1743,7 @@ showip.net
 sibreal.org
 siemens-home.bsh-group.com
 signal.org
+sigsauer.com
 simplex.chat
 simplex.im
 simplix.info
@@ -1829,6 +1845,7 @@ swissinfo.ch
 sydney.bing.com
 synoforum.com
 sysdig.com
+syslog-ng.com
 t-invariant.org
 t.co
 t.me
@@ -2024,6 +2041,7 @@ watchguard.com
 watermarkremover.io
 wbagora.com
 wbgames.com
+wdfiles.com
 weather.com
 web-instagram.net
 webchannel-alkalimakersuite-pa.clients6.google.com
@@ -2277,6 +2295,7 @@ zbigz.com
 zedge.net
 zendesk.com
 zerkalo.io
+zerossl.com
 zetflix.online
 zimbra.com
 zimbra.org
