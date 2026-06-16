@@ -34,4 +34,5 @@
   "bypassLocalDNS": true,
   "createdAt": 1781536967627,
   "updatedAt": 1781578727404
+  "updateInterval": 43200
 }
