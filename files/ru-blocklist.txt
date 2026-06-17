@@ -365,6 +365,7 @@ depositphotos.com
 designer.microsoft.com
 designify.com
 developer.nvidia.com
+developers.facebook.com
 devexpress.com
 deviantart.com
 devops.com
@@ -742,7 +743,6 @@ fb.watch
 fbacebook.com
 fbbmarket.com
 fbboostyourbusiness.com
-fbcdn-a.akamaihd.net
 fbcdn.com
 fbcdn.net
 fbf8.com
@@ -942,7 +942,7 @@ gr-assets.com
 grafana.com
 grammarly.com
 grani.ru
-graph-fallback.instagram.com
+graph-fallback.instagram.comai.google.dev
 graph.instagram.com
 graph.org
 graph.whatsapp.com
@@ -1519,7 +1519,7 @@ pimpletv.ru
 pingdom.com
 piratbit.top
 pixabay.com
-pixel.facebook.comai.google.dev
+pixel.facebook.com
 pixiv.net
 pkgs.tailscale.com
 plab.site
@@ -1992,7 +1992,7 @@ upwork.com
 urlr.me
 usa.one
 usatoday.com
-usercontent.devdevelopers.facebook.com
+usercontent.devfbcdn-a.akamaihd.net
 userscript.zone
 usher.ttvnw.net
 uwu-logs.xyz
