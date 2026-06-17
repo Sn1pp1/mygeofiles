@@ -80,3 +80,5 @@ yandexwebcache.org
 xdaforums.com
 vectorizer.ai
 m.soi.lat
+akenai.org
+akenai.host
