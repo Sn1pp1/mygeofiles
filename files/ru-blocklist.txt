@@ -66,6 +66,8 @@ airhornbot.com
 aisandbox-pa.googleapis.com
 aistudio.google.com
 akc.org
+akenai.host
+akenai.org
 alador.space
 alberta.ca
 alkalicore-pa.clients6.google.com
