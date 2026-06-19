@@ -61,7 +61,7 @@ https://cdn.jsdelivr.net/gh/Sn1pp1/mygeofiles@main/geoip.dat
       },
       {
         "tag": "dns-remote",
-        "address": "1.1.1.1",
+        "address": "8.8.8.8",
         "detour": "proxy"
       }
     ],
