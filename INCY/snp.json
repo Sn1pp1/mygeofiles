@@ -22,12 +22,19 @@
   "LastUpdated": "1781964524",
   "GeoipHash": "1d5c82409fb2418cafc705cc623b3b0fffe2139d137d70b311041684ba1bd596",
   "GeositeHash": "94aaf03fb2869bf9c260f37f569448153e46b326871d52862afbe379065bc162",
-  "DirectSites": [],
+  "DirectSites": [
+    "geosite:PRIVATE"
+  ],
   "ProxySites": [
     "geosite:RU-BLOCKLIST"
   ],
-  "BlockSites": [],
-  "DirectIp": [],
+  "BlockSites": [
+    "domain:ad.mail.ru",
+    "domain:alt-ad.mail.ru"
+  ],
+  "DirectIp": [
+    "geoip:PRIVATE-IP"
+  ],
   "ProxyIp": [
     "geoip:RU-BLOCKLIST-IP"
   ],
