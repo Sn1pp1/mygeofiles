@@ -969,6 +969,7 @@ hacklang.org
 hackmd.io
 halooglasi.com
 hammerandchisel.ssl.zendesk.com
+happ-proxy.com
 happ.su
 happycolorapp.com
 hashicorp.com
