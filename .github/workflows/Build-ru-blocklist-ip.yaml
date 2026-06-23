@@ -63,6 +63,16 @@ jobs:
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.list"
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/text/telegram.txt"
             "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/community_ips.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/cloudflare.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/cloudflare.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/cloudfront.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/cloudfront.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/digitalocean.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/digitalocean.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/hetzner.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/hetzner.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/ovh.lst"
+            "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/ovh.lst"
           )
 
           echo "📥 Загрузка данных из источников..."
