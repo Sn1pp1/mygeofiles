@@ -273,7 +273,6 @@ brawlstarsgame.com
 broadcom.com
 broncosportforum.com
 browser-intake-datadoghq.com
-browser-intake-datadoghq.comcopilot-proxy.githubusercontent.com
 browserleaks.com
 bt.t-ru.org
 bt2.t-ru.org
@@ -544,6 +543,7 @@ document360.com
 document360.io
 documentation.meraki.com
 dola.com
+dola.comopenaiapi-site.azureedge.net
 donkeykongcountryreturns.com
 dorama.live
 doramalive.ru
@@ -1933,7 +1933,7 @@ pump.fun
 pushbr.com
 pvpessence.com
 pyrobot.org
-qianwen.aliyun.comcopilot-proxy.githubusercontent.com
+qianwen.aliyun.comopenaiapi-site.azureedge.net
 qianwen.com
 qobuz.com
 qodana.cloud
