@@ -363,6 +363,7 @@ coomer.su
 copilot-proxy.githubusercontent.com
 copilot-telemetry-service.githubusercontent.com
 copilot-telemetry.githubusercontent.com
+copilot-telemetry.githubusercontent.comopenaiapi-site.azureedge.net
 copilot-workspace.githubnext.com
 copilot.microsoft.com
 copilotprodattachments.blob.core.windows.net
@@ -488,7 +489,6 @@ document360.com
 document360.io
 documentation.meraki.com
 dola.com
-dola.comopenaiapi-site.azureedge.net
 dorama.live
 doramalive.ru
 doramy.club
