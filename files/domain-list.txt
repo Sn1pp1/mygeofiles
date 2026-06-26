@@ -125,3 +125,6 @@ arc.msn.com
 storeedge.microsoft.com
 da.xboxservices.com
 bat.bing.com
+oneocsp.microsoft.com
+c1.microsoft.com
+c.bing.com
