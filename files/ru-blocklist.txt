@@ -150,6 +150,7 @@ bihus.info
 binoculus.com
 bitdefender.com
 bitnami.com
+blackmore.cloud
 blackseanews.net
 blinkshot.io
 bluehost.com
@@ -832,11 +833,11 @@ gql.twitch.tv
 gr-assets.com
 grafana.com
 grani.ru
-graph-fallback.instagram.comai.google.dev
+graph-fallback.instagram.com
 graph.instagram.com
 graph.org
 graph.whatsapp.com
-graph.whatsapp.net
+graph.whatsapp.netai.google.dev
 graty.me
 graylog.org
 grizzlysms.com
@@ -1083,6 +1084,7 @@ liverail.tv
 livetv.sx
 liveuamap.com
 llama.com
+llhost.eu
 lnstagram-help.com
 locals.md
 log.rw
