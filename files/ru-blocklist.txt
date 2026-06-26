@@ -17,6 +17,7 @@ aboutfacebook.com
 abstractapi.com
 academy.terrasoft.ua
 accessfacebookfromschool.com
+account.live.com
 accountkit.com
 acebooik.com
 acebook.com
@@ -28,6 +29,7 @@ activatica.org
 adguard-vpn.com
 adguard.com
 adidas.com
+adl.windows.com
 adminforge.de
 adobe.com
 adobe.io
@@ -103,7 +105,9 @@ api.service-kp.com
 api.theins.info
 api.themoviedb.org
 apkmirror.com
+apps.microsoft.com
 arbat.media
+arc.msn.com
 arc.net
 archive.is
 archive.ph
@@ -124,6 +128,7 @@ attachments.f95zone.to
 atv4.dnskp.cc
 audiobookbay.lu
 augmentcode.com
+auth.gfx.ms
 autodesk.com
 avira.com
 azathabar.com
@@ -196,6 +201,7 @@ cats.com
 cbilling.eu
 cbilling.vip
 cdn-service.space
+cdn.storeedgefd.dsx.mp.microsoft.com
 cdn.web-platform.io
 cdn2cdn.com
 cdn2site.com
@@ -232,11 +238,13 @@ claude.com
 clevelandclinic.org
 click-url.com
 clickup.com
+clientconfig.passport.net
 clip.opus.pro
 cloudaicompanion.googleapis.com
 cloudcode-pa.googleapis.com
 cloudtorrents.com
 cms-twdigitalassets.com
+cms.store.microsoft.com
 cnd2exp.online
 cock.li
 code.gist.build
@@ -267,6 +275,7 @@ crowdtangle.com
 croxyproxy.com
 crunchyroll.com
 csskor.ill.in.ua
+ctldl.windowsupdate.com
 cub.red
 currenttime.tv
 curseforge.com
@@ -296,6 +305,7 @@ deezer.com
 delfi.lt
 delfi.lv
 delivery.2d.net.co
+delivery.mp.microsoft.com
 dell.com
 dellcdn.com
 depositphotos.com
@@ -337,6 +347,8 @@ discordstatus.com
 discours.io
 disctech.com
 disneyplus.com
+displaycatalog.mp.microsoft.com
+dl.delivery.mp.microsoft.com
 dlfacebook.com
 docs.liquibase.com
 docs.rw
@@ -688,6 +700,8 @@ fcebook.com
 fcebookk.com
 fcfacebook.com
 fdacebook.info
+fe3.delivery.mp.microsoft.com
+fe3cr.delivery.mp.microsoft.com
 feacboo.com
 feacbook.com
 feacbooke.com
@@ -791,6 +805,7 @@ gameroom.com
 gamesrepack.com
 gamestop.com
 gaming.amazon.com
+gamingservices.mp.microsoft.com
 geekuninstaller.com
 geforcenow.com
 gelbooru.com
@@ -1070,6 +1085,7 @@ lgthinq.com
 lib.rus.ec
 libgen.li
 licdn.com
+licensing.mp.microsoft.com
 lidarr.audio
 lifehacker.com
 liga.net
@@ -1089,6 +1105,9 @@ lnstagram-help.com
 locals.md
 log.rw
 login-account.net
+login.live.com
+login.microsoftonline.com
+logincdn.msauth.net
 lolz.guru
 lookerstudio.google.com
 lostfilm.download
@@ -1111,6 +1130,7 @@ make.com
 makeitopen.com
 makersuite.google.com
 malwarebytes.com
+manage.devcenter.microsoft.com
 manga-chan.me
 mangadex.org
 mangahub.ru
@@ -1370,6 +1390,7 @@ primevue.org
 privatekeys.pw
 prnt.sc
 proactivebackend-pa.googleapis.com
+prod.do.dsp.mp.microsoft.com
 production-openaicom-storage.azureedge.net
 proekt.media
 profitwell.com
@@ -1382,7 +1403,9 @@ provereno.media
 prowlarr.com
 pscp.tv
 psiphon.ca
+pti.store.microsoft.com
 public.parsec.app
+purchase.md.mp.microsoft.com
 pushbr.com
 pvpessence.com
 pyrobot.org
@@ -1512,6 +1535,7 @@ sentry.dev
 sentry.io
 sephora.com
 servarr.com
+settings-win.data.microsoft.com
 severreal.org
 sfdcopens.com
 sharefile.com
@@ -1542,6 +1566,7 @@ skycdp.com
 slashlib.me
 slavicsac.com
 slifki.biz
+sls.update.microsoft.com
 smartbear.co
 smartbear.com
 smartdeploy.com
@@ -1585,6 +1610,11 @@ static.lostfilm.top
 statology.org
 steamstat.info
 stitch.withgoogle.com
+store-images.microsoft.com
+store-images.s-microsoft.com
+store.microsoft.com
+storecatalogrevocation.storequality.microsoft.com
+storeedgefd.dsx.mp.microsoft.com
 strana.news
 strana.today
 strava.com
@@ -1693,6 +1723,7 @@ tria.ge
 trinitycore.info
 trueblackmetalradio.com
 truthsocial.com
+tsfe.trafficshaping.dsp.mp.microsoft.com
 tsmc.com
 ttwstatic.com
 turbobit.net
@@ -1736,6 +1767,7 @@ ukrtelcdn.net
 unian.ua
 unscreen.com
 unsplash.com
+update.microsoft.com
 upwork.com
 urlr.me
 usa.one
@@ -1745,6 +1777,7 @@ userscript.zone
 usher.ttvnw.net
 uwu-logs.xyz
 v.vrv.co
+v10.events.data.microsoft.com
 vagrantcloud.com
 vectorizer.ai
 veeam.com
@@ -1808,16 +1841,20 @@ wiki.fextralife.com
 wikidot.com
 wilsoncenter.org
 windows10spotlight.com
+windowsupdate.com
 windsurf.com
 wise.com
 withyoutube.com
+wns.windows.com
 wonderzine.com
 workplace.com
 workplaceusecases.com
 worldhack.com
 wowinterface.com
 wpengine.com
+ws.microsoft.com
 wunderground.com
+wustat.windows.com
 x-minus.pro
 x.ai
 x.com
