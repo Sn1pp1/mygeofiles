@@ -122,3 +122,6 @@ login.microsoftonline.com
 v10.events.data.microsoft.com
 settings-win.data.microsoft.com
 arc.msn.com
+storeedge.microsoft.com
+da.xboxservices.com
+bat.bing.com
