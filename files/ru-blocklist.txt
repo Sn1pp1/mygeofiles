@@ -140,6 +140,7 @@ baginya.org
 baikal-journal.ru
 bard.google.com
 basicattentiontoken.org
+bat.bing.com
 bato.to
 bbc.co.uk
 bbc.com
@@ -286,6 +287,7 @@ cursorinfo.co.il
 cvedetails.com
 cyberghostvpn.com
 cyxymu.info
+da.xboxservices.com
 dacebook.com
 daemon-tools.cc
 daily-cloudcode-pa.googleapis.com
@@ -1614,6 +1616,7 @@ store-images.microsoft.com
 store-images.s-microsoft.com
 store.microsoft.com
 storecatalogrevocation.storequality.microsoft.com
+storeedge.microsoft.com
 storeedgefd.dsx.mp.microsoft.com
 strana.news
 strana.today
