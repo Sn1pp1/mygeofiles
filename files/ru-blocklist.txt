@@ -191,6 +191,8 @@ buyingfacebooklikes.com
 buymeacoffee.com
 buyoculus.com
 byteoversea.com
+c.bing.com
+c1.microsoft.com
 canva.com
 canva.dev
 capacitorjs.com
@@ -1297,6 +1299,7 @@ okx.com
 olx.ua
 omnissa.com
 omv-extras.org
+oneocsp.microsoft.com
 onfastspring.com
 oninstagram.com
 online-deals.net
