@@ -88,6 +88,7 @@ ai.google.dev
 ai.studio
 aicode.googleapis.com
 aida.googleapis.com
+aihelper.website
 airbrake.io
 aircanada.com
 airhorn.solutions
