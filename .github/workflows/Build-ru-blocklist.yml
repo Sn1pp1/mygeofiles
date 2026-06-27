@@ -37,6 +37,8 @@ jobs:
 
         SOURCES=(
           "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/domain-list.txt"
+          "https://community.antifilter.download/list/domains.lst"
+          "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/category-geoblock-ru"
           "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/inside-raw.lst"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/youtube.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/discord.list"
