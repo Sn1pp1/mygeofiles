@@ -85,3 +85,4 @@ akenai.host
 happ-proxy.com
 llhost.eu
 blackmore.cloud
+aihelper.website
