@@ -1,6 +1,9 @@
 abstractapi.com
 ads.twitch.tv
 ahc.ovh
+aihelper.website
+akenai.host
+akenai.org
 alador.space
 api-ipv4.ip.sb
 api-ipv6.ip.sb
@@ -10,6 +13,7 @@ archive.is
 archive.ph
 basicattentiontoken.org
 beszel.dev
+blackmore.cloud
 boberlogs.top
 boramoraboom.ru
 brave.com
@@ -30,6 +34,7 @@ geekuninstaller.com
 gfw.ovh
 gitbook.io
 gql.twitch.tv
+happ-proxy.com
 happ.su
 huggingface.co
 i0.wp.com
@@ -47,7 +52,9 @@ kinopub.online
 kpapp.link
 kpdl.link
 liquipedia.net
+llhost.eu
 log.rw
+m.soi.lat
 media.service-kp.com
 mmoui.com
 mobatek.net
@@ -74,15 +81,8 @@ trinitycore.info
 userscript.zone
 usher.ttvnw.net
 uwu-logs.xyz
+vectorizer.ai
 whoer.net
 wowinterface.com
-yandexwebcache.org
 xdaforums.com
-vectorizer.ai
-m.soi.lat
-akenai.org
-akenai.host
-happ-proxy.com
-llhost.eu
-blackmore.cloud
-aihelper.website
+yandexwebcache.org
