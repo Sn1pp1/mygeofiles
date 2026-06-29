@@ -1816,11 +1816,6 @@ pkgs.tailscale.com
 plab.site
 platform.activestate.com
 platform.twitter.com
-play-fe.googleapis.com
-play-games.googleusercontent.com
-play-lh.googleusercontent.com
-play.google.com
-play.googleapis.com
 play2go.cloud
 playboy.com
 playlist.ttvnw.net
@@ -1933,7 +1928,6 @@ redditstatic.com
 redditstatus.com
 reddxxx.com
 redgifs.com
-redirector.c.play.google.com
 redis.com
 redis.io
 redislabs.com
@@ -2550,7 +2544,6 @@ xhamsterlive.com
 xhcdn.com
 xiaomi.eu
 xmg.gg
-xn--ngstr-lra8j.com
 xnxx-cdn.com
 xnxx-ru.com
 xnxx.com
