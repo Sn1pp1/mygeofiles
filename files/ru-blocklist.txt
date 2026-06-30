@@ -496,6 +496,7 @@ designify.com
 devart.com
 developer.nvidia.com
 developerprofiles-pa.googleapis.com
+developers.facebook.com
 devexpress.com
 deviantart.com
 devops.com
@@ -896,7 +897,6 @@ fb.watch
 fbacebook.com
 fbbmarket.com
 fbboostyourbusiness.com
-fbcdn-a.akamaihd.net
 fbcdn.com
 fbcdn.net
 fbf8.com
@@ -2424,7 +2424,7 @@ upwork.com
 urlr.me
 usa.one
 usatoday.com
-usercontent.devdevelopers.facebook.com
+usercontent.devfbcdn-a.akamaihd.net
 userscript.zone
 usher.ttvnw.net
 uwu-logs.xyz
