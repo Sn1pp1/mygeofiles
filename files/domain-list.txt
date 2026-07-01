@@ -9,6 +9,7 @@ api-ipv4.ip.sb
 api-ipv6.ip.sb
 api.ip.sb
 api.myip.com
+api.srvkp.net
 archive.is
 archive.ph
 basicattentiontoken.org
