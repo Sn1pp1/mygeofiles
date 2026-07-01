@@ -45,6 +45,7 @@ jobs:
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/telegram.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/meta.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-deepmind.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/google-play.list"
           "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/twitch-ads"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/hdrezka.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Services/tiktok.lst"
