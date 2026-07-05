@@ -43,7 +43,6 @@ adobe.com
 adobe.io
 adobe.net
 ads-twitter.com
-ads.twitch.tv
 ads.youtube.comdiscord-attachments-uploads-prd.storage.googleapis.com
 adultmult.tv
 advancediddetection.com
@@ -1540,7 +1539,6 @@ play.google.com
 play.googleapis.com
 play2go.cloud
 playboy.com
-playlist.ttvnw.net
 plugins.jetbrains.com
 plugshare.com
 polit.ru
@@ -1612,7 +1610,7 @@ recoiljs.org
 recraft.ai
 reddxxx.com
 redgifs.com
-redirector.c.play.google.com
+redirector.c.play.google.comhdrezka.ag
 redis.com
 redis.io
 redislabs.com
@@ -1814,7 +1812,6 @@ st.kinovod.net
 stalker2.com
 startmail.com
 startpage.com
-static-cdn.jtvnw.nethdrezka.ag
 static-ss.xvideos-cdn.com
 static.cdninstagram.com
 static.files.bbci.co.uk
