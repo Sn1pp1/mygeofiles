@@ -1,5 +1,4 @@
 abstractapi.com
-ads.twitch.tv
 ahc.ovh
 aihelper.website
 akenai.host
@@ -67,13 +66,11 @@ opencck.org
 openuserjs.org
 pastes.io
 play2go.cloud
-playlist.ttvnw.net
 pushbr.com
 render.com
 smarttv.zeasn.tv
 smarttvcdn.online
 srvkp.com
-static-cdn.jtvnw.net
 tampermonkey.net
 teleos.club
 telepost.me
