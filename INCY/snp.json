@@ -29,8 +29,6 @@
     "geosite:RU-BLOCKLIST"
   ],
   "BlockSites": [
-    "domain:ad.mail.ru",
-    "domain:alt-ad.mail.ru"
   ],
   "DirectIp": [
     "geoip:PRIVATE-IP"
