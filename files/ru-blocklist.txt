@@ -2187,7 +2187,6 @@ st.kinovod.net
 stalker2.com
 startmail.com
 startpage.com
-static-cdn.jtvnw.net
 static-cdn.jtvnw.nethdrezka.ag
 static-ss.xvideos-cdn.com
 static.cdninstagram.com
