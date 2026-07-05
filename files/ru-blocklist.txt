@@ -43,6 +43,7 @@ adobe.com
 adobe.io
 adobe.net
 ads-twitter.com
+ads.twitch.tv
 ads.youtube.comdiscord-attachments-uploads-prd.storage.googleapis.com
 adultmult.tv
 advancediddetection.com
@@ -1539,6 +1540,7 @@ play.google.com
 play.googleapis.com
 play2go.cloud
 playboy.com
+playlist.ttvnw.net
 plugins.jetbrains.com
 plugshare.com
 polit.ru
@@ -1580,6 +1582,7 @@ pscp.tv
 psiphon.ca
 public.parsec.app
 pushbr.com
+puws.cloud
 pvpessence.com
 pyrobot.org
 qobuz.com
@@ -1812,6 +1815,7 @@ st.kinovod.net
 stalker2.com
 startmail.com
 startpage.com
+static-cdn.jtvnw.net
 static-ss.xvideos-cdn.com
 static.cdninstagram.com
 static.files.bbci.co.uk
