@@ -948,11 +948,11 @@ gr-assets.com
 grafana.com
 grammarly.com
 grani.ru
-graph-fallback.instagram.com
+graph-fallback.instagram.comai.google.dev
 graph.instagram.com
 graph.org
 graph.whatsapp.com
-graph.whatsapp.netai.google.dev
+graph.whatsapp.net
 graty.me
 graylog.org
 grazie.ai
