@@ -61,7 +61,6 @@ jobs:
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/telegram.lst"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.list"
             "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/text/telegram.txt"
-            "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/google.list"
           )
 
           echo "📥 Загрузка данных из источников..."
