@@ -251,6 +251,7 @@ cats.com
 cbilling.eu
 cbilling.vip
 cdn-service.space
+cdn-telegram.org
 cdn.id.supercell.com
 cdn.jsdelivr.net
 cdn.oaistatic.com
