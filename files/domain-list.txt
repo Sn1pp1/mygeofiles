@@ -87,3 +87,4 @@ yandexwebcache.org
 puws.cloud
 helium.computer
 wpn.team
+check-host.net
