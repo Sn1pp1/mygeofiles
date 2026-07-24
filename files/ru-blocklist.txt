@@ -275,6 +275,7 @@ chat.openai.com
 chat.openai.com.cdn.cloudflare.net
 chatgpt.com
 chaturbate.com
+check-host.net
 checkout.buckaroo.nl
 cherta.media
 chess.com
