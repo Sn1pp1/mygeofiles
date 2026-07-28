@@ -956,6 +956,7 @@ githubhackathon.com
 githubnext.com
 githubpreview.dev
 githubstatus.com
+githubsupport.com
 githubuniverse.com
 githubusercontent.com
 gitlab.io
@@ -983,11 +984,11 @@ gr-assets.com
 grafana.com
 grammarly.com
 grani.ru
-graph-fallback.instagram.comai.google.dev
+graph-fallback.instagram.com
 graph.instagram.com
 graph.org
 graph.whatsapp.com
-graph.whatsapp.net
+graph.whatsapp.netai.google.dev
 graty.me
 graylog.org
 grazie.ai
