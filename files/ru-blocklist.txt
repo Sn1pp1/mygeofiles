@@ -6,7 +6,6 @@
 2407.pl
 2o7.net
 37signals.com
-3dns-1.adobe.com
 3dns-2.adobe.com
 3dns-3.adobe.com
 3dns-4.adobe.com
@@ -137,9 +136,7 @@ adobetechcommcallback.com
 adobetechcommdemo.com
 adobexdplatform.com
 ads-twitter.com
-ads.twitch.tv
 ads.youtube.com
-ads.youtube.comdiscord-attachments-uploads-prd.storage.googleapis.com
 adstudio-assets.scdn.co
 adultmult.tv
 advancediddetection.com
@@ -197,6 +194,7 @@ amazfitwatchfaces.com
 amazon.com
 amd.com
 amd.com.cn
+amd.comnvidia.custhelp.com
 amdfanstore.com
 amdgaming.com
 amdm.ru
@@ -277,7 +275,6 @@ aqicn.org
 arbat.media
 arc.intel.com
 arc.net
-archive-it.org
 archive.is
 archive.org
 archive.ph
@@ -411,7 +408,6 @@ broncosportforum.com
 bronto.com
 browser-intake-datadoghq.com
 browserleaks.com
-bsky.app
 bsky.network
 bsky.social
 bt.t-ru.org
@@ -578,7 +574,7 @@ cloudtorrents.com
 clusterconnection.com
 cmems-du.eu
 cms-twdigitalassets.com
-cn.download.nvidia.com
+cn.download.nvidia.com3dns-1.adobe.com
 cnd2exp.online
 co.nz
 cocalc.com
@@ -668,7 +664,7 @@ cybersecurity-help.cz
 cyxymu.info
 czx.to
 d.docs.live.net
-da-files.com
+da-files.comaudio-ak-spotify-com.akamaized.net
 dacebook.com
 daemon-tools.cc
 daily-cloudcode-pa.googleapis.com
@@ -682,7 +678,6 @@ data-cdn.mbamupdates.com
 data.cline.bot
 database.clamav.net
 databricks.com
-datalore.io
 dating.com
 daz3d.com
 debian.map.fastlydns.net
@@ -1438,7 +1433,6 @@ gonift.com
 gonitro.com
 goodreads.com
 googlecensorship.org
-googleplay.com
 googletagmanager.com
 googlevideo.com
 gordonmoore.com
@@ -1830,7 +1824,6 @@ intel.uz
 intel.vg
 intel.vn
 intel.vu
-intel.wf
 intel.yt
 intelamericasstore.com
 intelapacstore.com
@@ -2071,7 +2064,7 @@ lpsnmedia.net
 lu4.org
 lucid.app
 lyst.com
-m.alador.space
+m.alador.spacegithub-api.arkoselabs.com
 m.me
 m.soi.lat
 m.strava.com
@@ -2271,19 +2264,7 @@ netacad.com
 netapp.com
 netflix.ca
 netflix.com
-netflix.com.edgesuite.net
 netflix.net
-netflixdnstest0.com
-netflixdnstest1.com
-netflixdnstest10.com
-netflixdnstest2.com
-netflixdnstest3.com
-netflixdnstest4.com
-netflixdnstest5.com
-netflixdnstest6.com
-netflixdnstest7.com
-netflixdnstest8.com
-netflixdnstest9.com
 netflixinvestor.com
 netflixstudios.com
 netflixtechblog.com
@@ -2418,7 +2399,6 @@ nvidia.com.tr
 nvidia.com.tw
 nvidia.com.ua
 nvidia.com.ve
-nvidia.custhelp.com
 nvidia.cz
 nvidia.de
 nvidia.dk
@@ -2524,7 +2504,7 @@ opengraphprotocol.com
 opengraphprotocol.org
 opengw.net
 openh264.org
-openlibrary.org
+openlibrary.orgppl-ai-file-upload.s3.amazonaws.com
 openmedia.io
 openrouter.ai
 opensanctions.org
@@ -2630,7 +2610,6 @@ pingdom.com
 pintool.com
 piratbit.top
 pixabay.com
-pixel.facebook.com
 pixel.facebook.comai.google.dev
 pixiv.net
 pkgs.tailscale.com
@@ -2646,7 +2625,6 @@ play.google.com
 play.googleapis.com
 play2go.cloud
 playboy.com
-playlist.ttvnw.net
 playnintendo.com
 plugin-alliance.com
 plugins.jetbrains.com
@@ -2696,7 +2674,6 @@ posthog.com
 postimees.ee
 poweredbyintel.com
 powersunitedvr.com
-ppl-ai-file-upload.s3.amazonaws.com
 pplx-res.cloudinary.com
 pplx.ai
 ppy.sh
@@ -2812,6 +2789,7 @@ redd.it
 reddit.app.link
 reddit.com
 reddit.map.fastly.net
+reddit.map.fastly.nettrojan-gfw.github.io
 redditblog.com
 reddithelp.com
 redditinc.com
@@ -2822,7 +2800,6 @@ redditstatic.com
 redditstatus.com
 reddxxx.com
 redgifs.com
-redirector.c.play.google.com
 redirector.c.play.google.comhdrezka.ag
 redis.com
 redis.io
@@ -3139,7 +3116,6 @@ stalker2.com
 starfox.com
 startmail.com
 startpage.com
-static-cdn.jtvnw.netgithub-api.arkoselabs.com
 static-ss.xvideos-cdn.com
 static.cdninstagram.com
 static.files.bbci.co.uk
@@ -3172,7 +3148,6 @@ summerana.com
 sun.com
 sundanceignite2016.com
 supercell.com
-supercell.helpshift.com
 supercell.net
 supercell.zendesk.com
 supercellcreators.com
@@ -3362,7 +3337,6 @@ tribler.org
 trinitycore.info
 trionworlds.com
 tripo3d.ai
-trojan-gfw.github.io
 trueblackmetalradio.com
 trustedanalytics.com
 trustedanalytics.net
@@ -3379,7 +3353,6 @@ ttoverseaus.net
 ttwebview.com
 ttwstatic.com
 tubemogul.com
-tumblr.com
 tunsafe.com
 turbobit.net
 turkeyblocks.org
@@ -3449,7 +3422,6 @@ urlr.me
 usa.one
 usatoday.com
 usercontent.dev
-usercontent.devdevelopers.facebook.com
 userscript.zone
 usher.ttvnw.net
 uwu-logs.xyz
@@ -3555,6 +3527,7 @@ whatsapp.tv
 whatsappbrand.com
 wheather.com
 whispersystems.org
+whispersystems.orgsupercell.helpshift.com
 white.instagram.com
 whoer.net
 whonix.org
@@ -3912,6 +3885,7 @@ yt-video-upload.l.google.com
 yt.be
 yt3.ggpht.com
 yt3.googleusercontent.com
+yt3.googleusercontent.comdiscord-attachments-uploads-prd.storage.googleapis.com
 ytimg.com
 ytimg.l.google.com
 yting.com
