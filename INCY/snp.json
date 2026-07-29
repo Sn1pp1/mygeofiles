@@ -19,9 +19,9 @@
   "DomesticDns": "https://77.88.8.8/dns-query",
   "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
   "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
-  "LastUpdated": "1785313578",
+  "LastUpdated": "1785323783",
   "GeoipHash": "74fef40fcb37e1db89670ddf84cd26f0108ed56b595ef4ce7d6e5a495c4aca8a",
-  "GeositeHash": "1126d70f08d5cb85041012f754183cc9cf157342e67d521fa28bfd8d80572cf4",
+  "GeositeHash": "c8183e8b2aa27467188fca4fdce0e874cdba03951a943e6ea3adf4f3146a347e",
   "DirectSites": [
     "geosite:PRIVATE"
   ],
@@ -45,7 +45,7 @@
   "isEditable": true,
   "sortOrder": 0,
   "createdAt": 1781536967627,
-  "updatedAt": 1785313578198,
+  "updatedAt": 1785323783614,
   "sourceURL": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/INCY/snp.json",
   "updateInterval": 43200
 }
