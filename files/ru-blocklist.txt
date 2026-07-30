@@ -1461,6 +1461,7 @@ graph.instagram.com
 graph.org
 graph.whatsapp.com
 graph.whatsapp.net
+graph.whatsapp.netai.google.dev
 graty.me
 graylog.org
 grazie.ai
@@ -2504,7 +2505,7 @@ opengraphprotocol.com
 opengraphprotocol.org
 opengw.net
 openh264.org
-openlibrary.orgppl-ai-file-upload.s3.amazonaws.com
+openlibrary.orgcopilot-proxy.githubusercontent.com
 openmedia.io
 openrouter.ai
 opensanctions.org
@@ -2610,7 +2611,7 @@ pingdom.com
 pintool.com
 piratbit.top
 pixabay.com
-pixel.facebook.comai.google.dev
+pixel.facebook.com
 pixiv.net
 pkgs.tailscale.com
 plab.site
@@ -2674,6 +2675,7 @@ posthog.com
 postimees.ee
 poweredbyintel.com
 powersunitedvr.com
+ppl-ai-file-upload.s3.amazonaws.com
 pplx-res.cloudinary.com
 pplx.ai
 ppy.sh
