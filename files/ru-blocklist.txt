@@ -1456,12 +1456,11 @@ grafana.com
 grammarly.com
 grani.ru
 granulate.io
-graph-fallback.instagram.com
+graph-fallback.instagram.comai.google.dev
 graph.instagram.com
 graph.org
 graph.whatsapp.com
 graph.whatsapp.net
-graph.whatsapp.netai.google.dev
 graty.me
 graylog.org
 grazie.ai
@@ -2505,7 +2504,7 @@ opengraphprotocol.com
 opengraphprotocol.org
 opengw.net
 openh264.org
-openlibrary.orgcopilot-proxy.githubusercontent.com
+openlibrary.orgai.google.dev
 openmedia.io
 openrouter.ai
 opensanctions.org
