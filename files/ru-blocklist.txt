@@ -2453,7 +2453,7 @@ opengraphprotocol.com
 opengraphprotocol.org
 opengw.net
 openh264.org
-openlibrary.orgservd-anthropic-website.b-cdn.net
+openlibrary.orgopenaiapi-site.azureedge.net
 openmedia.io
 openrouter.ai
 opensanctions.org
@@ -2916,6 +2916,7 @@ serialcart.com
 serif.com
 serpstat.com
 servarr.com
+servd-anthropic-website.b-cdn.net
 serverkast.com
 services.gearboxsoftware.com
 setapp.com
