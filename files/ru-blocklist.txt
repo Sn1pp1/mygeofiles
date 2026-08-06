@@ -1,6 +1,7 @@
 10minutemail.com
 1337x.to
 24.kg
+2dust.link
 4everland.io
 4freerussia.org
 4pda.ru
@@ -379,8 +380,11 @@ citizenlab.ca
 citizenlab.org
 citrix.com
 clamav.net
+clashmi.app
 clashofclans.com
+clashparty.org
 clashroyaleapp.com
+clashverge.dev
 clashyun.com
 claude.ai
 claude.com
@@ -992,6 +996,7 @@ flow.dev
 flow.google
 flow.org
 flowtype.org
+flowvy.io
 fls.guru
 fluke.com
 flukenetworks.com
@@ -1599,6 +1604,7 @@ meta.ai
 meta.com
 meta.law
 metacritic.com
+metacubex.github.io
 metacubex.one
 metal-archives.com
 metallica-api.wbagora.com
@@ -1783,6 +1789,7 @@ npm.community
 npmjs.com
 npmjs.org
 nsf.gov
+nsloon.com
 ntc.party
 ntp.msn.com
 nude-moon.org
@@ -1823,6 +1830,7 @@ olx.ua
 omnissa.com
 omtrdc.net
 omv-extras.org
+onexray.com
 onfastspring.com
 oninstagram.com
 onionshare.org
@@ -1988,6 +1996,7 @@ primevideo.com
 primevue.org
 privacytools.io
 privatekeys.pw
+prizrak.app
 prnt.sc
 proactivebackend-pa.googleapis.com
 prod-network-api.wbagora.com
@@ -2037,7 +2046,7 @@ puws.cloud
 pvpessence.com
 pwnedpasswords.com
 pyrobot.org
-qianwen.aliyun.comtrojan-gfw.github.io
+qianwen.aliyun.com
 qianwen.com
 qobuz.com
 qodana.cloud
@@ -2052,6 +2061,7 @@ qwant.com
 qwen.ai
 qwenlm.ai
 r4.err.ee
+rabbit-hole-1.gitbook.io
 radarr.servarr.com
 radiojar.com
 radiosakharov.org
@@ -2216,6 +2226,7 @@ servarr.com
 services.gearboxsoftware.com
 severreal.org
 sfdcopens.com
+shadowlaunch.com
 shadowsocks.org
 sharefile.com
 sharefile.io
@@ -2322,6 +2333,8 @@ stalker2.com
 starfox.com
 startmail.com
 startpage.com
+stash.wiki
+stash.ws
 static-ss.xvideos-cdn.com
 static.cdninstagram.com
 static.files.bbci.co.uk
@@ -2440,6 +2453,7 @@ thetvdb.com
 threads.com
 threads.net
 threema.ch
+throneproj.github.io
 ti.com
 tiangong.cn
 tidal.com
@@ -2492,7 +2506,7 @@ tracker.opentrackr.org
 tracklock.gg
 trae.ai
 trae.cn
-trae.com.cn
+trae.com.cnmatsuridayo.github.io
 trae.guru
 trailblazer.me
 trailhead.com
@@ -2501,6 +2515,7 @@ trellix.com
 tria.ge
 tribler.org
 trinitycore.info
+trojan-gfw.github.io
 trueblackmetalradio.com
 truthsocial.com
 trv-science.ru
@@ -2645,6 +2660,7 @@ webtoons.com
 weebly.com
 welt.de
 wetransfer.com
+wgtunnel.com
 whatsapp-plus.info
 whatsapp-plus.me
 whatsapp-plus.net
@@ -2682,6 +2698,7 @@ windguru.cz
 windows10spotlight.com
 windsurf.com
 wireguard.com
+wiresock.net
 wise.com
 withyoutube.com
 wixmp.com
