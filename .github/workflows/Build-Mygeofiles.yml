@@ -464,8 +464,8 @@ jobs:
             echo "## 🔄 Build #${{ github.run_number }}"
             echo ""
             echo "**📅 Built:** $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
-            echo "**🔗 Run:** [${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
-            echo "**🔖 Commit:** [\`${{ github.sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})"
+            echo "**🔗 Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo "**🔖 Commit:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
             echo ""
             echo "### 📦 Contents"
             echo "- **Geosite categories:** $(ls -1 data/geosite 2>/dev/null | wc -l)"
@@ -474,9 +474,9 @@ jobs:
             echo "- **geoip.dat size:** $(du -h geoip.dat | cut -f1)"
             echo ""
             echo "### 🔐 Checksums"
-            echo "\`\`\`"
+            echo '```'
             cat geosite.dat.sha256 geoip.dat.sha256
-            echo "\`\`\`"
+            echo '```'
             echo ""
             echo "### 📊 Statistics"
             cat statistics.md
