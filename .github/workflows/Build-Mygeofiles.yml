@@ -52,11 +52,11 @@ jobs:
 
       - name: Install sing-box
         run: |
-          echo "📦 Installing sing-box v${{ env.SING_BOX_VERSION }}..."
-          
+          echo " Installing sing-box v${{ env.SING_BOX_VERSION }}..."
+
           SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
           DOWNLOADED=false
-          
+
           for format in \
             "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz" \
             "https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box_${SING_BOX_VERSION}_linux_amd64.tar.gz"; do
@@ -66,11 +66,11 @@ jobs:
               break
             fi
           done
-          
+
           if [ "$DOWNLOADED" = true ] && file sing-box.tar.gz | grep -qE "gzip|tar"; then
             tar xzf sing-box.tar.gz
             SINGBOX_BIN=$(find . -name "sing-box" -type f 2>/dev/null | head -1)
-            
+
             if [ -n "$SINGBOX_BIN" ]; then
               cp "$SINGBOX_BIN" /usr/local/bin/sing-box
               chmod +x /usr/local/bin/sing-box
@@ -130,7 +130,7 @@ jobs:
 
           declare -A GEOSITE=(
             ["private"]="https://github.com/runetfreedom/russia-v2ray-rules-dat/raw/refs/heads/release/sing-box/rule-set-geosite/geosite-private.srs"
-            ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"  
+            ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
           )
 
           declare -A GEOIP=(
@@ -138,7 +138,7 @@ jobs:
             ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
           )
 
-          cat <<'EOF' > parser.py
+          sed 's/^          //' <<'EOF' > parser.py
           import json, sys, os, re
           def extract(obj, target_type):
               res = []
@@ -174,26 +174,26 @@ jobs:
             local target=$1
             shift
             local -n categories=$1
-            
+
             local failed=0
-            
+
             for name in "${!categories[@]}"; do
               local url="${categories[$name]}"
               [ -z "$url" ] && continue
-              
+
               echo ""
               echo "⬇️  [$target] $name"
               echo "    URL: $url"
-              
+
               if ! download_with_retry "$url" "temp_file"; then
                 echo "  ❌ Не удалось скачать"
                 ((failed++))
                 continue
               fi
-              
+
               local ext="${url##*.}"
               local output_path="data/$target/$name"
-              
+
               if [[ "$url" == *.srs ]]; then
                 echo "  🔧 Декомпилируем .srs..."
                 if ! sing-box rule-set decompile "temp_file" -o "temp.json" 2>&1; then
@@ -203,38 +203,38 @@ jobs:
                   continue
                 fi
                 python3 parser.py "$target" "$name"
-                
+
               elif [[ "$ext" == "txt" || "$ext" == "lst" ]]; then
                 echo "  📝 Обрабатываем текстовый список..."
                 grep -v '^#' "temp_file" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' > "$output_path" || true
                 count=$(wc -l < "$output_path" 2>/dev/null || echo 0)
                 echo "  ✅ Сохранено: $count записей → $output_path"
-                
+
               else
                 mv "temp_file" "temp.json"
                 python3 parser.py "$target" "$name"
               fi
-              
+
               rm -f temp.json temp_file 2>/dev/null || true
             done
-            
+
             return $failed
           }
 
           echo "🔄 Processing GEOSITE categories..."
           process_categories "geosite" GEOSITE || echo "⚠️  Некоторые geosite не обработаны"
-          
+
           echo "🔄 Processing GEOIP categories..."
           process_categories "geoip" GEOIP || echo "⚠️  Некоторые geoip не обработаны"
 
       - name: Validate and Cleanup
         run: |
           find data -type f -empty -delete
-          
+
           echo "📊 Final categories:"
           echo "   • geosite: $(ls -1 data/geosite 2>/dev/null | wc -l) files"
           echo "   • geoip: $(ls -1 data/geoip 2>/dev/null | wc -l) files"
-          
+
           echo "📋 File contents preview:"
           for f in data/geosite/*; do
             if [ -f "$f" ]; then
@@ -245,7 +245,7 @@ jobs:
               fi
             fi
           done
-          
+
           if [ -z "$(ls -A data/geosite 2>/dev/null)" ]; then
             echo "❌ Error: No geosite data generated!"
             exit 1
@@ -254,27 +254,46 @@ jobs:
       - name: Clean and Normalize Domains
         run: |
           echo "🧹 Cleaning and normalizing domain files..."
-          
+
           for file in data/geosite/*; do
             [ -f "$file" ] || continue
-            
+
             filename=$(basename "$file")
             echo "   • Processing $filename..."
-            
-            sed -E '
-              s/^[[:space:]"'"'"']+//
-              s/[[:space:]"'"'"']+$//
+
+            sed -E "
+              s/^[[:space:]'\"]+//
+              s/[[:space:]'\"]+$//
               /^$/d
               /^#/d
-              s/^\*\.(.+)\.\*$/.\1/
-              s/^\*\.(.+)$/.\1/
+              s/^\*\.(.+)$/\1/
               s/\.\././g
-            ' "$file" | \
-            grep -E '^(full:|regexp:|keyword:|domain:|domain_suffix:|domain_keyword:|domain_regex:)?[a-zA-Z0-9@.*-]' | \
+            " "$file" | \
+            awk '
+              {
+                line = $0
+                if (line ~ /^(regexp|domain_regex):/) { print line; next }
+                if (match(line, /^(full|keyword|domain|domain_suffix|domain_keyword):/)) {
+                  prefix = substr(line, 1, RLENGTH)
+                  value = substr(line, RLENGTH + 1)
+                  sub(/^\.+/, "", value)
+                  sub(/\.+$/, "", value)
+                  if (value == "" || index(value, "*") > 0) next
+                  print prefix value
+                  next
+                }
+                sub(/^\.+/, "", line)
+                sub(/\.+$/, "", line)
+                if (line == "" || index(line, "*") > 0) next
+                print line
+              }
+            ' | \
+            grep -E '^(full:|regexp:|keyword:|domain:|domain_suffix:|domain_keyword:|domain_regex:)?[a-zA-Z0-9_\\@-]' | \
+            grep -vE '^(full|regexp|keyword|domain|domain_suffix|domain_keyword|domain_regex):$' | \
             sort -u > "$file.cleaned"
-            
+
             mv "$file.cleaned" "$file"
-            
+
             count=$(wc -l < "$file")
             if [ "$count" -eq 0 ]; then
               echo "     ⚠️  WARNING: File is empty after cleaning!"
@@ -282,13 +301,32 @@ jobs:
               echo "     ✅ Cleaned: $count entries"
             fi
           done
-          
+
           echo "✅ Domain normalization complete"
+
+      - name: Pre-build validation
+        run: |
+          echo "🔍 Pre-build validation..."
+          bad=0
+          for file in data/geosite/*; do
+            [ -f "$file" ] || continue
+            invalid=$(grep -nE '^\.+|^(full|keyword|domain|domain_suffix|domain_keyword):\.+' "$file" || true)
+            if [ -n "$invalid" ]; then
+              echo "❌ Invalid entries in $(basename "$file"):"
+              echo "$invalid" | head -5
+              bad=1
+            fi
+          done
+          if [ "$bad" -eq 1 ]; then
+            echo "❌ Validation failed: entries with leading dots found"
+            exit 1
+          fi
+          echo "✅ All entries are valid"
 
       - name: Build geosite.dat
         run: |
           echo "🔨 Building geosite.dat..."
-          
+
           empty_files=0
           for f in data/geosite/*; do
             if [ -f "$f" ] && [ ! -s "$f" ]; then
@@ -296,14 +334,14 @@ jobs:
               ((empty_files++))
             fi
           done
-          
+
           if [ "$empty_files" -gt 0 ]; then
             echo "⚠️  $empty_files empty files found, but continuing..."
           fi
-          
+
           go run github.com/v2fly/domain-list-community@latest \
             --datapath=data/geosite --outputname=geosite.dat
-          
+
           if [ -f geosite.dat ]; then
             ls -lh geosite.dat
           else
@@ -325,47 +363,47 @@ jobs:
       - name: Validate generated files
         run: |
           echo "🔍 Validating generated files..."
-          
+
           echo "Checking geosite.dat..."
           if ! file geosite.dat | grep -q "data"; then
             echo "❌ geosite.dat is invalid or corrupted"
             exit 1
           fi
-          
+
           echo "Checking geoip.dat..."
           if ! file geoip.dat | grep -q "data"; then
             echo "❌ geoip.dat is invalid or corrupted"
             exit 1
           fi
-          
+
           echo "✅ All files validated successfully"
 
       - name: Health check
         run: |
           echo "🏥 Running health checks..."
-          
+
           geosite_size=$(stat -c%s geosite.dat 2>/dev/null || stat -f%z geosite.dat 2>/dev/null)
           geoip_size=$(stat -c%s geoip.dat 2>/dev/null || stat -f%z geoip.dat 2>/dev/null)
-          
+
           echo "   • geosite.dat: ${geosite_size} bytes"
           echo "   • geoip.dat: ${geoip_size} bytes"
-          
+
           if [ "$geosite_size" -lt 1000 ]; then
             echo "❌ geosite.dat too small (${geosite_size} bytes) - possible corruption"
             exit 1
           fi
-          
+
           if [ "$geoip_size" -lt 1000 ]; then
             echo "❌ geoip.dat too small (${geoip_size} bytes) - possible corruption"
             exit 1
           fi
-          
+
           echo "✅ Health check passed"
 
       - name: Generate statistics
         run: |
           echo "📊 Generating statistics..."
-          
+
           {
             echo "## 📈 Build Statistics"
             echo ""
@@ -393,10 +431,8 @@ jobs:
               fi
             done
           } > statistics.md
-          
-          cat statistics.md
 
-      # ✅ ШАГ "Compress artifacts" УДАЛЕН
+          cat statistics.md
 
       - name: Check artifact sizes
         run: |
@@ -429,7 +465,7 @@ jobs:
             echo ""
             echo "**📅 Built:** $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
             echo "**🔗 Run:** [${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
-            echo "**🔖 Commit:** [\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})"
+            echo "**🔖 Commit:** [\`${{ github.sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})"
             echo ""
             echo "### 📦 Contents"
             echo "- **Geosite categories:** $(ls -1 data/geosite 2>/dev/null | wc -l)"
@@ -445,36 +481,36 @@ jobs:
             echo "### 📊 Statistics"
             cat statistics.md
           } > changelog.md
-          
+
           cat changelog.md
 
       - name: Push Files to Branch
         run: |
           echo "📤 Pushing artifacts..."
-          
+
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          
+
           echo "📁 Files:"
           ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
-          
+
           echo "🗑️  Removing from Git index..."
           git rm --cached -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 || true
-          
+
           echo "📋 Adding as new files..."
           git add -f geosite.dat
           git add -f geoip.dat
           git add -f geosite.dat.sha256
           git add -f geoip.dat.sha256
-          
+
           echo "📊 Status:"
           git status --short
-          
-          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
+
+          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%H:%M MSK')"
           git commit -m "$COMMIT_MSG" || echo "⚠️ No changes"
-          
+
           git push origin main --force
-          
+
           echo "✅ Done!"
 
       - name: Create Release
