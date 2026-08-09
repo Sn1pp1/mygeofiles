@@ -23,7 +23,9 @@
   "ProxySites": [
     "geosite:RU-BLOCKLIST"
   ],
-  "BlockSites": [],
+  "BlockSites": [
+    "geosite:CATEGORY-ADS"
+  ],
   "DirectIp": [],
   "ProxyIp": [
     "geoip:RU-BLOCKLIST-IP"
