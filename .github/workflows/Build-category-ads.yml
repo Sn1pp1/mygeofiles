@@ -1,0 +1,164 @@
+name: Build Category Ads
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/Build-ru-blocklist.yml']
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create output directory
+      run: mkdir -p files/srs
+
+    - name: Download latest sing-box binary
+      run: |
+        LATEST_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
+        echo "Latest version: $LATEST_TAG"
+        wget -q "https://github.com/SagerNet/sing-box/releases/download/${LATEST_TAG}/sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+        tar -xzf "sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+        sudo mv "sing-box-${LATEST_TAG#v}-linux-amd64/sing-box" /usr/local/bin/
+        chmod +x /usr/local/bin/sing-box
+        sing-box version
+
+    - name: Download & Process category-ads
+      run: |
+        set -euo pipefail
+
+        SOURCE_URL="https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-ads"
+        TEMP_RAW=$(mktemp)
+        TEMP_CLEAN=$(mktemp)
+        trap "rm -f $TEMP_RAW $TEMP_CLEAN" EXIT
+
+        echo "📥 Загрузка: $SOURCE_URL"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        
+        curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$SOURCE_URL" -o "$TEMP_RAW" 2>/dev/null
+        
+        if [ ! -s "$TEMP_RAW" ]; then
+          echo "❌ Ошибка: Не удалось скачать файл!"
+          exit 1
+        fi
+        
+        TOTAL_BEFORE=$(wc -l < "$TEMP_RAW" | tr -d ' ')
+        echo "  Загружено строк: $TOTAL_BEFORE"
+        echo ""
+
+        echo "🧹 Очистка и нормализация..."
+        
+        awk '
+        { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+        /^[[:space:]]*$/ { next }
+        /^[[:space:]]*#/ { next }
+        /^regexp:/ { next }
+        /^include:/ { next }
+        {
+          sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
+          sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
+          sub(/^root:/, ""); sub(/^\./, "")
+        }
+        /^[[:space:]]*$/ { next }
+        /\.$/ { next }
+        {
+          d = $0
+          sub(/^www\./, "", d)
+          sub(/^www-/, "", d)
+          sub(/^www[0-9]+\./, "", d)
+          if (match(d, /^www[a-z]/)) {
+            d = substr(d, 4)
+          }
+          sub(/@.*$/, "", d)
+          sub(/domain:.*$/, "", d)
+          sub(/keyword:.*$/, "", d)
+          sub(/regexp:.*$/, "", d)
+          sub(/full:.*$/, "", d)
+          sub(/:[[:space:]]*$/, "", d)
+          sub(/\+.*$/, "", d)
+          sub(/[[:space:]].*$/, "", d)
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+          if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next
+          if (d == "") next
+          if (d !~ /\./) next
+          if (d ~ /\.\./) next
+          if (length(d) > 253) next
+          print tolower(d)
+        }
+        ' "$TEMP_RAW" > "$TEMP_CLEAN"
+        
+        BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN" | tr -d ' ')
+        
+        echo "🔍 Сортировка и удаление дубликатов..."
+        LC_ALL=C sort -u "$TEMP_CLEAN" > files/category-ads.txt
+        
+        if [ ! -s files/category-ads.txt ]; then
+          echo "❌ Ошибка: Файл category-ads.txt пустой после обработки!"
+          exit 1
+        fi
+
+        AFTER_DEDUP=$(wc -l < files/category-ads.txt | tr -d ' ')
+        REMOVED=$((BEFORE_DEDUP - AFTER_DEDUP))
+        SIZE=$(du -h files/category-ads.txt | cut -f1)
+        
+        if [ "$BEFORE_DEDUP" -gt 0 ]; then
+          PCT=$(awk "BEGIN {printf \"%.1f\", $REMOVED * 100 / $BEFORE_DEDUP}")
+        else
+          PCT="0.0"
+        fi
+        
+        echo ""
+        echo "📊 ИТОГОВАЯ СТАТИСТИКА"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        printf "  Записей после чистки:           %6s\n" "$BEFORE_DEDUP"
+        printf "  Удалено дубликатов:             %6s (%s%%)\n" "$REMOVED" "$PCT"
+        printf "  ✅ В итоговом файле:            %6s доменов\n" "$AFTER_DEDUP"
+        printf "  Размер файла:                   %6s\n" "$SIZE"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo " Первые 5 записей из category-ads.txt:"
+        head -5 files/category-ads.txt | sed 's/^/   ✓ /'
+
+    - name: Convert to SRS format
+      run: |
+        echo "🔄 Генерация SRS файла..."
+        
+        domains=$(grep -v '^$' files/category-ads.txt | jq -R -s 'split("\n") | map(select(length > 0))')
+        echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/category-ads.json
+        
+        sing-box rule-set compile --output files/srs/category-ads.srs /tmp/category-ads.json
+        
+        SRS_SIZE=$(du -h files/srs/category-ads.srs | cut -f1)
+        echo "✅ SRS файл создан: files/srs/category-ads.srs ($SRS_SIZE)"
+
+    - name: Commit and push result
+      run: |
+        git config user.name "Category Ads Bot"
+        git config user.email "ads-bot@github.com"
+        
+        git pull --rebase origin main 2>/dev/null || true
+        
+        if [ ! -f files/category-ads.txt ]; then
+          echo "❌ Ошибка: файл category-ads.txt не найден!"
+          exit 1
+        fi
+
+        git add files/category-ads.txt files/srs/category-ads.srs
+
+        if ! git diff --staged --quiet; then
+          git commit -m "🔄 Update category-ads ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          for i in 1 2 3; do
+            git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
+          done
+          echo "📤 Файлы успешно обновлены"
+        else
+          echo "⏭️ Список не изменился, пропуск коммита"
+        fi
