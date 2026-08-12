@@ -10,7 +10,7 @@
   "DomesticDNSType": "DoH",
   "DomesticDNSDomain": "https://dns.quad9.net/dns-query",
   "DomesticDNSIP": "9.9.9.9",
-  "FakeDNS": false,
+  "FakeDNS": true,
   "DnsHosts": {},
   "RemoteDns": "https://dns.quad9.net/dns-query",
   "DomesticDns": "https://dns.quad9.net/dns-query",
