@@ -2047,7 +2047,7 @@ puws.cloud
 pvpessence.com
 pwnedpasswords.com
 pyrobot.org
-qianwen.aliyun.commatsuridayo.github.io
+qianwen.aliyun.com
 qianwen.com
 qobuz.com
 qodana.cloud
@@ -2507,7 +2507,7 @@ tracker.opentrackr.org
 tracklock.gg
 trae.ai
 trae.cn
-trae.com.cn
+trae.com.cnmatsuridayo.github.io
 trae.guru
 trailblazer.me
 trailhead.com
