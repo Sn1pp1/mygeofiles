@@ -1,3 +1,4 @@
+a.mts.ru
 a.wb.ru
 ad.intl.xiaomi.com
 ad.mail.ru
@@ -68,6 +69,7 @@ mon-v2-boot.capcutapi.com
 mon.tiktokv.com
 mon16-normal-alisg.tiktokv.com
 mradx.net
+ms.vk.com
 ms.vk.ru
 mssdk-ru.tiktokv.com
 pagead2.googlesyndication.com
@@ -77,6 +79,7 @@ sage-collector.tbank.ru
 sdkconfig.ad.intl.xiaomi.com
 sdkconfig.ad.rus.xiaomi.com
 spade.twitch.tv
+stacks.vk-portal.net
 startup-mobile.ap.yandex-net.ru
 startup.mobile.yandex.net
 stats.avito.ru
