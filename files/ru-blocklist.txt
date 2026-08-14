@@ -227,11 +227,17 @@ autodesk.io
 autodesk.net
 autodesk360.com
 autodiscover.instagram.com
+avast.cn
+avast.co.jp
 avast.com
 avastbrowser.com
+avastdns.com
+avcdn.net
 avg.com
 avgbrowser.com
+avira-update.com
 avira.com
+avira.net
 azathabar.com
 azattyq.org
 babepedia.com
@@ -397,6 +403,7 @@ claude.ai
 claude.com
 clawhub-mirror.com
 clevelandclinic.org
+cleverbridge.com
 click-url.com
 clickup.com
 clip.opus.pro
@@ -524,6 +531,7 @@ digikey.com
 digital-cdn.net
 digitalcontent.sky
 digitalocean.com
+digitalriver.com
 dis.gd
 discord-activities.com
 discord-attachments-uploads-prd.storage.googleapis.com
@@ -1542,6 +1550,7 @@ lu4.org
 lucid.app
 lyst.com
 m.alador.space
+m.in-app.io
 m.me
 m.soi.lat
 m.strava.com
@@ -1778,6 +1787,7 @@ nordaccount.com
 nordcdn.com
 nordvpn.com
 norton.com
+nortonalto.com
 nortonlifelock.com
 notebook.google.com
 notebooklm-pa.googleapis.com
@@ -2400,6 +2410,10 @@ swagger.io
 swapd.co
 swissinfo.ch
 sydney.bing.com
+symantec.com
+symantecliveupdate.com
+symcb.com
+symcd.com
 synoforum.com
 sysdig.com
 syslog-ng.com
@@ -2443,6 +2457,8 @@ telex.cc
 tellapart.com
 tempmail.plus
 temu.com
+tenta.com
+tentanetworks.com
 terraform.io
 terragraph.com
 tg.dev
