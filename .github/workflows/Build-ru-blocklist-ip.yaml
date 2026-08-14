@@ -40,7 +40,6 @@ jobs:
           # === ИСТОЧНИКИ ДАННЫХ ===
           SOURCES=(
             "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ip-list.txt"
-            "https://community.antifilter.download/list/community.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/Discord.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/discord.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/Discord.lst"
