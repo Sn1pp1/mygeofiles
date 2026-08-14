@@ -9,6 +9,7 @@ ads.x5media.ru
 alt-ad.mail.ru
 amc.yandex.ru
 analytics.us.tiktok.com
+api-x.tutu.ru
 api16-access-ttp-b.tiktokpangle.us
 api16-access-ttp.tiktokpangle-b.us
 api16-access-ttp.tiktokpangle.us
@@ -44,6 +45,7 @@ firebaselogging.googleapis.com
 gator.volces.com
 google-analytics.com
 googleads.g.doubleclick.net
+goya.rutube.ru
 graph-fallback.instagram.com
 graph.instagram.com
 graph.whatsapp.com
@@ -51,6 +53,7 @@ graph.whatsapp.net
 growth-pa.googleapis.com
 gvt2.com
 iadsdk.apple.com
+log.rutube.ru
 log.strm.yandex.ru
 log16-normal-alisg.tiktokv.com
 log16-normal-useast5.tiktokv.us
