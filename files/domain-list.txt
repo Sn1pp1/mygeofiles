@@ -89,3 +89,17 @@ helium.computer
 wpn.team
 check-host.net
 buzzheavier.com
+avast.com
+avastbrowser.com
+avg.com
+avgbrowser.com
+norton.com
+nortonlifelock.com
+lifelock.com
+gen.com
+gendigital.com
+avira.com
+ccleaner.com
+ccleanerbrowser.com
+piriform.com
+reputationdefender.com
