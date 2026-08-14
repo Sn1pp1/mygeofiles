@@ -1262,9 +1262,11 @@ hetzner.com
 hhvm.com
 hi-butterfly.cn
 hiddify.com
+hidemyass.com
 hidive.com
 hifacebook.info
 hitomi.la
+hma.com
 hollisterco.com
 holod.global.ssl.fastly.net
 holod.media
@@ -1654,6 +1656,7 @@ mobile.events.data.microsoft.com
 mobilefacebook.com
 modartt.com
 modrinth.com
+moneylion.com
 moneywithfacebook.com
 mongodb.com
 monolisa.dev
@@ -1789,6 +1792,7 @@ nordcdn.com
 nordvpn.com
 norton.com
 nortonalto.com
+nortoncdn.com
 nortonlifelock.com
 notebook.google.com
 notebooklm-pa.googleapis.com
@@ -2399,6 +2403,7 @@ support.huawei.com
 support.ruckuswireless.com
 support.xerox.com
 supportfacebook.com
+surfeasy.com
 surfshark.com
 surveymonkey.com
 suspilne.media
@@ -2412,7 +2417,10 @@ swapd.co
 swissinfo.ch
 sydney.bing.com
 symantec.com
+symanteccloud.com
 symantecliveupdate.com
+symantecstore.com
+symassets.com
 symcb.com
 symcd.com
 synoforum.com
