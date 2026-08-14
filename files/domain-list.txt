@@ -103,10 +103,14 @@ norton.com
 nortonlifelock.com
 lifelock.com
 nortonalto.com
+nortoncdn.com
 symantec.com
 symantecliveupdate.com
 symcb.com
 symcd.com
+symanteccloud.com
+symantecstore.com
+symassets.com
 avira.com
 avira.net
 avira-update.com
@@ -120,3 +124,7 @@ m.in-app.io
 cleverbridge.com
 digitalriver.com
 akadns.net
+hma.com
+hidemyass.com
+surfeasy.com
+moneylion.com
