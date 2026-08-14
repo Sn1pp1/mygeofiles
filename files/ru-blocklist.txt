@@ -505,7 +505,6 @@ depositphotos.com
 designer.microsoft.com
 designify.com
 developer.nvidia.com
-developers.facebook.com
 developers.instagram.com
 devexpress.com
 deviantart.com
@@ -917,6 +916,7 @@ fb.watch
 fbacebook.com
 fbbmarket.com
 fbboostyourbusiness.com
+fbcdn-a.akamaihd.net
 fbcdn.com
 fbcdn.net
 fbf8.com
@@ -2047,7 +2047,7 @@ puws.cloud
 pvpessence.com
 pwnedpasswords.com
 pyrobot.org
-qianwen.aliyun.com
+qianwen.aliyun.commatsuridayo.github.io
 qianwen.com
 qobuz.com
 qodana.cloud
@@ -2507,7 +2507,7 @@ tracker.opentrackr.org
 tracklock.gg
 trae.ai
 trae.cn
-trae.com.cnmatsuridayo.github.io
+trae.com.cn
 trae.guru
 trailblazer.me
 trailhead.com
@@ -2587,7 +2587,7 @@ upwork.com
 urlr.me
 usa.one
 usatoday.com
-usercontent.devfbcdn-a.akamaihd.net
+usercontent.devdevelopers.facebook.com
 userscript.zone
 usher.ttvnw.net
 uwu-logs.xyz
