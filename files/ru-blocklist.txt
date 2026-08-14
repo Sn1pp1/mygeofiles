@@ -227,6 +227,10 @@ autodesk.io
 autodesk.net
 autodesk360.com
 autodiscover.instagram.com
+avast.com
+avastbrowser.com
+avg.com
+avgbrowser.com
 avira.com
 azathabar.com
 azattyq.org
@@ -330,6 +334,8 @@ carstagram.com
 cats.com
 cbilling.eu
 cbilling.vip
+ccleaner.com
+ccleanerbrowser.com
 cdn-service.space
 cdn-telegram.org
 cdn.betterttv.net
@@ -1089,6 +1095,8 @@ geller-pa.googleapis.com
 gemini.google
 gemini.google.com
 gemini.gstatic.com
+gen.com
+gendigital.com
 generativeai.google
 generativelanguage.googleapis.com
 geni.us
@@ -1496,6 +1504,7 @@ libsdl.org
 licdn.com
 lidarr.audio
 lifehacker.com
+lifelock.com
 liga.net
 lightning.ai
 linear.app
@@ -1768,6 +1777,8 @@ nomachine.com
 nordaccount.com
 nordcdn.com
 nordvpn.com
+norton.com
+nortonlifelock.com
 notebook.google.com
 notebooklm-pa.googleapis.com
 notebooklm.google
@@ -1933,6 +1944,7 @@ pimpletv.ru
 pingdom.com
 pingtest.net
 piratbit.top
+piriform.com
 pixabay.com
 pixel.facebook.com
 pixeldance.com
@@ -2102,6 +2114,7 @@ rentry.org
 repo.mongodb.org
 repo.new
 republic.ru
+reputationdefender.com
 research.net
 resp.app
 restream.io
