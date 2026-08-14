@@ -19,14 +19,18 @@
   "LastUpdated": "1786694047",
   "GeoipHash": "2dfe2561d34be9ecd86fa247b221abafc5d151d5861e8f12f787a1eb816ca183",
   "GeositeHash": "da5b8097a37fb013e04babb73cb5c949379b42eaf9f229ecb8d3d7469168af0d",
-  "DirectSites": [],
+  "DirectSites": [
+    "geosite:PRIVATE"
+  ],
   "ProxySites": [
     "geosite:RU-BLOCKLIST"
   ],
   "BlockSites": [
     "geosite:CATEGORY-ADS"
   ],
-  "DirectIp": [],
+  "DirectIp": [
+    "geoip:PRIVATE-IP"
+  ],
   "ProxyIp": [
     "geoip:RU-BLOCKLIST-IP"
   ],
