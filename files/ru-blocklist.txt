@@ -149,6 +149,7 @@ ahmia.fi
 ahrefs.com
 ai-chat.bsg.brave.com
 ai.com
+ai.google.dev
 ai.studio
 ai.zhaomi.cn
 aicode.googleapis.com
@@ -2240,7 +2241,6 @@ postfix.org
 posthog.com
 postimees.ee
 powersunitedvr.com
-ppl-ai-file-upload.s3.amazonaws.com
 pplx-res.cloudinary.com
 pplx.ai
 ppy.sh
@@ -2304,7 +2304,7 @@ puws.cloud
 pvpessence.com
 pwnedpasswords.com
 pyrobot.org
-qianwen.aliyun.comai.google.dev
+qianwen.aliyun.comppl-ai-file-upload.s3.amazonaws.com
 qianwen.com
 qobuz.com
 qodana.cloud
