@@ -7,7 +7,7 @@ on:
 env:
   MAX_ARTIFACT_SIZE_MB: 50
   DEBUG: ${{ secrets.DEBUG_MODE }}
-  DOMAIN_LIST_VER: "latest"  # Пинните конкретный тег, если нужно: "20241201"
+  DOMAIN_LIST_VER: "latest"
   GEOIP_VER: "latest"
 
 jobs:
@@ -133,53 +133,37 @@ jobs:
             ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
           )
 
-          # Python-парсер через heredoc (безопаснее и читаемее)
-          cat > parser.py <<'PYEOF'
-import json, sys, os, re
-
-def extract(obj, target_type):
-    res = []
-    if isinstance(obj, dict):
-        for k, v in obj.items():
-            if target_type == 'geosite':
-                if k in ('domain_suffix', 'domain'):
-                    res.extend(v)
-                elif k == 'domain_keyword':
-                    res.extend(['keyword:' + x for x in v])
-                elif k == 'domain_regex':
-                    for r in v:
-                        try:
-                            re.compile(r)
-                            res.append('regexp:' + r)
-                        except Exception:
-                            continue
-                else:
-                    res.extend(extract(v, target_type))
-            elif target_type == 'geoip':
-                if k == 'ip_cidr':
-                    res.extend(v)
-                else:
-                    res.extend(extract(v, target_type))
-    elif isinstance(obj, list):
-        for item in obj:
-            res.extend(extract(item, target_type))
-    return res
-
-try:
-    target, filename = sys.argv[1], sys.argv[2]
-    if not os.path.exists('temp.json'):
-        sys.exit(0)
-    with open('temp.json', 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    results = list(set(filter(None, extract(data, target))))
-    if results:
-        with open(f'data/{target}/{filename}', 'w', encoding='utf-8') as f_out:
-            f_out.write('\n'.join(results) + '\n')
-        print(f"✅ Parsed {len(results)} rules")
-except Exception as e:
-    print(f"Parser error: {e}")
-    sys.exit(1)
-PYEOF
+          printf '%s\n' \
+            'import json, sys, os, re' \
+            'def extract(obj, target_type):' \
+            '    res = []' \
+            '    if isinstance(obj, dict):' \
+            '        for k, v in obj.items():' \
+            "            if target_type == 'geosite':" \
+            "                if k in ['domain_suffix', 'domain']: res.extend(v)" \
+            "                elif k == 'domain_keyword': res.extend(['keyword:' + x for x in v])" \
+            "                elif k == 'domain_regex':" \
+            '                    for r in v:' \
+            "                        try: re.compile(r); res.append('regexp:' + r)" \
+            '                        except: continue' \
+            '                else: res.extend(extract(v, target_type))' \
+            "            elif target_type == 'geoip':" \
+            "                if k == 'ip_cidr': res.extend(v)" \
+            '                else: res.extend(extract(v, target_type))' \
+            '    elif isinstance(obj, list):' \
+            '        for item in obj: res.extend(extract(item, target_type))' \
+            '    return res' \
+            'try:' \
+            '    target, filename = sys.argv[1], sys.argv[2]' \
+            "    if not os.path.exists('temp.json'): sys.exit(0)" \
+            "    with open('temp.json', 'r', encoding='utf-8') as f: data = json.load(f)" \
+            '    results = list(set(filter(None, extract(data, target))))' \
+            '    if results:' \
+            "        with open(f'data/{target}/{filename}', 'w', encoding='utf-8') as f_out:" \
+            "            f_out.write('\n'.join(results) + '\n')" \
+            '        print(f"✅ Parsed {len(results)} rules")' \
+            'except Exception as e: print(f"Parser error: {e}")' \
+            > parser.py
 
           process_categories() {
             local target="$1"
@@ -328,7 +312,7 @@ PYEOF
             fi
           done
           if [ "$bad" -eq 1 ]; then
-            echo "❌ Validation failed"
+            echo "❌ Validation failed: entries with leading dots found"
             exit 1
           fi
           echo "✅ All entries are valid"
@@ -362,10 +346,7 @@ PYEOF
       - name: Build geoip.dat
         run: |
           echo "🔨 Building geoip.dat..."
-          cat <<EOF > geoip_config.json
-          {"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}],
-           "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}
-EOF
+          echo '{"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}], "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}' > geoip_config.json
           go install github.com/v2fly/geoip@${{ env.GEOIP_VER }}
           $(go env GOPATH)/bin/geoip -c geoip_config.json
           ls -lh geoip.dat
@@ -399,12 +380,12 @@ EOF
           echo "   • geoip.dat: ${geoip_size} bytes"
 
           if [ "$geosite_size" -lt 1000 ]; then
-            echo "❌ geosite.dat too small (${geosite_size} bytes)"
+            echo "❌ geosite.dat too small (${geosite_size} bytes) - possible corruption"
             exit 1
           fi
 
           if [ "$geoip_size" -lt 1000 ]; then
-            echo "❌ geoip.dat too small (${geoip_size} bytes)"
+            echo "❌ geoip.dat too small (${geoip_size} bytes) - possible corruption"
             exit 1
           fi
 
@@ -422,10 +403,11 @@ EOF
             echo "| Category | Entries |"
             echo "|----------|---------|"
             for f in data/geosite/*; do
-              [ -f "$f" ] || continue
-              name=$(basename "$f")
-              count=$(wc -l < "$f")
-              echo "| $name | $count |"
+              if [ -f "$f" ]; then
+                name=$(basename "$f")
+                count=$(wc -l < "$f")
+                echo "| $name | $count |"
+              fi
             done
             echo ""
             echo "### Geoip Categories"
@@ -433,10 +415,11 @@ EOF
             echo "| Category | Entries |"
             echo "|----------|---------|"
             for f in data/geoip/*; do
-              [ -f "$f" ] || continue
-              name=$(basename "$f")
-              count=$(wc -l < "$f")
-              echo "| $name | $count |"
+              if [ -f "$f" ]; then
+                name=$(basename "$f")
+                count=$(wc -l < "$f")
+                echo "| $name | $count |"
+              fi
             done
           } > statistics.md
 
@@ -502,8 +485,8 @@ EOF
           echo "📁 Files:"
           ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
 
-          # Переключаемся на изолированную ветку для бинарников
-          git checkout --orphan dat-files || git checkout dat-files
+          # Переключаемся на изолированную orphan-ветку — main не тронут
+          git checkout --orphan dat-files 2>/dev/null || git checkout dat-files
           git rm -rf . 2>/dev/null || true
 
           git add -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
@@ -511,7 +494,6 @@ EOF
           COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%H:%M MSK')"
           git commit -m "$COMMIT_MSG" || echo "⚠️ No changes"
 
-          # Force push только в dat-files — main не тронут
           git push origin dat-files --force
 
           echo "✅ Done! Artifacts are on dat-files branch"
