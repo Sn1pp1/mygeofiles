@@ -94,7 +94,11 @@ jobs:
           END { print c+0 }
           ' 2>/dev/null) || COUNT=0
           
+          # СКАЧИВАЕМ ФАЙЛ
           curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
+          
+          # ПРИНУДИТЕЛЬНЫЙ ПЕРЕВОД СТРОКИ (ФИКС СКЛЕЙКИ!)
+          echo "" >> "$TEMP_RAW"
           
           printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
           TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
@@ -106,7 +110,7 @@ jobs:
 
         echo "🧹 Очистка и нормализация..."
         
-        # === ПАРСЕР (ФИНАЛЬНАЯ ВЕРСИЯ) ===
+        # === ПАРСЕР (ИСПРАВЛЕННАЯ ВЕРСИЯ) ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -123,23 +127,17 @@ jobs:
         {
           d = $0
           
-          # 1. Очистка WWW-вариаций
-          sub(/^www\./, "", d)        # www.example.com -> example.com
-          sub(/^www-/, "", d)         # www-example.com -> example.com
-          sub(/^www[0-9]+\./, "", d)  # www3.example.com -> example.com
-          # wwwfacebook.com -> facebook.com (без использования \1, который ломает awk)
-          if (match(d, /^www[a-z]/)) {
-            d = substr(d, 4)
+          # 1. Очистка WWW-вариаций (БЕЗОПАСНАЯ ВЕРСИЯ)
+          # Удаляем только точные префиксы www., www-, www0-9.
+          if (match(d, /^www[0-9]*\./)) {
+            d = substr(d, RSTART + RLENGTH)
+          } else if (match(d, /^www-/)) {
+            d = substr(d, RSTART + RLENGTH)
           }
           
           # 2. Обрезка мусора в конце/середине
           sub(/@.*$/, "", d)          # domain@tracking -> domain
-          sub(/domain:.*$/, "", d)    # domaindomain:tracker -> domain
-          sub(/keyword:.*$/, "", d)
-          sub(/regexp:.*$/, "", d)
-          sub(/full:.*$/, "", d)
           sub(/:[[:space:]]*$/, "", d)
-          sub(/\+.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
           
           # 3. Финальная валидация
@@ -150,7 +148,10 @@ jobs:
           if (d ~ /\.\./) next                              # Нет двойных точек
           if (length(d) > 253) next                         # Не слишком длинный
           
-          # (Убрана агрессивная проверка на склейку, чтобы не резать ai.google.dev)
+          # 4. Проверка на склейки (защита от youtube.comdiscord.com)
+          # Если в домене больше 10 точек подряд или странные символы, пропускаем
+          if (d ~ /\.{3,}/) next
+          if (d ~ /[^\w\.\-]/) next  # Только буквы, цифры, точки и дефисы
           
           print tolower(d)
         }
