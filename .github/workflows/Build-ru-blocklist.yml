@@ -74,12 +74,12 @@ jobs:
 
         echo "📊 СТАТИСТИКА ЗАГРУЗКИ"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        
+
         TOTAL_BEFORE=0
-        
+
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
-          
+
           # Считаем строки после базовой чистки
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
@@ -93,24 +93,24 @@ jobs:
           { d=$0; if (d !~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ && d != "") c++ }
           END { print c+0 }
           ' 2>/dev/null) || COUNT=0
-          
-          # СКАЧИВАЕМ ФАЙЛ
+
+          # Скачиваем файл
           curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
-          
-          # ПРИНУДИТЕЛЬНЫЙ ПЕРЕВОД СТРОКИ (ФИКС СКЛЕЙКИ!)
+
+          # ПРИНУДИТЕЛЬНЫЙ перевод строки между файлами (защита от склейки!)
           echo "" >> "$TEMP_RAW"
-          
+
           printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
           TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
         done
-        
+
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE записей"
         echo ""
 
         echo "🧹 Очистка и нормализация..."
-        
-        # === ПАРСЕР (ИСПРАВЛЕННАЯ ВЕРСИЯ) ===
+
+        # === ПАРСЕР (mawk-совместимый, www сохраняем) ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -126,42 +126,29 @@ jobs:
         /\.$/ { next }
         {
           d = $0
-          
-          # 1. Очистка WWW-вариаций (БЕЗОПАСНАЯ ВЕРСИЯ)
-          # Удаляем только точные префиксы www., www-, www0-9.
-          if (match(d, /^www[0-9]*\./)) {
-            d = substr(d, RSTART + RLENGTH)
-          } else if (match(d, /^www-/)) {
-            d = substr(d, RSTART + RLENGTH)
-          }
-          
-          # 2. Обрезка мусора в конце/середине
-          sub(/@.*$/, "", d)          # domain@tracking -> domain
-          sub(/:[[:space:]]*$/, "", d)
+
+          # Обрезка мусора в конце
+          sub(/@.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
-          
-          # 3. Финальная валидация
-          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # Убираем чистые IP
-          if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next       # Убираем IPv6
+
+          # Финальная валидация (mawk-совместимая)
           if (d == "") next
-          if (d !~ /\./) next                               # Должна быть точка
-          if (d ~ /\.\./) next                              # Нет двойных точек
-          if (length(d) > 253) next                         # Не слишком длинный
-          
-          # 4. Проверка на склейки (защита от youtube.comdiscord.com)
-          # Если в домене больше 10 точек подряд или странные символы, пропускаем
-          if (d ~ /\.{3,}/) next
-          if (d ~ /[^\w\.\-]/) next  # Только буквы, цифры, точки и дефисы
-          
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # чистые IPv4
+          if (d ~ /:/) next                                 # IPv6 / порты
+          if (d !~ /\./) next                               # должна быть точка
+          if (d ~ /\.\./) next                              # нет двойных точек
+          if (length(d) > 253) next                         # лимит длины домена
+          if (d ~ /[^a-zA-Z0-9._-]/) next                   # только валидные символы
+
           print tolower(d)
         }
         ' "$TEMP_RAW" > "$TEMP_CLEAN"
-        
+
         BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN" | tr -d ' ')
-        
+
         echo "🔍 Сортировка и удаление дубликатов..."
         LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-blocklist.txt
-        
+
         # Проверка, что файл создан
         if [ ! -s files/ru-blocklist.txt ]; then
           echo "❌ Ошибка: Файл пустой после обработки!"
@@ -171,13 +158,13 @@ jobs:
         AFTER_DEDUP=$(wc -l < files/ru-blocklist.txt | tr -d ' ')
         REMOVED=$((BEFORE_DEDUP - AFTER_DEDUP))
         SIZE=$(du -h files/ru-blocklist.txt | cut -f1)
-        
+
         if [ "$BEFORE_DEDUP" -gt 0 ]; then
           PCT=$(awk "BEGIN {printf \"%.1f\", $REMOVED * 100 / $BEFORE_DEDUP}")
         else
           PCT="0.0"
         fi
-        
+
         echo ""
         echo "📊 ИТОГОВАЯ СТАТИСТИКА"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -193,14 +180,14 @@ jobs:
     - name: Convert to SRS format
       run: |
         echo "🔄 Генерация SRS файла..."
-        
+
         # Создаём временный JSON для sing-box
         domains=$(grep -v '^$' files/ru-blocklist.txt | jq -R -s 'split("\n") | map(select(length > 0))')
         echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/ru-blocklist.json
-        
+
         # Компилируем в SRS
         sing-box rule-set compile --output files/srs/ru-blocklist.srs /tmp/ru-blocklist.json
-        
+
         SRS_SIZE=$(du -h files/srs/ru-blocklist.srs | cut -f1)
         echo "✅ SRS файл создан: files/srs/ru-blocklist.srs ($SRS_SIZE)"
 
@@ -208,9 +195,9 @@ jobs:
       run: |
         git config user.name "RU Blocklist Bot"
         git config user.email "blocklist-bot@github.com"
-        
+
         git pull --rebase origin main 2>/dev/null || true
-        
+
         if [ ! -f files/ru-blocklist.txt ]; then
           echo "❌ Ошибка: файл ru-blocklist.txt не найден!"
           exit 1
