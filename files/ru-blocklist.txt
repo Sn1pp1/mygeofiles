@@ -4,6 +4,7 @@
 24.kg
 2dust.link
 2o7.net
+3dns-1.adobe.com
 3dns-2.adobe.com
 3dns-3.adobe.com
 3dns-4.adobe.com
@@ -19,11 +20,11 @@
 7dniv.rv.ua
 7tv.app
 7tv.io
+9anime.cz
 9anime.id
 9anime.to
 9anime.ws
 9tv.co.il
-9tv.co.ilgithub-api.arkoselabs.com
 a-vrv.akamaized.net
 a360.co
 ab.chatgpt.com
@@ -125,8 +126,7 @@ adobetechcommcallback.com
 adobetechcommdemo.com
 adobexdplatform.com
 ads-twitter.com
-ads-twitter.comads-twitter.com
-ads.youtube.comdiscord-attachments-uploads-prd.storage.googleapis.com
+ads.youtube.com
 adstudio-assets.scdn.co
 adultmult.tv
 advancediddetection.com
@@ -186,7 +186,7 @@ amplitude.com
 amx.com
 analog.com
 analytics.facebook.com
-analytics.tiktok.combyteoversea.com
+analytics.tiktok.com
 andrevi.ch
 anidub.com
 anilib.me
@@ -284,6 +284,7 @@ atscaleconference.com
 att.com
 attachments.f95zone.to
 atv4.dnskp.cc
+audio-ak-spotify-com.akamaized.net
 audio4-ak-spotify-com.akamaized.net
 audiobookbay.lu
 augmentcode.com
@@ -350,7 +351,7 @@ blackseanews.net
 blinkshot.io
 blog.business.instagram.com
 blog.instagram.com
-bloodhound.spotify.com3dns-1.adobe.com
+bloodhound.spotify.com
 bloody.com
 bluefootcms.com
 bluehost.com
@@ -403,6 +404,7 @@ buyoculus.com
 buzzheavier.com
 bypasscensorship.org
 byspotify.com
+bytedapm.com
 byteoversea.com
 c4rex.co
 caesium.app
@@ -496,6 +498,7 @@ clevelandclinic.org
 cleverbridge.com
 click-url.com
 clickup.com
+client-teamviewer-com.trafficmanager.net
 clip.opus.pro
 clipdrop.co
 cloud.mongodb.com
@@ -544,7 +547,6 @@ copilot-proxy.githubusercontent.com
 copilot-stg.com
 copilot-telemetry-service.githubusercontent.com
 copilot-telemetry.githubusercontent.com
-copilot-telemetry.githubusercontent.comyt3.googleusercontent.com
 copilot-workspace.githubnext.com
 copilot.cloud.microsoft
 copilot.com
@@ -1068,6 +1070,7 @@ fb.watch
 fbacebook.com
 fbbmarket.com
 fbboostyourbusiness.com
+fbcdn-a.akamaihd.net
 fbcdn.com
 fbcdn.net
 fbf8.com
@@ -1165,7 +1168,6 @@ footballapi.pulselive.com
 force-user-content.com
 force.com
 forgecdn.net
-forgecdn.netaudio-ak-spotify-com.akamaized.net
 fork.pet
 forklog.com
 formula1.com
@@ -1247,6 +1249,7 @@ gaming.amazon.com
 gateway.ai.cloudflare.com
 gateway.discord.gg
 gateway.pinata.cloud
+gaytube.com
 geekuninstaller.com
 geekyfuroshiki.com
 geforcenow.com
@@ -1285,6 +1288,7 @@ gifyu.com
 git.io
 git.new
 gitbook.io
+github-api.arkoselabs.com
 github-cloud.s3.amazonaws.com
 github-production-release-asset-2e65be.s3.amazonaws.com
 github-production-repository-file-5c1aeb.s3.amazonaws.com
@@ -1330,6 +1334,7 @@ gonift.com
 gonitro.com
 goodreads.com
 googlecensorship.org
+googleplay.com
 googletagmanager.com
 googlevideo.com
 gordonua.com
@@ -1393,6 +1398,7 @@ hchk.io
 hd-rezka.tv
 hd.zetfix.online
 hdkinoteatr.com
+hdrezka-home.tv
 hdrezka.ac
 hdrezka.ag
 hdrezka.app
@@ -1442,7 +1448,6 @@ housebrand.com
 howtohackfacebook-account.com
 hqporner.com
 hromadske.ua
-hrw.org
 hs.fi
 hsfacebook.com
 htmhell.dev
@@ -1588,7 +1593,6 @@ itch.zone
 itdog.info
 itninja.com
 itsmycity.ru
-jabra.com
 jamf.com
 jasper.ai
 jetbrains.ai
@@ -1718,7 +1722,6 @@ lostfilm.tw
 lostfilm.uno
 lostfilm.win
 lostfilmtv2.site
-lostfilmtv5.site
 lovart.ai
 lpsnmedia.net
 lu4.org
@@ -1783,6 +1786,7 @@ marscode.com.cn
 marvelsnap.com
 mashable.com
 master.qt.io
+matsuridayo.github.io
 mattermost.com
 maven.neoforged.net
 max.com
@@ -1825,11 +1829,9 @@ meteo.paraplan.net
 metla.press
 metopera.org
 mezha.net
-mfacebook.com
 miaibox.com
 miaoda.cn
 miaoyanai.com
-microchip.com
 middlewareinventory.com
 midentsolutions.com
 midjourney.com
@@ -1860,7 +1862,6 @@ mongodb.com
 monolisa.dev
 monoprice.com
 monster.ie
-montechpc.com
 moonshot.ai
 moonshot.cn
 more.fm
@@ -1986,7 +1987,6 @@ nippon.com
 nitropdf.com
 nnmclub.to
 nnmstatic.win
-noctua.at
 nomachine.com
 nordaccount.com
 nordcdn.com
@@ -2074,7 +2074,7 @@ onlinesim.io
 onlinesim.ru
 onshape.com
 ood.opsource.net
-ookla-speedtest-central.hgconair.hgc.com.hkclient-teamviewer-com.trafficmanager.net
+ookla-speedtest-central.hgconair.hgc.com.hk
 ookla.com
 ooklaserver.net
 ooni.org
@@ -2083,7 +2083,7 @@ opal.google.com
 open.spotify.com
 openai.com
 openai.com.cdn.cloudflare.net
-openai.qualtrics.commatsuridayo.github.io
+openai.qualtrics.com
 openaiapi-site.azureedge.net
 openaiassets.blob.core.windows.net
 openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
@@ -2115,6 +2115,7 @@ os.mbed.com
 ovd.info
 ovd.legal
 ovd.news
+ovdinfo.legal
 ovdinfo.org
 oystermercury.top
 ozodi.org
@@ -2237,10 +2238,10 @@ pornolab.net
 portal.bgpmon.net
 portal.lviv.ua
 posle.media
-postfix.org
 posthog.com
 postimees.ee
 powersunitedvr.com
+ppl-ai-file-upload.s3.amazonaws.com
 pplx-res.cloudinary.com
 pplx.ai
 ppy.sh
@@ -2304,7 +2305,7 @@ puws.cloud
 pvpessence.com
 pwnedpasswords.com
 pyrobot.org
-qianwen.aliyun.comppl-ai-file-upload.s3.amazonaws.com
+qianwen.aliyun.com
 qianwen.com
 qobuz.com
 qodana.cloud
@@ -2339,7 +2340,7 @@ recoiljs.org
 recraft.ai
 reddxxx.com
 redgifs.com
-redirector.c.play.google.comwww.speedtest.net.cdn.cloudflare.net
+redirector.c.play.google.com
 redis.com
 redis.io
 redislabs.com
@@ -2541,7 +2542,6 @@ smartbear.com
 smartdeploy.com
 smarttv.zeasn.tv
 smarttvcdn.online
-smashwords.com
 sms-activate.io
 snap-storage-cdn.l.google.com
 snap.com
@@ -2610,7 +2610,6 @@ srvkp.com
 sspanel.net
 st.kinovod.net
 stable.dl2.discordapp.net
-stalker2.com
 starfox.com
 startmail.com
 startpage.com
@@ -2633,7 +2632,6 @@ strana.news
 strana.today
 strava.com
 stream.voidboost.cc
-stream.voidboost.cchdrezka.ag
 streamable.com
 stulchik.net
 stunnel.org
@@ -2772,7 +2770,6 @@ tiktokv.com
 tiktokv.com.edgekey.net
 tiktokv.com.edgesuite.net
 tiktokv.eu
-tiktokv.euai.google.dev
 tiktokv.us
 tiktokw.eu
 tiktokw.us
@@ -2887,7 +2884,7 @@ upwork.com
 urlr.me
 usa.one
 usatoday.com
-usercontent.devfbcdn-a.akamaihd.net
+usercontent.dev
 userscript.zone
 usher.ttvnw.net
 uwu-logs.xyz
@@ -2991,7 +2988,6 @@ wiisportsresort.com
 wiiugamepad.com
 wiivc.net
 wiki.fextralife.com
-wikiart.org
 wikidot.com
 wikileaks.org
 wikiunblocked.org
@@ -3116,6 +3112,50 @@ wwis-dubc1-vip96.adobe.com
 wwis-dubc1-vip97.adobe.com
 wwis-dubc1-vip98.adobe.com
 wwis-dubc1-vip99.adobe.com
+www-facebook.com
+www.analog.com
+www.bbc.com
+www.cisco.com
+www.citrix.com
+www.currenttime.tv
+www.dell.com
+www.digikey.com
+www.digitalocean.com
+www.discord.com
+www.dw.com
+www.grammarly.com
+www.hetzner.com
+www.hrw.org
+www.intel.com
+www.jabra.com
+www.kavkazr.com
+www.lenovo.com
+www.lostfilm.tv
+www.lostfilmtv5.site
+www.microchip.com
+www.mongodb.com
+www.montechpc.com
+www.moscowtimes.ru
+www.mouser.com
+www.noctua.at
+www.postfix.org
+www.qualcomm.com
+www.smashwords.com
+www.speedtest.net.cdn.cloudflare.net
+www.stalker2.com
+www.support.xerox.com
+www.the-village.ru
+www.themoviedb.org
+www.ti.com
+www.torproject.org
+www.wikiart.org
+www.wunderground.com
+www.youtube.com
+www3.corsair.com
+wwwfacebok.com
+wwwfacebook.com
+wwwinstagram.com
+wwwmfacebook.com
 x-minus.pro
 x.ai
 x.com
