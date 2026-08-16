@@ -7,6 +7,8 @@ on:
 env:
   MAX_ARTIFACT_SIZE_MB: 50
   DEBUG: ${{ secrets.DEBUG_MODE }}
+  DOMAIN_LIST_VER: "latest"  # Пинните конкретный тег, если нужно: "20241201"
+  GEOIP_VER: "latest"
 
 jobs:
   build:
@@ -19,7 +21,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get latest Go version
@@ -52,8 +53,7 @@ jobs:
 
       - name: Install sing-box
         run: |
-          echo " Installing sing-box v${{ env.SING_BOX_VERSION }}..."
-
+          echo "Installing sing-box v${{ env.SING_BOX_VERSION }}..."
           SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
           DOWNLOADED=false
 
@@ -70,30 +70,23 @@ jobs:
           if [ "$DOWNLOADED" = true ] && file sing-box.tar.gz | grep -qE "gzip|tar"; then
             tar xzf sing-box.tar.gz
             SINGBOX_BIN=$(find . -name "sing-box" -type f 2>/dev/null | head -1)
-
             if [ -n "$SINGBOX_BIN" ]; then
-              cp "$SINGBOX_BIN" /usr/local/bin/sing-box
-              chmod +x /usr/local/bin/sing-box
+              sudo cp "$SINGBOX_BIN" /usr/local/bin/sing-box
+              sudo chmod +x /usr/local/bin/sing-box
               echo "✅ sing-box installed"
               sing-box version
             else
               echo "❌ Binary not found, using go install"
               go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
-              ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
+              sudo ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
             fi
             rm -rf sing-box.tar.gz 2>/dev/null || true
           else
             echo "⚠️ Using go install as fallback"
             go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
-            ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
+            sudo ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
             sing-box version
           fi
-
-      - name: Cache sing-box binary
-        uses: actions/cache@v4
-        with:
-          path: /usr/local/bin/sing-box
-          key: ${{ runner.os }}-singbox-${{ env.SING_BOX_VERSION }}
 
       - name: Set build date
         run: |
@@ -111,10 +104,11 @@ jobs:
 
       - name: Prepare Data
         run: |
+          set -euo pipefail
           mkdir -p data/geosite data/geoip
 
           download_with_retry() {
-            local url=$1; local dest=$2; local max=3
+            local url="$1" dest="$2" max=3
             url=$(echo "$url" | xargs)
             [ -z "$url" ] && return 1
             for i in $(seq 1 $max); do
@@ -139,47 +133,62 @@ jobs:
             ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
           )
 
-          printf '%s\n' \
-            'import json, sys, os, re' \
-            'def extract(obj, target_type):' \
-            '    res = []' \
-            '    if isinstance(obj, dict):' \
-            '        for k, v in obj.items():' \
-            "            if target_type == 'geosite':" \
-            "                if k in ['domain_suffix', 'domain']: res.extend(v)" \
-            "                elif k == 'domain_keyword': res.extend(['keyword:' + x for x in v])" \
-            "                elif k == 'domain_regex':" \
-            '                    for r in v:' \
-            "                        try: re.compile(r); res.append('regexp:' + r)" \
-            '                        except: continue' \
-            '                else: res.extend(extract(v, target_type))' \
-            "            elif target_type == 'geoip':" \
-            "                if k == 'ip_cidr': res.extend(v)" \
-            '                else: res.extend(extract(v, target_type))' \
-            '    elif isinstance(obj, list):' \
-            '        for item in obj: res.extend(extract(item, target_type))' \
-            '    return res' \
-            'try:' \
-            '    target, filename = sys.argv[1], sys.argv[2]' \
-            "    if not os.path.exists('temp.json'): sys.exit(0)" \
-            "    with open('temp.json', 'r', encoding='utf-8') as f: data = json.load(f)" \
-            '    results = list(set(filter(None, extract(data, target))))' \
-            '    if results:' \
-            "        with open(f'data/{target}/{filename}', 'w', encoding='utf-8') as f_out:" \
-            "            f_out.write('\n'.join(results) + '\n')" \
-            '        print(f"✅ Parsed {len(results)} rules")' \
-            'except Exception as e: print(f"Parser error: {e}")' \
-            > parser.py
+          # Python-парсер через heredoc (безопаснее и читаемее)
+          cat > parser.py <<'PYEOF'
+import json, sys, os, re
+
+def extract(obj, target_type):
+    res = []
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if target_type == 'geosite':
+                if k in ('domain_suffix', 'domain'):
+                    res.extend(v)
+                elif k == 'domain_keyword':
+                    res.extend(['keyword:' + x for x in v])
+                elif k == 'domain_regex':
+                    for r in v:
+                        try:
+                            re.compile(r)
+                            res.append('regexp:' + r)
+                        except Exception:
+                            continue
+                else:
+                    res.extend(extract(v, target_type))
+            elif target_type == 'geoip':
+                if k == 'ip_cidr':
+                    res.extend(v)
+                else:
+                    res.extend(extract(v, target_type))
+    elif isinstance(obj, list):
+        for item in obj:
+            res.extend(extract(item, target_type))
+    return res
+
+try:
+    target, filename = sys.argv[1], sys.argv[2]
+    if not os.path.exists('temp.json'):
+        sys.exit(0)
+    with open('temp.json', 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    results = list(set(filter(None, extract(data, target))))
+    if results:
+        with open(f'data/{target}/{filename}', 'w', encoding='utf-8') as f_out:
+            f_out.write('\n'.join(results) + '\n')
+        print(f"✅ Parsed {len(results)} rules")
+except Exception as e:
+    print(f"Parser error: {e}")
+    sys.exit(1)
+PYEOF
 
           process_categories() {
-            local target=$1
+            local target="$1"
             shift
-            local -n categories=$1
-
+            local -n cats=$1
             local failed=0
 
-            for name in "${!categories[@]}"; do
-              local url="${categories[$name]}"
+            for name in "${!cats[@]}"; do
+              local url="${cats[$name]}"
               [ -z "$url" ] && continue
 
               echo ""
@@ -188,7 +197,7 @@ jobs:
 
               if ! download_with_retry "$url" "temp_file"; then
                 echo "  ❌ Не удалось скачать"
-                ((failed++))
+                failed=$((failed + 1))
                 continue
               fi
 
@@ -200,10 +209,10 @@ jobs:
                 if ! sing-box rule-set decompile "temp_file" -o "temp.json" 2>&1; then
                   echo "  ⚠️  Декомпиляция не удалась, пропускаем"
                   rm -f temp_file
-                  ((failed++))
+                  failed=$((failed + 1))
                   continue
                 fi
-                python3 parser.py "$target" "$name"
+                python3 parser.py "$target" "$name" || failed=$((failed + 1))
 
               elif [[ "$ext" == "txt" || "$ext" == "lst" ]]; then
                 echo "  📝 Обрабатываем текстовый список..."
@@ -213,7 +222,7 @@ jobs:
 
               else
                 mv "temp_file" "temp.json"
-                python3 parser.py "$target" "$name"
+                python3 parser.py "$target" "$name" || failed=$((failed + 1))
               fi
 
               rm -f temp.json temp_file 2>/dev/null || true
@@ -237,7 +246,7 @@ jobs:
           echo "   • geoip: $(ls -1 data/geoip 2>/dev/null | wc -l) files"
 
           echo "📋 File contents preview:"
-          for f in data/geosite/*; do
+          for f in data/geosite/* data/geoip/*; do
             if [ -f "$f" ]; then
               lines=$(wc -l < "$f")
               echo "   • $(basename "$f"): $lines lines"
@@ -289,7 +298,7 @@ jobs:
                 print line
               }
             ' | \
-            grep -E '^(full:|regexp:|keyword:|domain:|domain_suffix:|domain_keyword:|domain_regex:)?[a-zA-Z0-9_\\@-]' | \
+            grep -E '^(full:|regexp:|keyword:|domain:|domain_suffix:|domain_keyword:|domain_regex:)?[a-zA-Z0-9_@-]' | \
             grep -vE '^(full|regexp|keyword|domain|domain_suffix|domain_keyword|domain_regex):$' | \
             sort -u > "$file.cleaned"
 
@@ -319,7 +328,7 @@ jobs:
             fi
           done
           if [ "$bad" -eq 1 ]; then
-            echo "❌ Validation failed: entries with leading dots found"
+            echo "❌ Validation failed"
             exit 1
           fi
           echo "✅ All entries are valid"
@@ -332,7 +341,7 @@ jobs:
           for f in data/geosite/*; do
             if [ -f "$f" ] && [ ! -s "$f" ]; then
               echo "⚠️  Warning: $(basename "$f") is empty"
-              ((empty_files++))
+              empty_files=$((empty_files + 1))
             fi
           done
 
@@ -340,7 +349,7 @@ jobs:
             echo "⚠️  $empty_files empty files found, but continuing..."
           fi
 
-          go run github.com/v2fly/domain-list-community@latest \
+          go run github.com/v2fly/domain-list-community@${{ env.DOMAIN_LIST_VER }} \
             --datapath=data/geosite --outputname=geosite.dat
 
           if [ -f geosite.dat ]; then
@@ -356,8 +365,8 @@ jobs:
           cat <<EOF > geoip_config.json
           {"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}],
            "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}
-          EOF
-          go install github.com/v2fly/geoip@latest
+EOF
+          go install github.com/v2fly/geoip@${{ env.GEOIP_VER }}
           $(go env GOPATH)/bin/geoip -c geoip_config.json
           ls -lh geoip.dat
 
@@ -390,12 +399,12 @@ jobs:
           echo "   • geoip.dat: ${geoip_size} bytes"
 
           if [ "$geosite_size" -lt 1000 ]; then
-            echo "❌ geosite.dat too small (${geosite_size} bytes) - possible corruption"
+            echo "❌ geosite.dat too small (${geosite_size} bytes)"
             exit 1
           fi
 
           if [ "$geoip_size" -lt 1000 ]; then
-            echo "❌ geoip.dat too small (${geoip_size} bytes) - possible corruption"
+            echo "❌ geoip.dat too small (${geoip_size} bytes)"
             exit 1
           fi
 
@@ -413,11 +422,10 @@ jobs:
             echo "| Category | Entries |"
             echo "|----------|---------|"
             for f in data/geosite/*; do
-              if [ -f "$f" ]; then
-                name=$(basename "$f")
-                count=$(wc -l < "$f")
-                echo "| $name | $count |"
-              fi
+              [ -f "$f" ] || continue
+              name=$(basename "$f")
+              count=$(wc -l < "$f")
+              echo "| $name | $count |"
             done
             echo ""
             echo "### Geoip Categories"
@@ -425,11 +433,10 @@ jobs:
             echo "| Category | Entries |"
             echo "|----------|---------|"
             for f in data/geoip/*; do
-              if [ -f "$f" ]; then
-                name=$(basename "$f")
-                count=$(wc -l < "$f")
-                echo "| $name | $count |"
-              fi
+              [ -f "$f" ] || continue
+              name=$(basename "$f")
+              count=$(wc -l < "$f")
+              echo "| $name | $count |"
             done
           } > statistics.md
 
@@ -485,9 +492,9 @@ jobs:
 
           cat changelog.md
 
-      - name: Push Files to Branch
+      - name: Push Files to dat-files branch (SAFE)
         run: |
-          echo "📤 Pushing artifacts..."
+          echo "📤 Pushing artifacts to separate branch..."
 
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -495,24 +502,19 @@ jobs:
           echo "📁 Files:"
           ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
 
-          echo "🗑️  Removing from Git index..."
-          git rm --cached -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256 || true
+          # Переключаемся на изолированную ветку для бинарников
+          git checkout --orphan dat-files || git checkout dat-files
+          git rm -rf . 2>/dev/null || true
 
-          echo "📋 Adding as new files..."
-          git add -f geosite.dat
-          git add -f geoip.dat
-          git add -f geosite.dat.sha256
-          git add -f geoip.dat.sha256
-
-          echo "📊 Status:"
-          git status --short
+          git add -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
 
           COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%H:%M MSK')"
           git commit -m "$COMMIT_MSG" || echo "⚠️ No changes"
 
-          git push origin main --force
+          # Force push только в dat-files — main не тронут
+          git push origin dat-files --force
 
-          echo "✅ Done!"
+          echo "✅ Done! Artifacts are on dat-files branch"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
