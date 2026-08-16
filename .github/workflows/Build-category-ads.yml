@@ -3,7 +3,7 @@ name: Build Category Ads
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/Build-ru-blocklist.yml']
+    paths: ['.github/workflows/Build-category-ads.yml']  # ← ПОПРАВИТЬ если файл называется иначе
   workflow_dispatch:
   schedule:
     - cron: '0 */6 * * *'
@@ -56,6 +56,7 @@ jobs:
 
         echo "🧹 Очистка и нормализация..."
         
+        # === ПАРСЕР (mawk-совместимый, www сохраняем, без опасных sub) ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -71,26 +72,20 @@ jobs:
         /\.$/ { next }
         {
           d = $0
-          sub(/^www\./, "", d)
-          sub(/^www-/, "", d)
-          sub(/^www[0-9]+\./, "", d)
-          if (match(d, /^www[a-z]/)) {
-            d = substr(d, 4)
-          }
+
+          # Обрезка мусора в конце (безопасно)
           sub(/@.*$/, "", d)
-          sub(/domain:.*$/, "", d)
-          sub(/keyword:.*$/, "", d)
-          sub(/regexp:.*$/, "", d)
-          sub(/full:.*$/, "", d)
-          sub(/:[[:space:]]*$/, "", d)
-          sub(/\+.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
-          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
-          if (d ~ /^[0-9a-f:]+::?[0-9a-f:\/]*$/) next
+
+          # Финальная валидация (mawk-совместимая)
           if (d == "") next
-          if (d !~ /\./) next
-          if (d ~ /\.\./) next
-          if (length(d) > 253) next
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # IPv4
+          if (d ~ /:/) next                                 # IPv6 / порты
+          if (d !~ /\./) next                               # должна быть точка
+          if (d ~ /\.\./) next                              # нет двойных точек
+          if (length(d) > 253) next                         # лимит длины
+          if (d ~ /[^a-zA-Z0-9._-]/) next                   # только валидные символы
+
           print tolower(d)
         }
         ' "$TEMP_RAW" > "$TEMP_CLEAN"
@@ -123,6 +118,14 @@ jobs:
         printf "  ✅ В итоговом файле:            %6s доменов\n" "$AFTER_DEDUP"
         printf "  Размер файла:                   %6s\n" "$SIZE"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        # Финальная самопроверка
+        if grep -qvE '^[a-z0-9]([a-z0-9._-]*[a-z0-9])?$' files/category-ads.txt; then
+          echo "❌ Найдены невалидные строки:"
+          grep -nvE '^[a-z0-9]([a-z0-9._-]*[a-z0-9])?$' files/category-ads.txt | head -5
+          exit 1
+        fi
+        echo "✅ Самопроверка пройдена: все строки — валидные домены"
         echo ""
         echo " Первые 5 записей из category-ads.txt:"
         head -5 files/category-ads.txt | sed 's/^/   ✓ /'
