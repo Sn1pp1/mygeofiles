@@ -2,49 +2,77 @@ name: INCY Config Sync
 
 on:
   workflow_run:
-    # Скрипт запустится автоматически сразу после завершения "Build Mygeofiles"
     workflows: ["Build Mygeofiles"]
     types:
       - completed
   workflow_dispatch:
-    # Кнопка ручного запуска во вкладке Actions (на всякий случай)
 
 jobs:
   sync-config:
     runs-on: ubuntu-latest
-    # Запускаем только если основной воркфлоу завершился УСПЕШНО
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Принудительно берем ветку main, куда основной билд только что загрузил свежие .dat файлы
           ref: main
+
+      - name: Download latest .dat files from Releases
+        run: |
+          echo "📥 Скачиваем актуальные .dat файлы из Releases..."
+          
+          GEOIP_URL="https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat"
+          GEOSITE_URL="https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat"
+          
+          # Скачиваем с retry
+          for i in 1 2 3; do
+            if curl -fsSL --retry 3 --retry-delay 2 "$GEOIP_URL" -o geoip.dat && \
+               curl -fsSL --retry 3 --retry-delay 2 "$GEOSITE_URL" -o geosite.dat; then
+              echo "✅ Файлы скачаны успешно"
+              break
+            fi
+            echo "⚠️ Попытка $i не удалась, повторяем..."
+            sleep $((i * 2))
+          done
+          
+          # Проверяем, что файлы действительно скачаны
+          if [ ! -s geoip.dat ] || [ ! -s geosite.dat ]; then
+            echo "❌ Ошибка: Не удалось скачать .dat файлы!"
+            exit 1
+          fi
+          
+          ls -lh geoip.dat geosite.dat
 
       - name: Calculate hashes and update JSON
         run: |
-          # Проверяем, что файлы действительно на месте
-          if [ ! -f geosite.dat ] || [ ! -f geoip.dat ]; then
-            echo "❌ Ошибка: Файлы .dat не найдены в корне репозитория!"
-            exit 1
-          fi
-
-          # 1. Вычисляем актуальные SHA256 хэши локальных файлов
+          # 1. Вычисляем SHA256 хэши
           GEOIP_HASH=$(sha256sum geoip.dat | awk '{print $1}')
           GEOSITE_HASH=$(sha256sum geosite.dat | awk '{print $1}')
+          
+          echo "🔐 Хэши:"
+          echo "   geoip.dat:  $GEOIP_HASH"
+          echo "   geosite.dat: $GEOSITE_HASH"
 
-          # 2. Генерируем текущие таймстампы
+          # 2. Генерируем таймстампы
           TIMESTAMP=$(date +%s)
           TIMESTAMP_MS=$(date +%s%3N)
 
-          # 3. Записываем всё в ваш snp.json через утилиту jq
+          # 3. Проверяем, что JSON существует
+          if [ ! -f INCY/snp.json ]; then
+            echo "❌ Ошибка: INCY/snp.json не найден!"
+            exit 1
+          fi
+
+          # 4. Обновляем JSON через jq
           jq --arg gh "$GEOIP_HASH" \
              --arg sh "$GEOSITE_HASH" \
              --arg ts "$TIMESTAMP" \
              --arg ts_ms "$TIMESTAMP_MS" \
              '.GeoipHash = $gh | .GeositeHash = $sh | .LastUpdated = $ts | .updatedAt = ($ts_ms | tonumber)' \
              INCY/snp.json > tmp.json && mv tmp.json INCY/snp.json
+          
+          echo "✅ JSON обновлён"
 
       - name: Commit and Push changes to GitHub
         run: |
@@ -53,8 +81,11 @@ jobs:
           
           git add INCY/snp.json
           
-          # Проверяем, изменился ли JSON, чтобы не плодить пустые коммиты
+          # Проверяем, изменился ли JSON
           if ! git diff-index --quiet HEAD; then
-            git commit -m "🔄 Update INCY config"
+            git commit -m "🔄 Update INCY config ($(TZ=Europe/Moscow date '+%H:%M MSK'))"
             git push origin main
+            echo "📤 Изменения отправлены"
+          else
+            echo "⏭️ JSON не изменился, пропуск коммита"
           fi
