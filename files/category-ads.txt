@@ -4,10 +4,12 @@ ad.intl.xiaomi.com
 ad.mail.ru
 adfox.ru
 adriver.ru
+ads.mozilla.org
 ads.vk.com
 ads.x5media.ru
 alt-ad.mail.ru
 amc.yandex.ru
+an.yandex.ru
 analytics.us.tiktok.com
 api-x.tutu.ru
 api16-access-ttp-b.tiktokpangle.us
@@ -78,6 +80,7 @@ mssdk-ru.tiktokv.com
 pagead2.googlesyndication.com
 pangle.io
 rtlog-ru.tiktokv.com
+s1.bss.2gis.com
 sage-collector.tbank.ru
 sdkconfig.ad.intl.xiaomi.com
 sdkconfig.ad.rus.xiaomi.com
