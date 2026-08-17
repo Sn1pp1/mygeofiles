@@ -2307,6 +2307,7 @@ pwnedpasswords.com
 pyrobot.org
 qianwen.aliyun.com
 qianwen.com
+qianwenai.com
 qobuz.com
 qodana.cloud
 qoder.com
