@@ -1732,6 +1732,7 @@ m.alador.space
 m.in-app.io
 m.me
 m.soi.lat
+m.staticpop.net
 m.strava.com
 macpaw.com
 macromedia.com
