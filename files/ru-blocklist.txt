@@ -724,6 +724,7 @@ doxa.team
 doxajournal.ru
 dpidetector.org
 draftjs.org
+dreamgen.com
 dreamhost.com
 driver.gaomon.net
 drmario-world.com
@@ -1626,6 +1627,7 @@ kemono.su
 keysight.com
 kilo.ai
 kilocode.ai
+kimi.ai
 kimi.com
 kingstagram.com
 kino.pub
@@ -2002,6 +2004,7 @@ notebooklm-pa.googleapis.com
 notebooklm.google
 notebooklm.google.com
 notebooklm.googleapis.com
+notegpt.io
 notepad-plus-plus.org
 notion-emojis.s3-us-west-2.amazonaws.com
 notion-static.com
@@ -2014,6 +2017,7 @@ novaya.media
 novaya.no
 novayagazeta.eu
 novayagazeta.ru
+novelai.net
 novyny.live
 npm.community
 npmjs.com
@@ -2686,6 +2690,7 @@ t.me
 t3.chat
 tableau.com
 tailscale.com
+talkai.info
 talosintelligence.com
 tampermonkey.net
 tapnow.ai
