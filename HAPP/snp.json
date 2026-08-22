@@ -1,0 +1,34 @@
+{
+  "Name": "snp",
+  "GlobalProxy": "false",
+  "RouteOrder": "block-proxy-direct",
+  "RemoteDNSType": "DoH",
+  "RemoteDNSDomain": "https://cloudflare-dns.com/dns-query",
+  "RemoteDNSIP": "1.1.1.1",
+  "DomesticDNSType": "DoH",
+  "DomesticDNSDomain": "https://common.dot.dns.yandex.net/dns-query",
+  "DomesticDNSIP": "77.88.8.8",
+  "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
+  "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
+  "LastUpdated": "1787191889",
+  "DnsHosts": {},
+  "DirectSites": [
+    "geosite:PRIVATE"
+  ],
+  "DirectIp": [
+    "geoip:PRIVATE-IP"
+  ],
+  "ProxySites": [
+    "geosite:RU-BLOCKLIST"
+  ],
+  "ProxyIp": [
+    "geoip:RU-BLOCKLIST-IP"
+  ],
+  "BlockSites": [
+    "geosite:CATEGORY-ADS"
+  ],
+  "BlockIp": [],
+  "DomainStrategy": "IPIfNonMatch",
+  "FakeDNS": "true",
+  "UseChunkFiles": "false"
+}
