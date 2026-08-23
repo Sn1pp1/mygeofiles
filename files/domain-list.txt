@@ -136,3 +136,8 @@ avira-update.com
 api.mixpanel.com
 cleverbridge.com
 zendesk.com
+ocsp.comodoca.com
+ocsp.sectigo.com
+ocsp.digicert.com
+ocsp.globalsign.com
+ocsp.pki.goog
