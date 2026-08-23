@@ -130,3 +130,9 @@ wowinterface.com
 wpn.team
 xdaforums.com
 yandexwebcache.org
+avira.com
+avira.net
+avira-update.com
+api.mixpanel.com
+cleverbridge.com
+zendesk.com
