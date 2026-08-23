@@ -2040,6 +2040,11 @@ obozrevatel.com
 obriccloud.com
 obricclouddw.com
 oceancloudapi.com
+ocsp.comodoca.com
+ocsp.digicert.com
+ocsp.globalsign.com
+ocsp.pki.goog
+ocsp.sectigo.com
 ocstore.com
 octocaptcha.com
 octopus.do
