@@ -232,6 +232,7 @@ api.home-connect.com
 api.instagram.com
 api.ip.sb
 api.jetbrains.ai
+api.mixpanel.com
 api.myip.com
 api.openai.com
 api.protonmail.ch
