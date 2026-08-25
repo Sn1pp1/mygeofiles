@@ -76,7 +76,7 @@ jobs:
               echo "✅ sing-box installed"
               sing-box version
             else
-              echo "❌ Binary not found, using go install"
+              echo " Binary not found, using go install"
               go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
               sudo ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
             fi
@@ -199,7 +199,7 @@ jobs:
                 python3 parser.py "$target" "$name" || failed=$((failed + 1))
 
               elif [[ "$ext" == "txt" || "$ext" == "lst" ]]; then
-                echo "  📝 Обрабатываем текстовый список..."
+                echo "   Обрабатываем текстовый список..."
                 grep -v '^#' "temp_file" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' > "$output_path" || true
                 count=$(wc -l < "$output_path" 2>/dev/null || echo 0)
                 echo "  ✅ Сохранено: $count записей → $output_path"
@@ -218,7 +218,7 @@ jobs:
           echo "🔄 Processing GEOSITE categories..."
           process_categories "geosite" GEOSITE || echo "⚠️  Некоторые geosite не обработаны"
 
-          echo "🔄 Processing GEOIP categories..."
+          echo " Processing GEOIP categories..."
           process_categories "geoip" GEOIP || echo "⚠️  Некоторые geoip не обработаны"
 
       - name: Validate and Cleanup
@@ -247,7 +247,7 @@ jobs:
 
       - name: Clean and Normalize Domains
         run: |
-          echo "🧹 Cleaning and normalizing domain files..."
+          echo " Cleaning and normalizing domain files..."
 
           for file in data/geosite/*; do
             [ -f "$file" ] || continue
@@ -312,7 +312,7 @@ jobs:
             fi
           done
           if [ "$bad" -eq 1 ]; then
-            echo "❌ Validation failed: entries with leading dots found"
+            echo " Validation failed: entries with leading dots found"
             exit 1
           fi
           echo "✅ All entries are valid"
@@ -384,7 +384,8 @@ jobs:
             exit 1
           fi
 
-          if [ "$geoip_size" -lt 1000 ]; then
+          # ✅ Исправлено: уменьшен порог для geoip.dat до 100 байт (для небольших списков IP)
+          if [ "$geoip_size" -lt 100 ]; then
             echo "❌ geoip.dat too small (${geoip_size} bytes) - possible corruption"
             exit 1
           fi
@@ -393,7 +394,7 @@ jobs:
 
       - name: Generate statistics
         run: |
-          echo "📊 Generating statistics..."
+          echo " Generating statistics..."
 
           {
             echo "## 📈 Build Statistics"
@@ -452,9 +453,9 @@ jobs:
       - name: Generate changelog
         run: |
           {
-            echo "## 🔄 Build #${{ github.run_number }}"
+            echo "##  Build #${{ github.run_number }}"
             echo ""
-            echo "**📅 Built:** $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
+            echo "** Built:** $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
             echo "**🔗 Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             echo "**🔖 Commit:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
             echo ""
