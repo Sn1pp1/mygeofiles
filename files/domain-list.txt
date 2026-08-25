@@ -134,3 +134,4 @@ avira.com
 avira.net
 avira-update.com
 api.mixpanel.com
+bgp.tools
