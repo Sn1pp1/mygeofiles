@@ -89,6 +89,7 @@ stacks.vk-portal.net
 startup-mobile.ap.yandex-net.ru
 startup.mobile.yandex.net
 stats.avito.ru
+stats.mos.ru
 stats.rustore.ru
 stats.vk-portal.net
 tab.volces.com
@@ -105,6 +106,7 @@ tracking.intl.miui.com
 tracking.rus.miui.com
 trk.pinterest.com
 vk-analytics.ru
+www.tns-counter.ru
 xray.mail.ru
 xy.fbcdn.net
 xz.fbcdn.net
