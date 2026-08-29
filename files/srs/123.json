@@ -1,0 +1,23 @@
+[
+  {
+    "tag": "geosite-category-ads",
+    "type": "remote",
+    "format": "binary",
+    "url": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/srs/category-ads.srs",
+    "download_detour": "proxy"
+  },
+  {
+    "tag": "geosite-ru-blocklist",
+    "type": "remote",
+    "format": "binary",
+    "url": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/srs/ru-blocklist.srs",
+    "download_detour": "proxy"
+  },
+  {
+    "tag": "geoip-ru-blocklist-ip",
+    "type": "remote",
+    "format": "binary",
+    "url": "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/srs/ru-blocklist-ip.srs",
+    "download_detour": "proxy"
+  }
+]
