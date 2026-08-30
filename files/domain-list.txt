@@ -90,3 +90,4 @@ wpn.team
 xdaforums.com
 yandexwebcache.org
 board.zash.run.place
+ocsp.r2m01.amazontrust.com
