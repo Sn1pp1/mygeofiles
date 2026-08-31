@@ -1970,6 +1970,7 @@ obozrevatel.com
 obriccloud.com
 obricclouddw.com
 oceancloudapi.com
+ocsp.r2m01.amazontrust.com
 ocstore.com
 octopus.do
 ocul.us
