@@ -599,6 +599,7 @@ deepl.com
 deepmind.com
 deepmind.google
 deepseek.com
+deepseeksvc.com
 deepstatemap.live
 deepwiki.com
 deepwiki.org
@@ -2897,6 +2898,7 @@ wise.com
 withyoutube.com
 wixmp.com
 wonderzine.com
+workbuddy.cn
 workplace.com
 workplaceusecases.com
 worldhack.com
