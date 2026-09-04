@@ -53,6 +53,7 @@ acheterfollowersinstagram.com
 activatica.org
 adafruit.com
 adblockplus.org
+adderly.top
 adeventtracker.spotify.com
 adguard-vpn.com
 adguard.com
@@ -102,6 +103,7 @@ ai.zhaomi.cn
 aicode.googleapis.com
 aida.googleapis.com
 aidoru-online.me
+aihelper.website
 aimlab.gg
 aimlabs.com
 aimlabspages.kinsta.cloud
@@ -111,8 +113,12 @@ airhornbot.com
 aisandbox-pa.googleapis.com
 aispeech.com
 aistudio.google.com
+akadns.net
 akasha.world
 akc.org
+akenai.host
+akenai.org
+alador.space
 alberta.ca
 alkalicore-pa.clients6.google.com
 alkalimakersuite-pa.clients6.google.com
@@ -169,18 +175,23 @@ anythingllm.com
 aol.com
 aorizon.cn
 api-building.fun
+api-ipv4.ip.sb
+api-ipv6.ip.sb
 api.alador.space
 api.app.prod.grazie.aws.intellij.net
 api.github.com
 api.githubcopilot.com
 api.home-connect.com
 api.instagram.com
+api.ip.sb
 api.jetbrains.ai
+api.myip.com
 api.openai.com
 api.protonmail.ch
 api.pwnedpasswords.com
 api.radarr.video
 api.service-kp.com
+api.srvkp.net
 api.theins.info
 api.themoviedb.org
 api.twitter.com
@@ -198,6 +209,7 @@ aqicn.org
 arbat.media
 arc.intel.com
 arc.net
+archive.is
 archive.ph
 archive.torrentonline.cc
 archiveofourown.org
@@ -251,6 +263,7 @@ baichuan-ai.com
 baikal-journal.ru
 banananetwork.qzz.io
 bard.google.com
+basicattentiontoken.org
 bato.to
 bbc.co.uk
 bbc.com
@@ -265,8 +278,10 @@ bell-sw.com
 bellingcat.com
 bestbuy.com
 bestchange.ru
+beszel.dev
 beyond-hd.me
 beyond.hg-cdn.com
+bgp.tools
 bibliotik.me
 bigbeans.solutions
 bigmodel.cn
@@ -289,12 +304,15 @@ bloody.com
 bluehost.com
 blutopia.cc
 bng.gg
+board.zash.run.place
+boberlogs.top
 bookstagram.com
 booktracker.org
 boominfo.org
 boosteroid.com
 booth.pm
 booth.pximg.net
+boramoraboom.ru
 bosch-home.com
 bosch.com
 boschaftermarket.com
@@ -303,6 +321,8 @@ botnadzor.org
 botorch.org
 bowsersinsidestory.com
 bradyid.com
+brave.com
+bravesoftware.com
 brawlstarsgame.com
 broadcasthe.net
 broadcom.com
@@ -336,6 +356,7 @@ butterflyai.cn
 buyingfacebooklikes.com
 buymeacoffee.com
 buyoculus.com
+buzzheavier.com
 bvarf.tracker.sh
 bwtorrents.tv
 bypasscensorship.org
@@ -366,6 +387,7 @@ cdn.oaistatic.com
 cdn.web-platform.io
 cdn2cdn.com
 cdn2site.com
+cdn4t.xyz
 cdnbunny.org
 cdninstagram.com
 cdnst.net
@@ -395,6 +417,7 @@ chatgpt.livekit.cloud
 chatgpt.site
 chaturbate.com
 chdbits.co
+check-host.net
 checkout.buckaroo.nl
 cherta.media
 chess.com
@@ -512,6 +535,7 @@ creditracker.net
 credly.com
 crewai.com
 crixet.com
+cron-job.org
 crowdtangle.com
 croxyproxy.com
 crunchyroll.com
@@ -581,6 +605,7 @@ diddykongracing.com
 dify.ai
 digash.live
 digikey.com
+digital-cdn.net
 digitalcontent.sky
 digitalocean.com
 dis.gd
@@ -1061,6 +1086,7 @@ filmix.fan
 filmix.fm
 filmix.la
 fingerium.stream.voidboost.cc
+firebaseremoteconfigrealtime.googleapis.com
 firefly-ps.adobe.io
 fitgirl-repacks.site
 fivetran.com
@@ -1164,6 +1190,7 @@ gateway.discord.gg
 gateway.pinata.cloud
 gaytube.com
 gazellegames.net
+geekuninstaller.com
 geekyfuroshiki.com
 geforcenow.com
 gelbooru.com
@@ -1194,6 +1221,7 @@ ggpht.com
 ghostrc.game.idtech.services
 gifyu.com
 git.new
+gitbook.io
 githubcopilot.com
 gitlab.io
 glavred.info
@@ -1262,6 +1290,7 @@ hackmd.io
 hailuoai.com
 halooglasi.com
 hammerandchisel.ssl.zendesk.com
+happ-proxy.com
 happ.info
 happ.su
 happycolorapp.com
@@ -1315,6 +1344,7 @@ heads-ak-spotify-com.akamaized.net
 heads4-ak-spotify-com.akamaized.net
 healthline.com
 helioadditive.com
+helium.computer
 helm.releases.hashicorp.com
 help.instagram.com
 hentai-foundry.com
@@ -1363,6 +1393,7 @@ i.4pda.ws
 i.instagram.com
 i.org
 i.sakh.com
+i0.wp.com
 ibm.com
 ibytedtos.com
 icetorrent.org
@@ -1462,7 +1493,10 @@ intgram.com
 intuit.com
 intuitibits.com
 ionos.com
+ios-kp.store
 ios.chat.openai.com
+ip-api.com
+ipapi.co
 ipburger.com
 ipfs-gateway.cloud
 ipfs.anonymize.com
@@ -1474,10 +1508,12 @@ ipfs.io
 ipfs.lain.la
 ipfs.runfission.com
 ipfs.tech
+ipinfo.io
 ipns.co
 iptorrents.com
 iptv.online
 ipv4announce.sktorrent.eu
+ipwho.is
 is.fi
 island-of-pleasure.site
 istories.media
@@ -1597,12 +1633,14 @@ linka2a.net
 linkedin.com
 linktr.ee
 linuxiac.com
+liquipedia.net
 liveperson.net
 liverail.com
 liverail.tv
 livetv.sx
 liveuamap.com
 llama.com
+llhost.eu
 lmstudio.ai
 lnstagram-help.com
 localbitcoins.com
@@ -1629,7 +1667,10 @@ lyst.com
 lztr.me
 m-team.cc
 m.alador.space
+m.in-app.io
 m.me
+m.soi.lat
+m.staticpop.net
 m.strava.com
 macpaw.com
 macvendors.com
@@ -1686,6 +1727,7 @@ mcrouter.net
 mcrouter.org
 mdza.io
 media.discordapp.net
+media.service-kp.com
 mediazona.ca
 mediazona.online
 medicalnewstoday.com
@@ -1730,6 +1772,8 @@ miracleptr.wordpress.com
 mistral.ai
 mixcloud.com
 mmcdn.com
+mmoui.com
+mobatek.net
 mobile.events.data.microsoft.com
 mobilefacebook.com
 modartt.com
@@ -1745,6 +1789,7 @@ moonshot.cn
 more.fm
 morethan.tv
 mos-gorsud.co
+mos-gorsud.com
 moscowtimes.ru
 mouser.com
 mouser.fi
@@ -1767,6 +1812,7 @@ myanonamouse.net
 mydoramy.club
 myfbfans.com
 myheritage.com
+myip.ipip.net
 myjetbrains.com
 myparallels.com
 myparallelstory.com
@@ -1922,6 +1968,7 @@ obozrevatel.com
 obriccloud.com
 obricclouddw.com
 oceancloudapi.com
+ocsp.r2m01.amazontrust.com
 ocstore.com
 octopus.do
 ocul.us
@@ -1942,6 +1989,7 @@ ogp.me
 ohmyswift.ru
 ohmyz.sh
 oi.legal
+oisd.nl
 okx.com
 ollama.com
 olx.ua
@@ -1981,6 +2029,7 @@ openaicom-api-bdcpf8c6d2e9atf6.z01.azurefd.net
 openaicom.imgix.net
 openaicomproductionae4b.blob.core.windows.net
 openart.ai
+opencck.org
 openclaw.ai
 opencreate.org
 opengraphprotocol.com
@@ -1994,6 +2043,7 @@ opensea.io
 openspec.dev
 opentor.org
 opentrackr.org
+openuserjs.org
 openvpn.net
 openwrt.wk.cz
 oppaiti.me
@@ -2031,6 +2081,7 @@ paritydeals.com
 parse.com
 paskoocheh.com
 passthepopcorn.me
+pastes.io
 path3.xtracloud.net
 patreon.com
 patreonusercontent.com
@@ -2082,6 +2133,7 @@ play-games.googleusercontent.com
 play-lh.googleusercontent.com
 play.google.com
 play.googleapis.com
+play2go.cloud
 playboy.com
 playnintendo.com
 plugins.jetbrains.com
@@ -2241,10 +2293,12 @@ releases.hashicorp.com
 remna.st
 remove.bg
 render-state.to
+render.com
 rentry.co
 rentry.org
 repo.mongodb.org
 republic.ru
+reputationdefender.com
 research.net
 resp.app
 restream.io
@@ -2430,6 +2484,7 @@ slifki.biz
 smartbear.co
 smartbear.com
 smartdeploy.com
+smarttv.zeasn.tv
 smarttvcdn.online
 sms-activate.io
 snap-storage-cdn.l.google.com
@@ -2493,6 +2548,7 @@ sputnikipogrom.com
 squadbustersgame.com
 squareup.com
 squietpc.com
+srvkp.com
 sspanel.net
 st.kinovod.net
 stable.dl2.discordapp.net
@@ -2563,6 +2619,7 @@ tableau.com
 tailscale.com
 talkai.info
 talosintelligence.com
+tampermonkey.net
 tapnow.ai
 tapnow.top
 tayga.info
@@ -2745,6 +2802,7 @@ tracker2.dler.org
 tracker2.itzmx.com
 tracker3.itzmx.com
 tracker4.itzmx.com
+tracklock.gg
 trae.ai
 trae.cn
 trae.com.cn
@@ -2755,6 +2813,7 @@ transferwise.com
 trellix.com
 tria.ge
 tribler.org
+trinitycore.info
 tripo3d.ai
 trojan-gfw.github.io
 trontv.com
@@ -2832,7 +2891,9 @@ urlr.me
 usa.one
 usatoday.com
 usercontent.dev
+userscript.zone
 usher.ttvnw.net
+uwu-logs.xyz
 v.vrv.co
 v2fly.org
 v2ray.com
@@ -2917,6 +2978,7 @@ whatsappbrand.com
 wheather.com
 whispersystems.org
 white.instagram.com
+whoer.net
 whonix.org
 whybother.torrentonline.cc
 whyfacebook.com
@@ -2949,7 +3011,9 @@ workbuddy.cn
 workplace.com
 workplaceusecases.com
 worldhack.com
+wowinterface.com
 wpengine.com
+wpn.team
 wunderground.com
 www-facebook.com
 www.analog.com
@@ -3000,6 +3064,7 @@ x-minus.pro
 x.ai
 x.com
 xauat6.edu.cn
+xdaforums.com
 xenoblade.com
 xerox.com
 xhamster.com
@@ -3028,6 +3093,7 @@ xv-ru.com
 xvideos-cdn.com
 xvideos.com
 yande.re
+yandexwebcache.org
 yeggi.com
 yiyan.baidu.com
 yle.fi
