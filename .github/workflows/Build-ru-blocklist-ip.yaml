@@ -41,6 +41,9 @@ jobs:
           SOURCES=(
             "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ip-list.txt"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.list"
+            "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/twitter.list"
+            "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/facebook.list"
+            "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/netflix.list"
           )
 
           echo "📥 Загрузка данных из источников..."
