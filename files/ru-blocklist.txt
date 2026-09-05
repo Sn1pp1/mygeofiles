@@ -168,6 +168,7 @@ antigravity-pa.googleapis.com
 antigravity-unleash.goog
 antigravity.google
 antigravity.googleapis.com
+antivir.de
 antizapret.prostovpn.org
 any.do
 anydesk.com
@@ -235,6 +236,7 @@ atscaleconference.com
 att.com
 attachments.f95zone.to
 atv4.dnskp.cc
+auc-avira.com
 audiences.me
 audio-ak-spotify-com.akamaized.net
 audio4-ak-spotify-com.akamaized.net
@@ -249,8 +251,22 @@ autodesk.io
 autodesk.net
 autodesk360.com
 autodiscover.instagram.com
+avast.cn
+avast.com
+avast.de
+avast.ru
+avastbrowser.com
+avcdn.net
+avg.com
+avg.cz
+avg.de
 avgv.cc
+avira-update.com
 avira.com
+avira.de
+avira.net
+avira.org
+aviracdn.net
 avistaz.to
 awesome-hd.me
 azathabar.com
@@ -377,6 +393,7 @@ cats.com
 cbilling.eu
 cbilling.vip
 ccfbits.org
+ccleaner.com
 cdn-service.space
 cdn-spotify-experiments.conductrics.com
 cdn-telegram.org
@@ -456,6 +473,7 @@ claudeusercontent.com
 clawhub-mirror.com
 clawhub.ai
 clevelandclinic.org
+cleverbridge.com
 click-url.com
 clickup.com
 client-teamviewer-com.trafficmanager.net
@@ -1198,6 +1216,7 @@ geller-pa.googleapis.com
 gemini.google
 gemini.google.com
 gemini.gstatic.com
+gendigital.com
 generativeai.google
 generativelanguage.googleapis.com
 geni.us
@@ -1356,11 +1375,13 @@ hhanclub.top
 hhvm.com
 hi-butterfly.cn
 hiddify.com
+hidemyass.com
 hidive.com
 hifacebook.info
 hitomi.la
 hitpt.com
 hitpt.org
+hmavpn.com
 hollisterco.com
 holod.global.ssl.fastly.net
 holod.media
@@ -1420,6 +1441,7 @@ imgur.com
 important-stories.com
 imstagram.com
 imtagram.com
+in-app.io
 incy.cc
 indeed.com
 indiehackers.com
@@ -1625,6 +1647,7 @@ licdn.com
 lidarr.audio
 lifeatspotify.com
 lifehacker.com
+lifelock.com
 liga.net
 lightning.ai
 linear.app
@@ -1928,6 +1951,8 @@ nomachine.com
 nordaccount.com
 nordcdn.com
 nordvpn.com
+norton.com
+nortonlifelock.com
 notebook.google.com
 notebooklm-pa.googleapis.com
 notebooklm.google
@@ -2106,6 +2131,7 @@ perplexity.ai
 perplexity.com
 personaltrainermath.com
 pexels.com
+phantomvpn.com
 philiascans.org
 phncdn.com
 phncdn.com.sds.rncdn7.com
@@ -2119,6 +2145,7 @@ pimpletv.ru
 pingdom.com
 pingtest.net
 piratbit.top
+piriform.com
 pixabay.com
 pixel.facebook.com
 pixeldance.com
@@ -2417,6 +2444,8 @@ seasonvar.ru
 sebeanus.online
 seconddinnertech.com
 secure-web.cisco.com
+securebrowser.com
+securenorton.com
 seedoff.zannn.top
 seedpeer.net
 selezen.org
@@ -2606,6 +2635,9 @@ swagger.io
 swapd.co
 swissinfo.ch
 sydney.bing.com
+symantec.com
+symantecliveupdate.com
+symcd.com
 synoforum.com
 sysdig.com
 syslog-ng.com
@@ -3304,5 +3336,6 @@ znanija.com
 zohomail.com
 zolika1351.pages.dev
 zona.media
+zonealarm.com
 zuckerberg.com
 zuckerberg.net
