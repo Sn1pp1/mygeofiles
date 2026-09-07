@@ -166,6 +166,7 @@ api.github.com
 api.githubcopilot.com
 api.home-connect.com
 api.instagram.com
+api.ios-kp.store
 api.ip.sb
 api.jetbrains.ai
 api.myip.com
@@ -174,6 +175,7 @@ api.protonmail.ch
 api.pwnedpasswords.com
 api.radarr.video
 api.service-kp.com
+api.srvkp.com
 api.srvkp.net
 api.theins.info
 api.themoviedb.org
@@ -347,10 +349,12 @@ cdn.oaistatic.com
 cdn.web-platform.io
 cdn2cdn.com
 cdn2site.com
+cdn32.lol
 cdn4t.xyz
 cdnbunny.org
 cdninstagram.com
 cdnst.net
+cdntogo.net
 cdromance.org
 cdw.com
 celebgramme.com
@@ -1033,6 +1037,7 @@ fitgirl-repacks.site
 fivetran.com
 flashscore.com
 flclashx.app
+flexcdn.cloud
 flibusta.is
 flibusta.net
 flipboard.com
@@ -1595,6 +1600,7 @@ lyst.com
 m.alador.space
 m.in-app.io
 m.me
+m.pushbr.com
 m.soi.lat
 m.staticpop.net
 m.strava.com
@@ -1729,6 +1735,7 @@ musixmatch.com
 mw2.wiki
 my.atlassian.com
 myanimelist.net
+mycdn.video
 mydoramy.club
 myfbfans.com
 myheritage.com
@@ -2134,6 +2141,7 @@ provereno.media
 prowlarr.com
 proxifier.com
 proxy.individual.githubcopilot.com
+proxykp.xyz
 proxyscrape.com
 pscdn.co
 pscp.tv
