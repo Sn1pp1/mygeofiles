@@ -1833,6 +1833,7 @@ ovd.legal
 ovd.news
 ovdinfo.org
 ozodi.org
+p16-tiktok-dm-sticker-sign-sg.ibyteimg.com
 p16-tiktokcdn-com.akamaized.net
 packages.cachyos.org
 packages.gitlab.com
