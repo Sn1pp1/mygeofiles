@@ -1,0 +1,201 @@
+name: Build wl
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/Build-wl.yml']
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create output directory
+      run: mkdir -p files/srs
+
+    - name: Download latest sing-box binary
+      run: |
+        LATEST_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
+        echo "Latest version: $LATEST_TAG"
+        wget -q "https://github.com/SagerNet/sing-box/releases/download/${LATEST_TAG}/sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+        tar -xzf "sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+        sudo mv "sing-box-${LATEST_TAG#v}-linux-amd64/sing-box" /usr/local/bin/
+        chmod +x /usr/local/bin/sing-box
+        sing-box version
+
+    - name: Download & Process Sources
+      run: |
+        set -euo pipefail
+
+        SOURCES=(
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-finance"
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-gov
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-media
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-medicine
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-shopping
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-telecom
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-transport
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-video
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/other
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/ozon
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/private
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/vk
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/wildberries
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/x5
+          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/yandex
+        )
+
+        TEMP_RAW=$(mktemp)
+        TEMP_CLEAN=$(mktemp)
+        trap "rm -f $TEMP_RAW $TEMP_CLEAN" EXIT
+
+        echo "📊 СТАТИСТИКА ЗАГРУЗКИ"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        TOTAL_BEFORE=0
+
+        for URL in "${SOURCES[@]}"; do
+          SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
+
+          # Считаем строки после базовой чистки
+          COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
+          { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+          /^[[:space:]]*$/ { next }
+          /^[[:space:]]*#/ { next }
+          /^regexp:/ { next }
+          /^include:/ { next }
+          { sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, ""); sub(/^full:/, ""); sub(/^\./, "") }
+          /^[[:space:]]*$/ { next }
+          /\.$/ { next }
+          { d=$0; if (d !~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ && d != "") c++ }
+          END { print c+0 }
+          ' 2>/dev/null) || COUNT=0
+
+          # Скачиваем файл
+          curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
+
+          # ПРИНУДИТЕЛЬНЫЙ перевод строки между файлами (защита от склейки!)
+          echo "" >> "$TEMP_RAW"
+
+          printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
+          TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
+        done
+
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE записей"
+        echo ""
+
+        echo "🧹 Очистка и нормализация..."
+
+        # === ПАРСЕР (mawk-совместимый, www сохраняем) ===
+        awk '
+        { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+        /^[[:space:]]*$/ { next }
+        /^[[:space:]]*#/ { next }
+        /^regexp:/ { next }
+        /^include:/ { next }
+        {
+          sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
+          sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
+          sub(/^root:/, ""); sub(/^\./, "")
+        }
+        /^[[:space:]]*$/ { next }
+        /\.$/ { next }
+        {
+          d = $0
+
+          # Обрезка мусора в конце
+          sub(/@.*$/, "", d)
+          sub(/[[:space:]].*$/, "", d)
+
+          # Финальная валидация (mawk-совместимая)
+          if (d == "") next
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # чистые IPv4
+          if (d ~ /:/) next                                 # IPv6 / порты
+          if (d !~ /\./) next                               # должна быть точка
+          if (d ~ /\.\./) next                              # нет двойных точек
+          if (length(d) > 253) next                         # лимит длины домена
+          if (d ~ /[^a-zA-Z0-9._-]/) next                   # только валидные символы
+
+          print tolower(d)
+        }
+        ' "$TEMP_RAW" > "$TEMP_CLEAN"
+
+        BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN" | tr -d ' ')
+
+        echo "🔍 Сортировка и удаление дубликатов..."
+        LC_ALL=C sort -u "$TEMP_CLEAN" > files/wl.txt
+
+        # Проверка, что файл создан
+        if [ ! -s files/wl.txt ]; then
+          echo "❌ Ошибка: Файл пустой после обработки!"
+          exit 1
+        fi
+
+        AFTER_DEDUP=$(wc -l < files/wl.txt | tr -d ' ')
+        REMOVED=$((BEFORE_DEDUP - AFTER_DEDUP))
+        SIZE=$(du -h files/wl.txt | cut -f1)
+
+        if [ "$BEFORE_DEDUP" -gt 0 ]; then
+          PCT=$(awk "BEGIN {printf \"%.1f\", $REMOVED * 100 / $BEFORE_DEDUP}")
+        else
+          PCT="0.0"
+        fi
+
+        echo ""
+        echo "📊 ИТОГОВАЯ СТАТИСТИКА"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        printf "  Записей после чистки:           %6s\n" "$BEFORE_DEDUP"
+        printf "  Удалено дубликатов:             %6s (%s%%)\n" "$REMOVED" "$PCT"
+        printf "  ✅ В итоговом файле:            %6s доменов\n" "$AFTER_DEDUP"
+        printf "  Размер файла:                   %6s\n" "$SIZE"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo " Первые 5 записей из wl.txt:"
+        head -5 files/wl.txt | sed 's/^/   ✓ /'
+
+    - name: Convert to SRS format
+      run: |
+        echo "🔄 Генерация SRS файла..."
+
+        # Создаём временный JSON для sing-box
+        domains=$(grep -v '^$' files/wl.txt | jq -R -s 'split("\n") | map(select(length > 0))')
+        echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/wl.json
+
+        # Компилируем в SRS
+        sing-box rule-set compile --output files/srs/wl.srs /tmp/wl.json
+
+        SRS_SIZE=$(du -h files/srs/wl.srs | cut -f1)
+        echo "✅ SRS файл создан: files/srs/wl.srs ($SRS_SIZE)"
+
+    - name: Commit and push result
+      run: |
+        git config user.name "wl Bot"
+        git config user.email "wl-bot@github.com"
+
+        git pull --rebase origin main 2>/dev/null || true
+
+        if [ ! -f files/wl.txt ]; then
+          echo "❌ Ошибка: файл wl.txt не найден!"
+          exit 1
+        fi
+
+        git add files/wl.txt files/srs/wl.srs
+
+        if ! git diff --staged --quiet; then
+          git commit -m "🔄 Update wl.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          for i in 1 2 3; do
+            git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
+          done
+          echo "📤 Файлы успешно обновлены"
+        else
+          echo "⏭️ Списки не изменились, пропуск коммита"
+        fi
