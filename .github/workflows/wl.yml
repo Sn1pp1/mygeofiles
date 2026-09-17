@@ -37,20 +37,20 @@ jobs:
 
         SOURCES=(
           "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-finance"
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-gov
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-media
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-medicine
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-shopping
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-telecom
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-transport
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-video
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/other
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/ozon
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/private
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/vk
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/wildberries
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/x5
-          https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/yandex
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-gov"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-media"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-medicine"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-shopping"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-telecom"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-transport"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-video"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/other"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/ozon"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/private"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/vk"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/wildberries"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/x5"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/yandex"
         )
 
         TEMP_RAW=$(mktemp)
