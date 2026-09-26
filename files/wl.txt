@@ -20,8 +20,10 @@
 a.lmcdn.ru
 aeroflot.ru
 aif.ru
+airport.us
 alfabank.ru
 android-mb.vtb.ru
+android.apis.google.com
 api-n.goldapple.ru
 api-omni.x5.ru
 api.prod.digital.uni.rest
@@ -48,6 +50,7 @@ bitrix.info
 boxberry.ru
 burgerkingrus.ru
 c.dns-shop.ru
+captive.apple.com
 catalog-images.x5static.net
 cbr.ru
 ccdn.goldapple.ru
@@ -78,7 +81,10 @@ chizhik.club
 citydrive.ru
 clck.ru
 client.crrpay.ru
+clients3.google.com
 code-push-api.samokat.ru
+connectivitycheck.android.com
+connectivitycheck.gstatic.com
 core-colibri-api.samokat.ru
 credistory.ru
 crpt.ru
@@ -88,10 +94,12 @@ damcdn.samokat.ru
 dc.otpbank.ru
 delimobil.ru
 dellin.ru
+detectportal.firefox.com
 detmir.ru
 dixy.ru
 dnevnik.ru
 dns-shop.ru
+dns.msftncsi.com
 dobro.ru
 dodopizza.com
 dodopizza.ru
@@ -119,6 +127,8 @@ esmdtpep.sbpvtb.ru
 esmdtpep.vtb.ru
 event-stream-api.magnit.ru
 fasten.ru
+fcm.googleapis.com
+fcmconnection.googleapis.com
 fda.middle-api.magnit.ru
 ff.setka.ru
 fix-price.com
@@ -149,6 +159,7 @@ gosuslugi.ru
 gov.ru
 grandtrain.ru
 grpc.prod.digital.uni.rest
+gsp1.apple.com
 gu-st.ru
 gw-fl5.x5.ru
 headless-cms5.vtb.ru
@@ -160,6 +171,7 @@ homepage.5ka.ru
 hotel.tutu.ru
 hr-link.ru
 i.letu.ru
+ibook.info
 id.magnit.ru
 id.tutu.ru
 id.x5.ru
@@ -170,6 +182,8 @@ imgproxy.kuper.ru
 imgproxy.prod.ya.magnit.ru
 imgsmail.ru
 info-mobile.medtochka.ru
+ipv6.msftconnecttest.com
+itools.info
 ivi.ru
 iz.ru
 kaspersky.com
@@ -220,6 +234,8 @@ moex.com
 mos.ru
 motiv.me
 motivtelecom.ru
+msftconnecttest.com
+mtalk.google.com
 mts-link.ru
 mts.ru
 mtsbank.ru
@@ -237,6 +253,8 @@ netmonet.co
 nextmobile.ru
 notifier.burgerkingrus.ru
 nspk.ru
+ntp.vniiftri.ru
+ntp1.stratum2.ru
 ntv.ru
 observability.x5.ru
 ok.ru
@@ -271,12 +289,17 @@ petrovich.ru
 pikabu.ru
 pixel.id.x5.ru
 pochta.ru
+pool.ntp.org
 portal.s7cdn.online
 premier.one
 prodoctorov.ru
 profile-mobile.medtochka.ru
 psbank.ru
 public.s7cdn.online
+push-api.cloud.huawei.com
+push.apple.com
+push.hicloud.com
+push.xiaomi.com
 rambler.ru
 rbc.ru
 rg.ru
@@ -288,6 +311,7 @@ rt.avito.ru
 rt.com
 rt.ru
 rtbcdn.ru
+ru.pool.ntp.org
 rustore.ru
 rutube.ru
 rzd.ru
@@ -296,6 +320,7 @@ s2.sbpvtb.ru
 s3-portal.s7cdn.online
 s7.ru
 samokat.ru
+samsungpush.com
 sbermarket.ru
 sbermobile.ru
 set.ki
@@ -331,7 +356,11 @@ taxsee.com
 taxsee.pro
 taxsee.ru
 tele2.ru
+thinkdifferent.us
 ticketland.ru
+time.apple.com
+time.google.com
+time.windows.com
 timeweb.cloud
 tnt-online.ru
 tsum.com
@@ -380,6 +409,7 @@ wildberries.com
 wildberries.ru
 wink.ru
 www.alfabank.ru
+www.appleiphonecell.com
 www.avito.ru
 www.avito.st
 www.detmir.ru
@@ -389,6 +419,8 @@ www.kaspersky.com
 www.lamoda.ru
 www.letu.ru
 www.mos.ru
+www.msftconnecttest.com
+www.msftncsi.com
 www.otpbank.ru
 www.perekrestok.ru
 www.pochta.ru
