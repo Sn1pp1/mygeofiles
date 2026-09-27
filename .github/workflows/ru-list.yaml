@@ -1,9 +1,9 @@
-name: Build wl
+name: Build ru-list
 
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/Build-wl.yml']
+    paths: ['.github/workflows/Build-ru-list.yml']
   workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
@@ -36,21 +36,64 @@ jobs:
         set -euo pipefail
 
         SOURCES=(
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-finance"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-gov"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-media"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-medicine"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-shopping"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-telecom"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-transport"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-video"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/other"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/ozon"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/private"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/vk"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/wildberries"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/x5"
-          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/yandex"
+          "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/wl.txt"
+          "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.lst"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/2gis.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/autoru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/aviasales.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/avito.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/beget.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/betboom.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-bank-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-betting-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ecommerce-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-education-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-entertainment-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-forums-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-gov-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-media-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-medicine-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-retail-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-tech-media-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-travel-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cdek.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/cian.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/comssone.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/genotek-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/gismeteo.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/headhunter.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ideco-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/kaspersky.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/kinopoisk.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/kontur.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/magnit.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/mailru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/mailru-group.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/megafon.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/mosmetro.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/mts-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/mvideo.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/myoffice-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/nic-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ok.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/okko.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/overclockers-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ozon.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/regru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/rostelecom.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/rutube.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/sber.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/t2-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/tbank-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/tld-ru.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/vk.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/wildberries.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/wink.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/x5.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/yandex.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ucoz.list"
         )
 
         TEMP_RAW=$(mktemp)
@@ -132,17 +175,17 @@ jobs:
         BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN" | tr -d ' ')
 
         echo "🔍 Сортировка и удаление дубликатов..."
-        LC_ALL=C sort -u "$TEMP_CLEAN" > files/wl.txt
+        LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-list.txt
 
         # Проверка, что файл создан
-        if [ ! -s files/wl.txt ]; then
+        if [ ! -s files/ru-list.txt ]; then
           echo "❌ Ошибка: Файл пустой после обработки!"
           exit 1
         fi
 
-        AFTER_DEDUP=$(wc -l < files/wl.txt | tr -d ' ')
+        AFTER_DEDUP=$(wc -l < files/ru-list.txt | tr -d ' ')
         REMOVED=$((BEFORE_DEDUP - AFTER_DEDUP))
-        SIZE=$(du -h files/wl.txt | cut -f1)
+        SIZE=$(du -h files/ru-list.txt | cut -f1)
 
         if [ "$BEFORE_DEDUP" -gt 0 ]; then
           PCT=$(awk "BEGIN {printf \"%.1f\", $REMOVED * 100 / $BEFORE_DEDUP}")
@@ -159,39 +202,39 @@ jobs:
         printf "  Размер файла:                   %6s\n" "$SIZE"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
-        echo " Первые 5 записей из wl.txt:"
-        head -5 files/wl.txt | sed 's/^/   ✓ /'
+        echo " Первые 5 записей из ru-list.txt:"
+        head -5 files/ru-list.txt | sed 's/^/   ✓ /'
 
     - name: Convert to SRS format
       run: |
         echo "🔄 Генерация SRS файла..."
 
         # Создаём временный JSON для sing-box
-        domains=$(grep -v '^$' files/wl.txt | jq -R -s 'split("\n") | map(select(length > 0))')
-        echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/wl.json
+        domains=$(grep -v '^$' files/ru-list.txt | jq -R -s 'split("\n") | map(select(length > 0))')
+        echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/ru-list.json
 
         # Компилируем в SRS
-        sing-box rule-set compile --output files/srs/wl.srs /tmp/wl.json
+        sing-box rule-set compile --output files/srs/ru-list.srs /tmp/ru-list.json
 
-        SRS_SIZE=$(du -h files/srs/wl.srs | cut -f1)
-        echo "✅ SRS файл создан: files/srs/wl.srs ($SRS_SIZE)"
+        SRS_SIZE=$(du -h files/srs/ru-list.srs | cut -f1)
+        echo "✅ SRS файл создан: files/srs/ru-list.srs ($SRS_SIZE)"
 
     - name: Commit and push result
       run: |
-        git config user.name "wl Bot"
-        git config user.email "wl-bot@github.com"
+        git config user.name "ru-list Bot"
+        git config user.email "ru-list-bot@github.com"
 
         git pull --rebase origin main 2>/dev/null || true
 
-        if [ ! -f files/wl.txt ]; then
-          echo "❌ Ошибка: файл wl.txt не найден!"
+        if [ ! -f files/ru-list.txt ]; then
+          echo "❌ Ошибка: файл ru-list.txt не найден!"
           exit 1
         fi
 
-        git add files/wl.txt files/srs/wl.srs
+        git add files/ru-list.txt files/srs/ru-list.srs
 
         if ! git diff --staged --quiet; then
-          git commit -m "🔄 Update wl.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          git commit -m "🔄 Update ru-list.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
           for i in 1 2 3; do
             git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
           done
