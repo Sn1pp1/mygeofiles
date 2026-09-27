@@ -3,7 +3,7 @@ name: Build RU Blocklist IP
 on:
   schedule:
     - cron: '0 */12 * * *'
-  workflow_dispatch: # Возможность ручного запуска через вкладку Actions
+  workflow_dispatch:
   push:
     branches: [main]
     paths: ['.github/workflows/Build-ru-blocklist-ip.yml']
@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Разрешение на коммит и пуш файлов обратно в репозиторий
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -25,11 +25,9 @@ jobs:
 
       - name: Download sing-box
         run: |
-          # Получаем версию последнего релиза sing-box через jq (надежнее, чем grep+sed)
           SING_BOX_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
           echo "Downloading sing-box version: $SING_BOX_VERSION"
           
-          # Скачиваем и распаковываем бинарный файл для linux-amd64
           curl -sL "https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION#v}-linux-amd64.tar.gz" | tar xz -C /tmp
           mv /tmp/sing-box-${SING_BOX_VERSION#v}-linux-amd64/sing-box ./sing-box
           chmod +x ./sing-box
@@ -41,13 +39,11 @@ jobs:
           
           TEMP_FILE=$(mktemp)
           TEMP_CLEAN=$(mktemp)
-          TEMP_JSON=$(mktemp)
           
-          # Гарантированная очистка временных файлов при завершении (даже при ошибке)
-          trap "rm -f $TEMP_FILE $TEMP_CLEAN $TEMP_JSON" EXIT
+          trap "rm -f $TEMP_FILE $TEMP_CLEAN" EXIT
 
-          # === ИСТОЧНИКИ ДАННЫХ ===
           SOURCES=(
+            "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ip-list.txt"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.list"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/telegram.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/telegram.lst"
@@ -62,37 +58,28 @@ jobs:
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/netflix.list"
           )
 
-          echo "📥 Загрузка данных из источников..."
+          echo " Загрузка данных из источников..."
           for url in "${SOURCES[@]}"; do
-            # Флаг -f заставляет curl возвращать ошибку при HTTP 404/500, чтобы HTML не попал в файл
             if ! curl -fsL --connect-timeout 10 --max-time 30 "$url" >> "$TEMP_FILE" 2>/dev/null; then
               echo "⚠️ Ошибка загрузки (возможно, 404 или таймаут): $url"
             fi
-            # ПРИНУДИТЕЛЬНЫЙ перевод строки между файлами, чтобы они не склеивались!
             echo "" >> "$TEMP_FILE"
           done
 
-          echo "🧹 Очистка, фильтрация и сортировка..."
+          echo " Очистка, фильтрация и сортировка..."
           
-          # Удаляем комментарии, пустые строки, строки без маски (/), обрезаем пробелы и приводим к нижнему регистру
           sed -e 's/#.*//' -e '/^[[:space:]]*$/d' -e '/\//!d' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' "$TEMP_FILE" | tr 'A-Z' 'a-z' > "$TEMP_CLEAN"
           
-          # Создаем пустой файл, чтобы гарантировать его существование
           > files/ru-blocklist-ip.txt
           
-          # Строгая валидация CIDR и раздельная сортировка (|| true предотвращает падение, если совпадений нет)
-          # IPv4: x.x.x.x/y
           grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}$' "$TEMP_CLEAN" | sort -u >> files/ru-blocklist-ip.txt || true
-          
-          # IPv6: hex:hex/y
           grep -E '^[0-9a-fA-F:]+/[0-9]{1,3}$' "$TEMP_CLEAN" | sort -u >> files/ru-blocklist-ip.txt || true
 
           TOTAL_IPS=$(wc -l < files/ru-blocklist-ip.txt | tr -d ' ')
           echo "✅ Собрано уникальных диапазонов: $TOTAL_IPS"
           
-          # Проверяем, что список не пустой
           if [ "$TOTAL_IPS" -eq 0 ]; then
-            echo "❌ Ошибка: список IP пустой после фильтрации"
+            echo " Ошибка: список IP пустой после фильтрации"
             exit 1
           fi
 
@@ -100,7 +87,9 @@ jobs:
         run: |
           echo "⚙️ Генерация JSON и компиляция в бинарный формат..."
           
-          # Генерируем JSON во временный файл (он будет удален trap-ом)
+          # Создаем временный файл ПЕРЕД использованием
+          TEMP_JSON=$(mktemp)
+          
           jq -R -s -c 'split("\n") | map(select(length > 0))' files/ru-blocklist-ip.txt | \
             jq '{
               "version": 1,
@@ -111,7 +100,6 @@ jobs:
               ]
             }' > "$TEMP_JSON"
 
-          # Компилируем .srs в папку files/srs/
           ./sing-box rule-set compile "$TEMP_JSON" -o files/srs/ru-blocklist-ip.srs
           
           if [ -f files/srs/ru-blocklist-ip.srs ]; then
@@ -121,29 +109,27 @@ jobs:
             echo "❌ Ошибка компиляции .srs"
             exit 1
           fi
+          
+          rm -f "$TEMP_JSON"
 
       - name: Commit and push changes
         run: |
           git config user.name "RU Blocklist IP Bot"
           git config user.email "blocklist-ip-bot@github.com"
           
-          # Синхронизируемся с удаленным репозиторием на случай параллельных изменений
           git pull --rebase origin main 2>/dev/null || true
           
-          # Добавляем только .txt и .srs файлы
           git add files/ru-blocklist-ip.txt files/srs/ru-blocklist-ip.srs
           
           if git diff --staged --quiet; then
             echo "⏭️ Нет изменений для коммита (списки не изменились)."
           else
-            # Получаем текущее время по Москве (МСК)
             MSK_TIME=$(TZ='Europe/Moscow' date '+%Y-%m-%d %H:%M MSK')
             git commit -m "🔄 Update ru-blocklist-ip.txt and SRS ($MSK_TIME)"
             
-            # Надежный пуш с повторными попытками на случай конфликтов или сбоев сети
             for i in 1 2 3; do
               if git push; then
-                echo "🚀 Изменения успешно отправлены в репозиторий!"
+                echo " Изменения успешно отправлены в репозиторий!"
                 break
               else
                 echo "⚠️ Ошибка push, попытка $i/3. Делаем rebase и пробуем снова..."
