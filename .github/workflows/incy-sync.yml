@@ -1,4 +1,4 @@
-name: INCY Config Sync
+name: incy config sync
 
 on:
   workflow_run:
