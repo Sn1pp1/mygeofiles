@@ -3,7 +3,7 @@ name: Build category-ads
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/Build-category-ads.yml']
+    paths: ['.github/workflows/category-ads.yml']
   workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
