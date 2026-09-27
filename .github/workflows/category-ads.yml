@@ -1,4 +1,4 @@
-name: Build category ads
+name: Build category-ads
 
 on:
   push:
