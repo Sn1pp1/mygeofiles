@@ -4,39 +4,43 @@
   "type": "GLOBAL",
   "GlobalProxy": false,
   "RemoteDNSType": "DoH",
-  "RemoteDNSDomain": "https://dns10.quad9.net/dns-query",
+  "RemoteDNSDomain": "https://9.9.9.10/dns-query",
   "RemoteDNSIP": "9.9.9.10",
   "DomesticDNSType": "DoH",
-  "DomesticDNSDomain": "https://common.dot.dns.yandex.net/dns-query",
+  "DomesticDNSDomain": "https://77.88.8.8/dns-query",
   "DomesticDNSIP": "77.88.8.8",
   "FakeDNS": true,
   "DnsHosts": {},
-  "RemoteDns": "https://dns10.quad9.net/dns-query",
-  "DomesticDns": "https://common.dot.dns.yandex.net/dns-query",
+  "RemoteDns": "https://9.9.9.10/dns-query",
+  "DomesticDns": "https://77.88.8.8/dns-query",
   "Geoipurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geoip.dat",
   "Geositeurl": "https://github.com/Sn1pp1/mygeofiles/releases/download/latest/geosite.dat",
   "LastUpdated": "1790524361",
   "GeoipHash": "5a2934f67be10900ab82f57c5e184aef598e79f6a3484dbc8c6d70d71ba32e1f",
   "GeositeHash": "6e286c86116fc30bf16c2cfdbd30a15c36ec82ef6098be02694b897c65d2fe57",
   "DirectSites": [
-    "geosite:PRIVATE"
+    "geosite:private",
+    "geosite:wl",
+    "geosite:ru-list"
   ],
   "ProxySites": [
-    "geosite:RU-BLOCKLIST"
+    "geosite:ru-blocklist"
   ],
   "BlockSites": [
-    "geosite:CATEGORY-ADS"
+    "geosite:category-ads"
   ],
   "DirectIp": [
-    "geoip:PRIVATE-IP"
+    "geoip:private-ip",
+    "geoip:wl-ip",
+    "geoip:ru-list-ip"
   ],
   "ProxyIp": [
-    "geoip:RU-BLOCKLIST-IP"
+    "geoip:ru-blocklist-ip"
   ],
   "BlockIp": [],
   "DomainStrategy": "IPIfNonMatch",
   "RouteOrder": "block-proxy-direct",
-  "UseChunkFiles": false,
+  "UseChunkFiles": true,
   "bypassPrivateIPs": true,
   "bypassLocalDNS": true,
   "isDefault": false,
