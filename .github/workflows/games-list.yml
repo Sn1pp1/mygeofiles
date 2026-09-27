@@ -1,0 +1,246 @@
+name: Build games-list
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/games-list.yml']
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */12 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create output directory
+      run: mkdir -p files/srs
+
+    - name: Download latest sing-box binary
+      run: |
+        LATEST_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
+        echo "Latest version: $LATEST_TAG"
+        wget -q "https://github.com/SagerNet/sing-box/releases/download/${LATEST_TAG}/sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+        tar -xzf "sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
+        sudo mv "sing-box-${LATEST_TAG#v}-linux-amd64/sing-box" /usr/local/bin/
+        chmod +x /usr/local/bin/sing-box
+        sing-box version
+
+    - name: Download & Process Sources
+      run: |
+        set -euo pipefail
+
+        SOURCES=(
+          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Blizzard.list"
+          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Epic.list"
+          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/GameDownload.list"
+          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/NetEase.list"
+          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Nintendo.list"
+          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Origin.list"
+          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Steam.list"
+          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/SteamCN.list"
+          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/SteamRegionCheck.list"
+          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Xbox.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/2kgames.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/activision-blizzard.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bethesda.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/blizzard.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-game-platforms-download.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-games.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-games-!cn.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ea.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/epicgames.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/escapefromtarkov.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/faceit.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/garena.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/gog.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/hoyoverse.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/konami.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/mojang.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/netease.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/netease@!cn.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/nexon.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/nintendo.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/origin.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/playstation.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/pubg.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/riot.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/roblox.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/rockstar.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/steam.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/steam@cn.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/tencent-games.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ubisoft.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/wargaming.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/wbgames.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/xbox.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/forza.list"
+        )
+
+        TEMP_RAW=$(mktemp)
+        TEMP_CLEAN=$(mktemp)
+        trap "rm -f $TEMP_RAW $TEMP_CLEAN" EXIT
+
+        echo "📊 СТАТИСТИКА ЗАГРУЗКИ"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+        TOTAL_BEFORE=0
+
+        for URL in "${SOURCES[@]}"; do
+          SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
+
+          # Считаем строки с той же логикой, что и основной парсер
+          COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
+          { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+          /^[[:space:]]*$/ { next }
+          /^[[:space:]]*#/ { next }
+          /^regexp:/ { next }
+          /^include:/ { next }
+          {
+            sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
+            sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
+            sub(/^root:/, ""); sub(/^\./, "")
+          }
+          /^[[:space:]]*$/ { next }
+          /\.$/ { next }
+          {
+            d = $0
+            sub(/@.*$/, "", d)
+            sub(/[[:space:]].*$/, "", d)
+            if (d == "") next
+            if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+            if (d ~ /:/) next
+            # Whitelist только известных TLD
+            if (d !~ /\./) {
+              if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
+            }
+            if (d ~ /\.\./) next
+            if (length(d) > 253) next
+            if (d ~ /[^a-zA-Z0-9._-]/) next
+            c++
+          }
+          END { print c+0 }
+          ' 2>/dev/null) || COUNT=0
+
+          curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
+          echo "" >> "$TEMP_RAW"
+
+          printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
+          TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
+        done
+
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE записей"
+        echo ""
+
+        echo "🧹 Очистка и нормализация..."
+
+        # === ОСНОВНОЙ ПАРСЕР ===
+        awk '
+        { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+        /^[[:space:]]*$/ { next }
+        /^[[:space:]]*#/ { next }
+        /^regexp:/ { next }
+        /^include:/ { next }
+        {
+          sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
+          sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
+          sub(/^root:/, ""); sub(/^\./, "")
+        }
+        /^[[:space:]]*$/ { next }
+        /\.$/ { next }
+        {
+          d = $0
+
+          sub(/@.*$/, "", d)
+          sub(/[[:space:]].*$/, "", d)
+
+          if (d == "") next
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+          if (d ~ /:/) next
+          
+          # === WHITELIST TLD: только ru, su, by, moscow и punycode (xn--*) ===
+          if (d !~ /\./) {
+            if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
+          }
+
+          if (d ~ /\.\./) next
+          if (length(d) > 253) next
+          if (d ~ /[^a-zA-Z0-9._-]/) next
+
+          print tolower(d)
+        }
+        ' "$TEMP_RAW" > "$TEMP_CLEAN"
+
+        BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN" | tr -d ' ')
+
+        echo "🔍 Сортировка и удаление дубликатов..."
+        LC_ALL=C sort -u "$TEMP_CLEAN" > files/games-list.txt
+
+        if [ ! -s files/games-list.txt ]; then
+          echo "❌ Ошибка: Файл пустой после обработки!"
+          exit 1
+        fi
+
+        AFTER_DEDUP=$(wc -l < files/games-list.txt | tr -d ' ')
+        REMOVED=$((BEFORE_DEDUP - AFTER_DEDUP))
+        SIZE=$(du -h files/games-list.txt | cut -f1)
+
+        if [ "$BEFORE_DEDUP" -gt 0 ]; then
+          PCT=$(awk "BEGIN {printf \"%.1f\", $REMOVED * 100 / $BEFORE_DEDUP}")
+        else
+          PCT="0.0"
+        fi
+
+        echo ""
+        echo "📊 ИТОГОВАЯ СТАТИСТИКА"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        printf "  Записей после чистки:           %6s\n" "$BEFORE_DEDUP"
+        printf "  Удалено дубликатов:             %6s (%s%%)\n" "$REMOVED" "$PCT"
+        printf "  ✅ В итоговом файле:            %6s доменов\n" "$AFTER_DEDUP"
+        printf "  Размер файла:                   %6s\n" "$SIZE"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+        echo " Первые 5 записей из games-list.txt:"
+        head -5 files/games-list.txt | sed 's/^/   ✓ /'
+
+    - name: Convert to SRS format
+      run: |
+        echo "🔄 Генерация SRS файла..."
+
+        domains=$(grep -v '^$' files/games-list.txt | jq -R -s 'split("\n") | map(select(length > 0))')
+        echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/games-list.json
+
+        sing-box rule-set compile --output files/srs/games-list.srs /tmp/games-list.json
+
+        SRS_SIZE=$(du -h files/srs/games-list.srs | cut -f1)
+        echo "✅ SRS файл создан: files/srs/games-list.srs ($SRS_SIZE)"
+
+    - name: Commit and push result
+      run: |
+        git config user.name "games-list Bot"
+        git config user.email "games-list-bot@github.com"
+
+        git pull --rebase origin main 2>/dev/null || true
+
+        if [ ! -f files/games-list.txt ]; then
+          echo "❌ Ошибка: файл games-list.txt не найден!"
+          exit 1
+        fi
+
+        git add files/games-list.txt files/srs/games-list.srs
+
+        if ! git diff --staged --quiet; then
+          git commit -m "🔄 Update games-list.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          for i in 1 2 3; do
+            git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
+          done
+          echo "📤 Файлы успешно обновлены"
+        else
+          echo "⏭️ Списки не изменились, пропуск коммита"
+        fi
