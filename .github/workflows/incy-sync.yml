@@ -2,7 +2,7 @@ name: incy config sync
 
 on:
   workflow_run:
-    workflows: ["Build Mygeofiles"]
+    workflows: ["mygeofiles"]
     types:
       - completed
   workflow_dispatch:
