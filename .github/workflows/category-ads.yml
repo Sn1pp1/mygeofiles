@@ -152,8 +152,8 @@ jobs:
 
     - name: Commit and push result
       run: |
-        git config user.name "Category Ads Bot"
-        git config user.email "ads-bot@github.com"
+        git config user.name "category-ads Bot"
+        git config user.email "category-ads-bot@github.com"
         
         git pull --rebase origin main 2>/dev/null || true
         
