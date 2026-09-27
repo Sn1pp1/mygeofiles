@@ -108,24 +108,37 @@ jobs:
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
 
-          # Считаем строки после базовой чистки
+          # Считаем строки с той же логикой, что и основной парсер, чтобы цифры сходились
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
           /^[[:space:]]*$/ { next }
           /^[[:space:]]*#/ { next }
           /^regexp:/ { next }
           /^include:/ { next }
-          { sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, ""); sub(/^full:/, ""); sub(/^\./, "") }
+          {
+            sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
+            sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
+            sub(/^root:/, ""); sub(/^\./, "")
+          }
           /^[[:space:]]*$/ { next }
           /\.$/ { next }
-          { d=$0; if (d !~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ && d != "") c++ }
+          {
+            d = $0
+            sub(/@.*$/, "", d)
+            sub(/[[:space:]].*$/, "", d)
+            if (d == "") next
+            if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+            if (d ~ /:/) next
+            if (d !~ /\./ && d !~ /^[a-z0-9-]+$/) next
+            if (d ~ /\.\./) next
+            if (length(d) > 253) next
+            if (d ~ /[^a-zA-Z0-9._-]/) next
+            c++
+          }
           END { print c+0 }
           ' 2>/dev/null) || COUNT=0
 
-          # Скачиваем файл
           curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
-
-          # ПРИНУДИТЕЛЬНЫЙ перевод строки между файлами (защита от склейки!)
           echo "" >> "$TEMP_RAW"
 
           printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
@@ -138,7 +151,6 @@ jobs:
 
         echo "🧹 Очистка и нормализация..."
 
-        # === ПАРСЕР (mawk-совместимый, www сохраняем) ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -155,18 +167,16 @@ jobs:
         {
           d = $0
 
-          # Обрезка мусора в конце
           sub(/@.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
 
-          # Финальная валидация (mawk-совместимая)
           if (d == "") next
-          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # чистые IPv4
-          if (d ~ /:/) next                                 # IPv6 / порты
-          if (d !~ /\./) next                               # должна быть точка
-          if (d ~ /\.\./) next                              # нет двойных точек
-          if (length(d) > 253) next                         # лимит длины домена
-          if (d ~ /[^a-zA-Z0-9._-]/) next                   # только валидные символы
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+          if (d ~ /:/) next          
+          if (d !~ /\./ && d !~ /^[a-z0-9-]+$/) next
+          if (d ~ /\.\./) next
+          if (length(d) > 253) next
+          if (d ~ /[^a-zA-Z0-9._-]/) next
 
           print tolower(d)
         }
@@ -177,7 +187,6 @@ jobs:
         echo "🔍 Сортировка и удаление дубликатов..."
         LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-list.txt
 
-        # Проверка, что файл создан
         if [ ! -s files/ru-list.txt ]; then
           echo "❌ Ошибка: Файл пустой после обработки!"
           exit 1
@@ -202,18 +211,18 @@ jobs:
         printf "  Размер файла:                   %6s\n" "$SIZE"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
-        echo " Первые 5 записей из ru-list.txt:"
-        head -5 files/ru-list.txt | sed 's/^/   ✓ /'
+        echo " Первые 10 записей из ru-list.txt (проверка TLD):"
+        grep -E '^(ru|su|xn--p1acf|[a-z0-9-]+)$' files/ru-list.txt | head -5 | sed 's/^/   ✓ TLD: /'
+        echo " Обычные домены:"
+        grep '\.' files/ru-list.txt | head -5 | sed 's/^/   ✓ /'
 
     - name: Convert to SRS format
       run: |
         echo "🔄 Генерация SRS файла..."
 
-        # Создаём временный JSON для sing-box
         domains=$(grep -v '^$' files/ru-list.txt | jq -R -s 'split("\n") | map(select(length > 0))')
         echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/ru-list.json
 
-        # Компилируем в SRS
         sing-box rule-set compile --output files/srs/ru-list.srs /tmp/ru-list.json
 
         SRS_SIZE=$(du -h files/srs/ru-list.srs | cut -f1)
