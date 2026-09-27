@@ -1,4 +1,4 @@
-name: Build RU Blocklist IP
+name: Build ru blocklist ip
 
 on:
   schedule:
