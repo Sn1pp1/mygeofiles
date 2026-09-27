@@ -78,24 +78,40 @@ jobs:
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
 
-          # Считаем строки после базовой чистки
+          # Считаем строки с той же логикой, что и основной парсер
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
           /^[[:space:]]*$/ { next }
           /^[[:space:]]*#/ { next }
           /^regexp:/ { next }
           /^include:/ { next }
-          { sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, ""); sub(/^full:/, ""); sub(/^\./, "") }
+          {
+            sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
+            sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
+            sub(/^root:/, ""); sub(/^\./, "")
+          }
           /^[[:space:]]*$/ { next }
           /\.$/ { next }
-          { d=$0; if (d !~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ && d != "") c++ }
+          {
+            d = $0
+            sub(/@.*$/, "", d)
+            sub(/[[:space:]].*$/, "", d)
+            if (d == "") next
+            if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+            if (d ~ /:/) next
+            # Whitelist только известных TLD
+            if (d !~ /\./) {
+              if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
+            }
+            if (d ~ /\.\./) next
+            if (length(d) > 253) next
+            if (d ~ /[^a-zA-Z0-9._-]/) next
+            c++
+          }
           END { print c+0 }
           ' 2>/dev/null) || COUNT=0
 
-          # Скачиваем файл
           curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
-
-          # ПРИНУДИТЕЛЬНЫЙ перевод строки между файлами (защита от склейки!)
           echo "" >> "$TEMP_RAW"
 
           printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
@@ -108,7 +124,7 @@ jobs:
 
         echo "🧹 Очистка и нормализация..."
 
-        # === ПАРСЕР (mawk-совместимый, www сохраняем) ===
+        # === ОСНОВНОЙ ПАРСЕР ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -125,18 +141,21 @@ jobs:
         {
           d = $0
 
-          # Обрезка мусора в конце
           sub(/@.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
 
-          # Финальная валидация (mawk-совместимая)
           if (d == "") next
-          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # чистые IPv4
-          if (d ~ /:/) next                                 # IPv6 / порты
-          if (d !~ /\./) next                               # должна быть точка
-          if (d ~ /\.\./) next                              # нет двойных точек
-          if (length(d) > 253) next                         # лимит длины домена
-          if (d ~ /[^a-zA-Z0-9._-]/) next                   # только валидные символы
+          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+          if (d ~ /:/) next
+          
+          # === WHITELIST TLD: только ru, su, by, moscow и punycode (xn--*) ===
+          if (d !~ /\./) {
+            if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
+          }
+
+          if (d ~ /\.\./) next
+          if (length(d) > 253) next
+          if (d ~ /[^a-zA-Z0-9._-]/) next
 
           print tolower(d)
         }
@@ -147,7 +166,6 @@ jobs:
         echo "🔍 Сортировка и удаление дубликатов..."
         LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-blocklist.txt
 
-        # Проверка, что файл создан
         if [ ! -s files/ru-blocklist.txt ]; then
           echo "❌ Ошибка: Файл пустой после обработки!"
           exit 1
@@ -179,11 +197,9 @@ jobs:
       run: |
         echo "🔄 Генерация SRS файла..."
 
-        # Создаём временный JSON для sing-box
         domains=$(grep -v '^$' files/ru-blocklist.txt | jq -R -s 'split("\n") | map(select(length > 0))')
         echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/ru-blocklist.json
 
-        # Компилируем в SRS
         sing-box rule-set compile --output files/srs/ru-blocklist.srs /tmp/ru-blocklist.json
 
         SRS_SIZE=$(du -h files/srs/ru-blocklist.srs | cut -f1)
