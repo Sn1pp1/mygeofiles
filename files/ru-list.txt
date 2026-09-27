@@ -303,6 +303,7 @@ bs.yandex.ru
 bspb.ru
 burgerkingrus.ru
 buryatia.ru
+by
 c.dns-shop.ru
 cabconnect.org
 callbackkiller.com
@@ -1100,6 +1101,7 @@ mordovia.ru
 more.tv
 mos.ru
 mos.transport.vtb.ru
+moscow
 mosgorzdrav.ru
 mosmetro.ru
 mosmetro.tech
@@ -1481,6 +1483,7 @@ rtrunews.com
 rttv.com
 rttv.ru
 rtxv.ru
+ru
 ru.abchina.com
 ru.ccb.com
 ru.com
@@ -1740,6 +1743,7 @@ stavropol.ru
 sting.samokat.ru
 stolichki.ru
 stv.ru
+su
 summerstage.ru
 support-uber.com
 surgut.ru
@@ -2215,13 +2219,16 @@ xn--80abkdqhcx2axc5i.com
 xn--80acbjgmges7ca.xn--p1ai
 xn--80acbjgsdq2cl.xn--p1ai
 xn--80acgfbsl1azdqr.xn--p1ai
+xn--80adxhks
 xn--80aglfyfk.xn--p1ai
 xn--80aglzei.xn--p1ai
 xn--80aj3b.xn--p1ai
 xn--80ajghhoc2aj1c8b.xn--p1ai
 xn--80aqcf7a6do.com
 xn--80arpq.xn--p1ai
+xn--80asehdb
 xn--80asgb.xn--p1ai
+xn--80aswg
 xn--90ab.com
 xn--90ab2c.xn--p1ai
 xn--90acagbhgpca7c8c7f.xn--p1ai
@@ -2238,14 +2245,18 @@ xn--b1agpaeoen.xn--p1ai
 xn--b1agzk.xn--p1ai
 xn--b1agzk9c.xn--p1ai
 xn--c1acbl2abdlkab1og.xn--p1ai
+xn--c1avg
 xn--d1abb2a.xn--p1ai
 xn--d1abkf4ap.fun
 xn--d1acchc3adyj9k.xn--p1ai
+xn--d1acj3b
 xn--d1acpjx3f.xn--p1ai
 xn--d1aqf.xn--p1ai
 xn--e1adjldbbpv.xn--90ais
 xn--e1aigb.xn--p1ai
 xn--h1ao.site
+xn--p1acf
+xn--p1ai
 xray.mail.ru
 ya.cc
 ya.ru
