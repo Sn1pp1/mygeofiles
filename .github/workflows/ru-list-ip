@@ -1,0 +1,129 @@
+name: Build ru-list-ip
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/Build-ru-list-ip.yml']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq curl
+
+      - name: Download sing-box
+        run: |
+          SING_BOX_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
+          echo "Downloading sing-box version: $SING_BOX_VERSION"
+          
+          curl -sL "https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION#v}-linux-amd64.tar.gz" | tar xz -C /tmp
+          mv /tmp/sing-box-${SING_BOX_VERSION#v}-linux-amd64/sing-box ./sing-box
+          chmod +x ./sing-box
+          ./sing-box version
+
+      - name: Fetch and process IP lists
+        run: |
+          mkdir -p files/srs
+          
+          TEMP_FILE=$(mktemp)
+          TEMP_CLEAN=$(mktemp)
+          
+          trap "rm -f $TEMP_FILE $TEMP_CLEAN" EXIT
+
+          SOURCES=(
+            "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/wl-ip.txt"
+            "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.txt"
+          )
+
+          echo " Загрузка данных из источников..."
+          for url in "${SOURCES[@]}"; do
+            if ! curl -fsL --connect-timeout 10 --max-time 30 "$url" >> "$TEMP_FILE" 2>/dev/null; then
+              echo "⚠️ Ошибка загрузки (возможно, 404 или таймаут): $url"
+            fi
+            echo "" >> "$TEMP_FILE"
+          done
+
+          echo " Очистка, фильтрация и сортировка..."
+          
+          sed -e 's/#.*//' -e '/^[[:space:]]*$/d' -e '/\//!d' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' "$TEMP_FILE" | tr 'A-Z' 'a-z' > "$TEMP_CLEAN"
+          
+          > files/ru-list-ip.txt
+          
+          grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}$' "$TEMP_CLEAN" | sort -u >> files/ru-list-ip.txt || true
+          grep -E '^[0-9a-fA-F:]+/[0-9]{1,3}$' "$TEMP_CLEAN" | sort -u >> files/ru-list-ip.txt || true
+
+          TOTAL_IPS=$(wc -l < files/ru-list-ip.txt | tr -d ' ')
+          echo "✅ Собрано уникальных диапазонов: $TOTAL_IPS"
+          
+          if [ "$TOTAL_IPS" -eq 0 ]; then
+            echo " Ошибка: список IP пустой после фильтрации"
+            exit 1
+          fi
+
+      - name: Generate JSON and Compile to .srs
+        run: |
+          echo "⚙️ Генерация JSON и компиляция в бинарный формат..."
+          
+          # Создаем временный файл ПЕРЕД использованием
+          TEMP_JSON=$(mktemp)
+          
+          jq -R -s -c 'split("\n") | map(select(length > 0))' files/ru-list-ip.txt | \
+            jq '{
+              "version": 1,
+              "rules": [
+                {
+                  "ip_cidr": .
+                }
+              ]
+            }' > "$TEMP_JSON"
+
+          ./sing-box rule-set compile "$TEMP_JSON" -o files/srs/ru-list-ip.srs
+          
+          if [ -f files/srs/ru-list-ip.srs ]; then
+            SRS_SIZE=$(du -h files/srs/ru-list-ip.srs | cut -f1)
+            echo "✅ Файл ru-list-ip.srs успешно создан (Размер: $SRS_SIZE)"
+          else
+            echo "❌ Ошибка компиляции .srs"
+            exit 1
+          fi
+          
+          rm -f "$TEMP_JSON"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "ru-list-ip Bot"
+          git config user.email "ru-list-ip-bot@github.com"
+          
+          git pull --rebase origin main 2>/dev/null || true
+          
+          git add files/ru-list-ip.txt files/srs/ru-list-ip.srs
+          
+          if git diff --staged --quiet; then
+            echo "⏭️ Нет изменений для коммита (списки не изменились)."
+          else
+            MSK_TIME=$(TZ='Europe/Moscow' date '+%Y-%m-%d %H:%M MSK')
+            git commit -m "🔄 Update ru-list-ip.txt and SRS ($MSK_TIME)"
+            
+            for i in 1 2 3; do
+              if git push; then
+                echo " Изменения успешно отправлены в репозиторий!"
+                break
+              else
+                echo "⚠️ Ошибка push, попытка $i/3. Делаем rebase и пробуем снова..."
+                sleep $((RANDOM % 5 + 1))
+                git pull --rebase origin main
+              fi
+            done
+          fi
