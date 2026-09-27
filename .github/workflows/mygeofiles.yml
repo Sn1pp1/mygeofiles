@@ -127,12 +127,14 @@ jobs:
             ["category-ads"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/category-ads.txt"
             ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
             ["wl"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/wl.txt"
+            ["ru-list"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-list.txt"
           )
 
           declare -A GEOIP=(
             ["private-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/private.srs"
             ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
             ["wl-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/wl-ip.txt"
+            ["ru-list-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-list-ip.txt"
           )
 
           # Python парсер для извлечения правил из JSON (декомпилированных .srs)
