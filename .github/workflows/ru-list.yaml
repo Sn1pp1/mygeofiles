@@ -108,7 +108,7 @@ jobs:
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
 
-          # Считаем строки с той же логикой, что и основной парсер, чтобы цифры сходились
+          # Считаем строки с той же логикой, что и основной парсер
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
           /^[[:space:]]*$/ { next }
@@ -129,7 +129,10 @@ jobs:
             if (d == "") next
             if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
             if (d ~ /:/) next
-            if (d !~ /\./ && d !~ /^[a-z0-9-]+$/) next
+            # Whitelist только известных российских TLD
+            if (d !~ /\./) {
+              if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
+            }
             if (d ~ /\.\./) next
             if (length(d) > 253) next
             if (d ~ /[^a-zA-Z0-9._-]/) next
@@ -151,6 +154,7 @@ jobs:
 
         echo "🧹 Очистка и нормализация..."
 
+        # === ОСНОВНОЙ ПАРСЕР ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -172,8 +176,13 @@ jobs:
 
           if (d == "") next
           if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
-          if (d ~ /:/) next          
-          if (d !~ /\./ && d !~ /^[a-z0-9-]+$/) next
+          if (d ~ /:/) next
+          
+          # === WHITELIST TLD: только ru, su, by, moscow и punycode (xn--*) ===
+          if (d !~ /\./) {
+            if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
+          }
+
           if (d ~ /\.\./) next
           if (length(d) > 253) next
           if (d ~ /[^a-zA-Z0-9._-]/) next
@@ -184,7 +193,7 @@ jobs:
 
         BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN" | tr -d ' ')
 
-        echo "🔍 Сортировка и удаление дубликатов..."
+        echo " Сортировка и удаление дубликатов..."
         LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-list.txt
 
         if [ ! -s files/ru-list.txt ]; then
@@ -211,10 +220,13 @@ jobs:
         printf "  Размер файла:                   %6s\n" "$SIZE"
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
-        echo " Первые 10 записей из ru-list.txt (проверка TLD):"
-        grep -E '^(ru|su|xn--p1acf|[a-z0-9-]+)$' files/ru-list.txt | head -5 | sed 's/^/   ✓ TLD: /'
-        echo " Обычные домены:"
-        grep '\.' files/ru-list.txt | head -5 | sed 's/^/   ✓ /'
+        
+        # Проверка TLD (с защитой от Broken pipe)
+        echo "🔍 Найденные TLD в списке:"
+        { grep -E '^(ru|su|by|moscow|xn--[a-z0-9]+)$' files/ru-list.txt || true; } | head -10 | sed 's/^/   ✓ TLD: /'
+        echo ""
+        echo " Первые 5 обычных доменов:"
+        { grep '\.' files/ru-list.txt || true; } | head -5 | sed 's/^/   ✓ /'
 
     - name: Convert to SRS format
       run: |
@@ -243,7 +255,7 @@ jobs:
         git add files/ru-list.txt files/srs/ru-list.srs
 
         if ! git diff --staged --quiet; then
-          git commit -m "🔄 Update ru-list.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          git commit -m " Update ru-list.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
           for i in 1 2 3; do
             git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
           done
