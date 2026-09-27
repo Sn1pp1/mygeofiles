@@ -46,6 +46,7 @@ ipwho.is
 kino.pub
 kino.watch
 kinopub.online
+kpapp.link
 kpdl.link
 liquipedia.net
 llhost.eu
