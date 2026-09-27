@@ -36,16 +36,6 @@ jobs:
         set -euo pipefail
 
         SOURCES=(
-          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Blizzard.list"
-          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Epic.list"
-          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/GameDownload.list"
-          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/NetEase.list"
-          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Nintendo.list"
-          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Origin.list"
-          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Steam.list"
-          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/SteamCN.list"
-          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/SteamRegionCheck.list"
-          "https://github.com/ACL4SSR/ACL4SSR/raw/refs/heads/master/Clash/Ruleset/Xbox.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/2kgames.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/activision-blizzard.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bethesda.list"
