@@ -38,15 +38,13 @@ jobs:
 
       - name: Fetch and process IP lists
         run: |
-          set -euo pipefail
           mkdir -p files/srs
           
           TEMP_FILE=$(mktemp)
           TEMP_CLEAN=$(mktemp)
-          TEMP_JSON=$(mktemp)
           
           # Гарантированная очистка временных файлов при завершении (даже при ошибке)
-          trap "rm -f $TEMP_FILE $TEMP_CLEAN $TEMP_JSON" EXIT
+          trap "rm -f $TEMP_FILE $TEMP_CLEAN" EXIT
 
           # === ИСТОЧНИКИ ДАННЫХ ===
           SOURCES=(
@@ -66,17 +64,19 @@ jobs:
             echo "" >> "$TEMP_FILE"
           done
 
-          echo "🧹 Очистка, фильтрация и сортировка..."
+          echo " Очистка, фильтрация и сортировка..."
           
           # Удаляем комментарии, пустые строки, обрезаем пробелы по краям
           sed -e 's/#.*//' -e '/^[[:space:]]*$/d' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' "$TEMP_FILE" > "$TEMP_CLEAN"
           
-          # Валидация IP/CIDR и раздельная сортировка (только уникальные значения)
-          # IPv4: поддерживает и одиночные IP (1.2.3.4), и CIDR (1.2.3.4/24)
-          grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}(/[0-9]{1,2})?$' "$TEMP_CLEAN" | sort -u > files/wl-ip.txt
+          # Создаем пустой файл, чтобы гарантировать существование
+          > files/wl-ip.txt
           
-          # IPv6: поддерживает и одиночные IP, и CIDR
-          grep -E '^[0-9a-fA-F:]+(/[0-9]{1,3})?$' "$TEMP_CLEAN" | sort -u >> files/wl-ip.txt
+          # Валидация IPv4 (|| true чтобы не падать если ничего не найдено)
+          grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}(/[0-9]{1,2})?$' "$TEMP_CLEAN" | sort -u >> files/wl-ip.txt || true
+          
+          # Валидация IPv6 (|| true чтобы не падать если ничего не найдено)
+          grep -E '^[0-9a-fA-F:]+(/[0-9]{1,3})?$' "$TEMP_CLEAN" | sort -u >> files/wl-ip.txt || true
 
           TOTAL_IPS=$(wc -l < files/wl-ip.txt | tr -d ' ')
           echo "✅ Собрано уникальных IP и диапазонов: $TOTAL_IPS"
@@ -91,8 +91,10 @@ jobs:
         run: |
           echo "⚙️ Генерация JSON и компиляция в бинарный формат..."
           
-          # Генерируем JSON во временный файл (он будет удален trap-ом)
+          # Генерируем JSON во временный файл
           TEMP_JSON=$(mktemp)
+          trap "rm -f $TEMP_JSON" EXIT
+          
           jq -R -s -c 'split("\n") | map(select(length > 0))' files/wl-ip.txt | \
             jq '{
               "version": 1,
@@ -126,7 +128,7 @@ jobs:
           git add files/wl-ip.txt files/srs/wl-ip.srs
           
           if git diff --staged --quiet; then
-            echo "⏭️ Нет изменений для коммита (списки не изменились)."
+            echo "️ Нет изменений для коммита (списки не изменились)."
           else
             # Получаем текущее время по Москве (МСК)
             MSK_TIME=$(TZ='Europe/Moscow' date '+%Y-%m-%d %H:%M MSK')
