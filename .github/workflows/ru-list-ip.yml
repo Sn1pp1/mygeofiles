@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['.github/workflows/Build-ru-list-ip.yml']
+    paths: ['.github/workflows/ru-list-ip.yml']
 
 jobs:
   build:
