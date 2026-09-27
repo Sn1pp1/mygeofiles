@@ -1,9 +1,9 @@
-name: Build Category Ads
+name: Build category ads
 
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/Build-category-ads.yml']  # ← ПОПРАВИТЬ если файл называется иначе
+    paths: ['.github/workflows/Build-category-ads.yml']
   workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
@@ -56,7 +56,7 @@ jobs:
 
         echo "🧹 Очистка и нормализация..."
         
-        # === ПАРСЕР (mawk-совместимый, www сохраняем, без опасных sub) ===
+        # === ПАРСЕР ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -73,15 +73,19 @@ jobs:
         {
           d = $0
 
-          # Обрезка мусора в конце (безопасно)
+          # Обрезка мусора в конце
           sub(/@.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
 
-          # Финальная валидация (mawk-совместимая)
+          # Финальная валидация
           if (d == "") next
           if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next  # IPv4
           if (d ~ /:/) next                                 # IPv6 / порты
-          if (d !~ /\./) next                               # должна быть точка
+          
+          # ВАЖНО: Для списка рекламы наличие точки ОБЯЗАТЕЛЬНО. 
+          # Это предотвращает случайную блокировку целых доменных зон (например, "ru" или "com").
+          if (d !~ /\./) next
+          
           if (d ~ /\.\./) next                              # нет двойных точек
           if (length(d) > 253) next                         # лимит длины
           if (d ~ /[^a-zA-Z0-9._-]/) next                   # только валидные символы
@@ -120,7 +124,7 @@ jobs:
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
         # Финальная самопроверка
-        if grep -qvE '^[a-z0-9]([a-z0-9._-]*[a-z0-9])?$' files/category-ads.txt; then
+        if grep -qvE '^[a-z0-9]([a-z0-9._-]*[a-z0-9])?$' files/category-ads.txt 2>/dev/null; then
           echo "❌ Найдены невалидные строки:"
           grep -nvE '^[a-z0-9]([a-z0-9._-]*[a-z0-9])?$' files/category-ads.txt | head -5
           exit 1
@@ -128,16 +132,20 @@ jobs:
         echo "✅ Самопроверка пройдена: все строки — валидные домены"
         echo ""
         echo " Первые 5 записей из category-ads.txt:"
-        head -5 files/category-ads.txt | sed 's/^/   ✓ /'
+        { head -5 files/category-ads.txt || true; } | sed 's/^/   ✓ /'
 
     - name: Convert to SRS format
       run: |
         echo "🔄 Генерация SRS файла..."
         
-        domains=$(grep -v '^$' files/category-ads.txt | jq -R -s 'split("\n") | map(select(length > 0))')
-        echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/category-ads.json
+        # Используем mktemp для консистентности и безопасности
+        TEMP_JSON=$(mktemp)
+        trap "rm -f $TEMP_JSON" EXIT
         
-        sing-box rule-set compile --output files/srs/category-ads.srs /tmp/category-ads.json
+        domains=$(grep -v '^$' files/category-ads.txt | jq -R -s 'split("\n") | map(select(length > 0))')
+        echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > "$TEMP_JSON"
+        
+        sing-box rule-set compile --output files/srs/category-ads.srs "$TEMP_JSON"
         
         SRS_SIZE=$(du -h files/srs/category-ads.srs | cut -f1)
         echo "✅ SRS файл создан: files/srs/category-ads.srs ($SRS_SIZE)"
