@@ -3,7 +3,7 @@ name: Build ru-list
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/Build-ru-list.yml']
+    paths: ['.github/workflows/ru-list.yml']
   workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
