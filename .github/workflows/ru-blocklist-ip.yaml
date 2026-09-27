@@ -43,7 +43,6 @@ jobs:
           trap "rm -f $TEMP_FILE $TEMP_CLEAN" EXIT
 
           SOURCES=(
-            "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ip-list.txt"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.list"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv4/telegram.lst"
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/telegram.lst"
