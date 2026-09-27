@@ -255,7 +255,7 @@ jobs:
         git add files/ru-list.txt files/srs/ru-list.srs
 
         if ! git diff --staged --quiet; then
-          git commit -m " Update ru-list.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          git commit -m "🔄 Update ru-list.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
           for i in 1 2 3; do
             git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
           done
