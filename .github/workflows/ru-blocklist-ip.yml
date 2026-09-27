@@ -113,8 +113,8 @@ jobs:
 
       - name: Commit and push changes
         run: |
-          git config user.name "RU Blocklist IP Bot"
-          git config user.email "blocklist-ip-bot@github.com"
+          git config user.name "ru-blocklist-ip Bot"
+          git config user.email "ru-blocklist-ip-bot@github.com"
           
           git pull --rebase origin main 2>/dev/null || true
           
