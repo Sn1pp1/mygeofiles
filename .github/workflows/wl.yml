@@ -3,7 +3,7 @@ name: Build wl
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/Build-wl.yml']
+    paths: ['.github/workflows/wl.yml']
   workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
