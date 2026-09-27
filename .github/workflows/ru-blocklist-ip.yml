@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['.github/workflows/Build-ru-blocklist-ip.yml']
+    paths: ['.github/workflows/ru-blocklist-ip.yml']
 
 jobs:
   build:
