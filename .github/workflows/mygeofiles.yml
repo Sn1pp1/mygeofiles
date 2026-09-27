@@ -1,4 +1,4 @@
-name: mygeofiles
+name: Build mygeofiles
 
 on:
   schedule:
