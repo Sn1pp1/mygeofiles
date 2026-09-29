@@ -87,6 +87,7 @@ alibaba.cdn.steampipe.steamcontent.com
 aligames.com
 amiibo.com
 analytics.163.com
+analytics.cloud.unity3d.com
 anthemgame.com
 anthemthegame.com
 anticheatexpert.com
@@ -599,6 +600,7 @@ cdn-qc.content.steamchina.com
 cdn-ws.content.steamchina.com
 cdncl.net
 cdngarenanow-a.akamaihd.net
+cdp.cloud.unity3d.com
 cgyouxi.com
 championshipseriesleague.com
 changyou.com
@@ -615,6 +617,7 @@ cloudsync-prod.s3.amazonaws.com
 cncrivals.com
 codm.com
 commandandconquer.com
+config.uca.cloud.unity3d.com
 conquerwithcharacter.com
 content.cdp.bethesda.net
 convrgencegame.com
@@ -863,6 +866,7 @@ iadmat.nosdn.127.net
 iadmatapk.nosdn.127.net
 iadmusicmat.music.126.net
 iadmusicmatvideo.music.126.net
+iads.unity3d.com
 icourse163.org
 ihappystudio.cn
 ihappystudio.com
@@ -1129,6 +1133,8 @@ papegames.cn
 papegames.com
 papermc.io
 paragon.com
+perf-events.cloud.unity3d.com
+perf.cloud.unity3d.com
 personaltrainermath.com
 phira.cn
 pinkcore.com
@@ -1175,6 +1181,7 @@ pokemonultrasunmoon.com
 pokemonvgc.com
 pokemonwifi.net
 popcap.com
+prd-lender.cdp.internal.unity3d.com
 prd-priconne-redive.akamaized.net
 priconne-redive.jp
 prismlauncher.org
@@ -1494,6 +1501,9 @@ ultimaforever.com
 ultimaonline.com
 umamusume.akamaized.net
 underlords.com
+unity.com
+unity3d.com
+unityads.unity3d.com
 unravel2.com
 unraveltwo.com
 unrealengine.com
