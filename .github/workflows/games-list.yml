@@ -71,6 +71,8 @@ jobs:
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/wbgames.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/xbox.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/forza.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/mihoyo.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/unity.list"
           "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/epicgames"
           "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/escapefromtarkov"
           "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/faceit"
