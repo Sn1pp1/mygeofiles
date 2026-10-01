@@ -45,6 +45,7 @@ jobs:
           SOURCES=(
             "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/wl-ip.txt"
             "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.txt"
+            "https://github.com/hydraponique/roscomvpn-geoip/raw/refs/heads/master/release/text/direct.txt"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/ru.list"
           )
 
