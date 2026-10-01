@@ -155,7 +155,6 @@ headless-cms5.vtb.ru
 health.samokat.ru
 hh.ru
 hhcdn.ru
-home.arpa
 homepage.5ka.ru
 hotel.tutu.ru
 hr-link.ru
