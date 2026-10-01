@@ -48,7 +48,6 @@ jobs:
           # === ИСТОЧНИКИ ДАННЫХ ===
           SOURCES=(
             "https://github.com/vahellame/russia-whitelist-geoip/raw/refs/heads/main/data/other"
-            "https://github.com/vahellame/russia-whitelist-geoip/raw/refs/heads/main/data/private"
             "https://github.com/vahellame/russia-whitelist-geoip/raw/refs/heads/main/data/trash"
             "https://github.com/vahellame/russia-whitelist-geoip/raw/refs/heads/main/data/vk"
             "https://github.com/vahellame/russia-whitelist-geoip/raw/refs/heads/main/data/yandex"
