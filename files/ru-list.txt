@@ -720,7 +720,6 @@ hh.by
 hh.kz
 hh.ru
 hhcdn.ru
-home.arpa
 home.bank
 homecredit.ru
 homepage.5ka.ru
