@@ -88,3 +88,4 @@ xdaforums.com
 yandexwebcache.org
 revouninstaller.b-cdn.net
 revouninstaller.com
+archive.org
