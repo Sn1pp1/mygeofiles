@@ -187,6 +187,7 @@ arbat.media
 arc.intel.com
 arc.net
 archive.is
+archive.org
 archive.ph
 archiveofourown.org
 arduino.cc
@@ -2079,6 +2080,8 @@ resp.app
 restream.io
 returnyoutubedislikeapi.com
 reve.art
+revouninstaller.b-cdn.net
+revouninstaller.com
 rezka-ua.in
 rezka.ag
 rezka.cc
