@@ -36,7 +36,6 @@ jobs:
         set -euo pipefail
 
         SOURCES=(
-          "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/wl.txt"
           "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.lst"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/2gis.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/autoru.list"
@@ -94,6 +93,22 @@ jobs:
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/x5.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/yandex.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/ucoz.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/habr.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/dzen.list"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-finance"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-gov"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-media"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-medicine"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-shopping"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-telecom"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-transport"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/category-video"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/other"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/ozon"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/vk"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/wildberries"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/x5"
+          "https://github.com/vahellame/russia-whitelist-geosite/raw/refs/heads/main/data/yandex"
         )
 
         TEMP_RAW=$(mktemp)
