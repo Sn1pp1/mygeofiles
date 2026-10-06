@@ -705,6 +705,8 @@ grpc.prod.digital.uni.rest
 gu-st.ru
 gw-fl5.x5.ru
 gw2ru.com
+habr.com
+habrastorage.org
 hacksoft.ru
 haicomdc.com
 halva.email
