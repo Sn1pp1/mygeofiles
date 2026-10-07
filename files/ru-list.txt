@@ -183,6 +183,7 @@ api.mindbox.ru
 api.prod.digital.uni.rest
 api.samokat.ru
 api.setka.ru
+api.sypexgeo.net
 apiauto.ru
 apiok.ru
 app-mobile.medtochka.ru
