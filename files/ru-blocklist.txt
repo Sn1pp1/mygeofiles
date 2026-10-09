@@ -315,6 +315,7 @@ bytedapm.com
 byteoversea.com
 c4rex.co
 caesium.app
+cafe.github.com
 canva.com
 canva.dev
 capacitorjs.com
