@@ -264,6 +264,7 @@ blog.business.instagram.com
 blog.instagram.com
 bloodhound.spotify.com
 bloody.com
+bluearchiveyostar.com
 bluehost.com
 bng.gg
 board.zash.run.place
@@ -457,6 +458,27 @@ cyberghostvpn.com
 cyxymu.info
 czx.to
 d.docs.live.net
+d1g1f25tn8m2e6.cloudfront.net
+d1m7jfoe9zdc1j.cloudfront.net
+d1mhjrowxxagfy.cloudfront.net
+d1ndex63qxojbr.cloudfront.net
+d1oca24q5dwo6d.cloudfront.net
+d1w2poirtb3as9.cloudfront.net
+d1xhnb4ptk05mw.cloudfront.net
+d1ymi26ma8va5x.cloudfront.net
+d2aba1wr3818hz.cloudfront.net
+d2dylwb3shzel1.cloudfront.net
+d2e2de1etea730.cloudfront.net
+d2nvs31859zcd8.cloudfront.net
+d2um2qdswy1tb0.cloudfront.net
+d2vjef5jvl6bfs.cloudfront.net
+d2xmjdvx03ij56.cloudfront.net
+d36nr0u3xmc4mm.cloudfront.net
+d3aqoihi2n8ty8.cloudfront.net
+d3c27h4odz752x.cloudfront.net
+d3vd9lfkzbru3h.cloudfront.net
+d6d4ismr40iw.cloudfront.net
+d6tizftlrpuof.cloudfront.net
 dacebook.com
 daemon-tools.cc
 daily-cloudcode-pa.googleapis.com
@@ -468,6 +490,7 @@ dat.foundation
 data-cdn.mbamupdates.com
 data.cline.bot
 database.clamav.net
+ddacn6pr5v0tl.cloudfront.net
 debian.map.fastlydns.net
 deckbrew.xyz
 decrypt.day
@@ -492,6 +515,7 @@ developers.instagram.com
 devexpress.com
 deviantart.com
 devops.com
+dgeft87wbj63p.cloudfront.net
 diabrowser.com
 dialga.com
 diddykongracing.com
@@ -560,16 +584,19 @@ downloads.intercomcdn.com
 doxa.team
 doxajournal.ru
 dpidetector.org
+dqrpb9wgowsf5.cloudfront.net
 draftjs.org
 dreamhost.com
 driver.gaomon.net
 drmario-world.com
+ds0h3roq6wcgc.cloudfront.net
 dual-a-0001.a-msedge.net
 dub.sh
 ducati.com
 dumka.media
 dw.com
 dweb.link
+dykkng5hnh52u.cloudfront.net
 dyson.com
 e-hentai.org
 e1v-h.phncdn.com
@@ -621,6 +648,7 @@ exler.ru
 expandrive.com
 expres.online
 expresswifi.com
+ext-twitch.tv
 extremetech.com
 f1.com
 f8.com
@@ -1006,6 +1034,7 @@ framercanvas.com
 framercdn.com
 framerstatic.com
 framerusercontent.com
+freeanimehentai.net
 freeb.com
 freebasics.com
 freebasics.net
@@ -1183,6 +1212,7 @@ hacklang.org
 hackmd.io
 halooglasi.com
 hammerandchisel.ssl.zendesk.com
+hanime-cdn.com
 happ-proxy.com
 happ.info
 happ.su
@@ -1392,6 +1422,7 @@ jnn-pa.googleapis.com
 joesandbox.com
 jorropo.net
 jskor.ill.in.ua
+jtvnw.net
 jules.google
 jules.google.com
 jut-su.net
@@ -1472,6 +1503,7 @@ linkedin.com
 linktr.ee
 linuxiac.com
 liquipedia.net
+live-video.net
 liverail.com
 liverail.tv
 livetv.sx
@@ -1969,6 +2001,7 @@ prnt.sc
 proactivebackend-pa.googleapis.com
 prod-network-api.wbagora.com
 production-openaicom-storage.azureedge.net
+production.cloudfront.docker.com
 productionresultssa0.blob.core.windows.net
 productionresultssa1.blob.core.windows.net
 productionresultssa10.blob.core.windows.net
@@ -2499,6 +2532,7 @@ tsx.ovh
 ttcdn-us.com
 ttlivecdn.com
 ttoverseaus.net
+ttvnw.net
 ttwstatic.com
 tunsafe.com
 turbobit.net
@@ -2518,6 +2552,10 @@ twinlife-systems.com
 twinme.com
 twirpx.com
 twister.net.co
+twitch.tv
+twitchcdn.net
+twitchcon.com
+twitchsvc.net
 twitpic.com
 twitter.biz
 twitter.com
@@ -2756,6 +2794,7 @@ yandexwebcache.org
 yeggi.com
 yle.fi
 yogalayout.com
+yostarplat.com
 youtrack.cloud
 youtu.be
 youtube-nocookie.com
