@@ -22,6 +22,7 @@
 2gis.tj
 2gis.ua
 2gis.uz
+2ip.ru
 2w.ru
 3dnews.ru
 3ds-secure-payment.com
@@ -172,6 +173,7 @@ appmetrica.yandex.net
 appmetrica.yandex.ru
 appmetrica.yango.com
 appsmail.ru
+appstorrent.ru
 apptracer.ru
 apptrackpets.com
 apteka-april.ru
@@ -203,6 +205,7 @@ autobahn.db.com
 autofinancebank.ru
 autokreditbank.ru
 autoru.me
+autowp.ru
 av.ru
 avangard.ru
 aversbank.ru
@@ -212,6 +215,7 @@ avito.ru
 avito.st
 avs.io
 avto.ru
+avtoto.ru
 avtovokzaly.ru
 azbukainterneta.ru
 b17.ru
@@ -912,6 +916,7 @@ kursk.ru
 kuzbank.ru
 lamoda.ru
 lanta.ru
+lava.ru
 lead-pro2023.online
 lenta.com
 lenta.tech
@@ -1303,6 +1308,7 @@ restream-media.net
 restream.ru
 rf-sim-mobile.ru
 ria.ru
+rkbank.ru
 rkomi.ru
 rncb.ru
 rncoluminis.ru
@@ -2223,6 +2229,7 @@ zenit-card.ru
 zenit.ru
 zentotem.net
 ziraatbank.ru
+zr.ru
 zub.ru
 zvuk-b2b.com
 zvuk.com
