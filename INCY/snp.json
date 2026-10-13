@@ -20,7 +20,6 @@
   "GeositeHash": "fbc9d5067e38a0a4201621cdfdbd18bca6181185dd3f76d005be61869708238b",
   "DirectSites": [
     "geosite:private",
-    "geosite:wl",
     "geosite:ru-list"
   ],
   "ProxySites": [
@@ -31,7 +30,6 @@
   ],
   "DirectIp": [
     "geoip:private-ip",
-    "geoip:wl-ip",
     "geoip:ru-list-ip"
   ],
   "ProxyIp": [
