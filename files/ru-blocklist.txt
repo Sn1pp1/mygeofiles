@@ -562,27 +562,6 @@ cybersecurity-help.cz
 cyxymu.info
 czx.to
 d.docs.live.net
-d1g1f25tn8m2e6.cloudfront.net
-d1m7jfoe9zdc1j.cloudfront.net
-d1mhjrowxxagfy.cloudfront.net
-d1ndex63qxojbr.cloudfront.net
-d1oca24q5dwo6d.cloudfront.net
-d1w2poirtb3as9.cloudfront.net
-d1xhnb4ptk05mw.cloudfront.net
-d1ymi26ma8va5x.cloudfront.net
-d2aba1wr3818hz.cloudfront.net
-d2dylwb3shzel1.cloudfront.net
-d2e2de1etea730.cloudfront.net
-d2nvs31859zcd8.cloudfront.net
-d2um2qdswy1tb0.cloudfront.net
-d2vjef5jvl6bfs.cloudfront.net
-d2xmjdvx03ij56.cloudfront.net
-d36nr0u3xmc4mm.cloudfront.net
-d3aqoihi2n8ty8.cloudfront.net
-d3c27h4odz752x.cloudfront.net
-d3vd9lfkzbru3h.cloudfront.net
-d6d4ismr40iw.cloudfront.net
-d6tizftlrpuof.cloudfront.net
 dacebook.com
 daemon-tools.cc
 daily-cloudcode-pa.googleapis.com
@@ -598,7 +577,6 @@ database.clamav.net
 databricks.com
 dating.com
 daz3d.com
-ddacn6pr5v0tl.cloudfront.net
 debian.map.fastlydns.net
 deckbrew.xyz
 decrypt.day
@@ -627,7 +605,6 @@ developers.instagram.com
 devexpress.com
 deviantart.com
 devops.com
-dgeft87wbj63p.cloudfront.net
 diabrowser.com
 dialga.com
 dice.com
@@ -702,12 +679,10 @@ downloads.intercomcdn.com
 doxa.team
 doxajournal.ru
 dpidetector.org
-dqrpb9wgowsf5.cloudfront.net
 draftjs.org
 dreamhost.com
 driver.gaomon.net
 drmario-world.com
-ds0h3roq6wcgc.cloudfront.net
 dual-a-0001.a-msedge.net
 dub.sh
 ducati.com
@@ -718,7 +693,6 @@ dv9cjr-dlsdk.appsflyersdk.com
 dv9cjr-launches.appsflyersdk.com
 dw.com
 dweb.link
-dykkng5hnh52u.cloudfront.net
 dyson.com
 dzcdn.net
 e-hentai.org
@@ -779,7 +753,6 @@ exler.ru
 expandrive.com
 expres.online
 expresswifi.com
-ext-twitch.tv
 extremetech.com
 f1.com
 f8.com
@@ -1610,7 +1583,6 @@ jorropo.net
 joyreactor.cc
 jsfiddle.net
 jskor.ill.in.ua
-jtvnw.net
 jules.google
 jules.google.com
 jut-su.net
@@ -1705,7 +1677,6 @@ lipstickalley.com
 liquibase.com
 liquidsky.com
 liquipedia.net
-live-video.net
 live.net
 livekit.cloud
 liverail.com
@@ -2892,7 +2863,6 @@ ttdns3.com
 ttlivecdn.com
 ttoversea.net
 ttoverseaus.net
-ttvnw.net
 ttwebview.com
 ttwstatic.com
 tunsafe.com
@@ -2914,10 +2884,6 @@ twinlife-systems.com
 twinme.com
 twirpx.com
 twister.net.co
-twitch.tv
-twitchcdn.net
-twitchcon.com
-twitchsvc.net
 twitpic.com
 twitter.biz
 twitter.com
