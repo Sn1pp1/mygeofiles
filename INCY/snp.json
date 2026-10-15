@@ -19,8 +19,7 @@
   "GeoipHash": "ca36fce1f8c0c9f77cdedf2ab1811a33d12c64eab6afa4af038873460c5621cd",
   "GeositeHash": "fbc9d5067e38a0a4201621cdfdbd18bca6181185dd3f76d005be61869708238b",
   "DirectSites": [
-    "geosite:private",
-    "geosite:ru-list"
+    "geosite:private"
   ],
   "ProxySites": [
     "geosite:ru-blocklist"
@@ -29,8 +28,7 @@
     "geosite:category-ads"
   ],
   "DirectIp": [
-    "geoip:private-ip",
-    "geoip:ru-list-ip"
+    "geoip:private-ip"
   ],
   "ProxyIp": [
     "geoip:ru-blocklist-ip"
