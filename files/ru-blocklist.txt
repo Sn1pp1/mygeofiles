@@ -186,6 +186,7 @@ api-ipv4.ip.sb
 api-ipv6.ip.sb
 api.alador.space
 api.app.prod.grazie.aws.intellij.net
+api.elevenlabs.io
 api.fitbit.com
 api.github.com
 api.githubcopilot.com
@@ -1408,6 +1409,7 @@ helioadditive.com
 helium.computer
 hellonotion.com
 helm.releases.hashicorp.com
+help.elevenlabs.io
 help.instagram.com
 hentai-foundry.com
 heroku.com
