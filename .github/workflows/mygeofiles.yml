@@ -2,7 +2,7 @@ name: Build mygeofiles
 
 on:
   schedule:
-    - cron: '0 */12 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 env:
@@ -73,12 +73,11 @@ jobs:
           }
 
           declare -A GEOSITE=(
-            ["private"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geosite/private.srs"
-            ["category-ads"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/category-ads.txt"
+            ["direct"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/direct.txt"
             ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
           )
           declare -A GEOIP=(
-            ["private-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/private.srs"
+            ["direct-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/direct-ip.txt"
             ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
           )
 
