@@ -6,7 +6,9 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths: ['.github/workflows/ru-blocklist-ip.yml']
+    paths: 
+      - '.github/workflows/ru-blocklist-ip.yml'
+      - 'files/add/add-blocklist-ip.txt'
 
 jobs:
   build:
@@ -38,9 +40,7 @@ jobs:
           mkdir -p files/srs
           
           TEMP_FILE=$(mktemp)
-          TEMP_CLEAN=$(mktemp)
-          
-          trap "rm -f $TEMP_FILE $TEMP_CLEAN" EXIT
+          trap "rm -f $TEMP_FILE" EXIT
 
           SOURCES=(
             "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/community_ips.lst"
@@ -61,30 +61,79 @@ jobs:
             "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Subnets/IPv6/discord.lst"
             "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/discord_ips.lst"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/netflix.list"
+            "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-blocklist-ip.txt"
           )
 
-          echo " Загрузка данных из источников..."
+          echo "📊 Загрузка данных из источников..."
+          TOTAL_BEFORE=0
+          
           for url in "${SOURCES[@]}"; do
-            if ! curl -fsL --connect-timeout 10 --max-time 30 "$url" >> "$TEMP_FILE" 2>/dev/null; then
-              echo "⚠️ Ошибка загрузки (возможно, 404 или таймаут): $url"
-            fi
+            SHORT_NAME=$(echo "$url" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
+            
+            # Считаем валидные строки перед скачиванием
+            COUNT=$(curl -fsL --connect-timeout 10 --max-time 30 "$url" 2>/dev/null | awk '
+            { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+            /^[[:space:]]*$/ { next }
+            /^[[:space:]]*#/ { next }
+            {
+              ip = $0
+              if (ip ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) {
+                split(ip, parts, "[./]")
+                if (parts[5] >= 0 && parts[5] <= 32) { c++; next }
+              }
+              if (ip ~ /^([0-9a-fA-F:]+)\/[0-9]+$/) {
+                split(ip, parts, "/")
+                if (parts[2] >= 0 && parts[2] <= 128) { c++; next }
+              }
+              if (ip ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) { c++; next }
+            }
+            END { print c+0 }
+            ' 2>/dev/null) || COUNT=0
+            
+            curl -fsL --connect-timeout 10 --max-time 30 "$url" >> "$TEMP_FILE" 2>/dev/null || echo "⚠️ Ошибка загрузки: $url"
             echo "" >> "$TEMP_FILE"
+            
+            printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
+            TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
           done
 
-          echo " Очистка, фильтрация и сортировка..."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE записей"
+          echo ""
+
+          echo "🧹 Очистка, валидация CIDR и сортировка..."
           
-          sed -e 's/#.*//' -e '/^[[:space:]]*$/d' -e '/\//!d' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' "$TEMP_FILE" | tr 'A-Z' 'a-z' > "$TEMP_CLEAN"
-          
-          > files/ru-blocklist-ip.txt
-          
-          grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}$' "$TEMP_CLEAN" | sort -u >> files/ru-blocklist-ip.txt || true
-          grep -E '^[0-9a-fA-F:]+/[0-9]{1,3}$' "$TEMP_CLEAN" | sort -u >> files/ru-blocklist-ip.txt || true
+          # Строгий парсер: валидирует маски и добавляет /32 к одиночным IPv4
+          awk '
+          { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+          /^[[:space:]]*$/ { next }
+          /^[[:space:]]*#/ { next }
+          {
+            ip = $0
+            # Валидный IPv4 CIDR
+            if (ip ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) {
+              split(ip, parts, "[./]")
+              if (parts[5] >= 0 && parts[5] <= 32) { print ip; next }
+            }
+            # Валидный IPv6 CIDR
+            if (ip ~ /^([0-9a-fA-F:]+)\/[0-9]+$/) {
+              split(ip, parts, "/")
+              if (parts[2] >= 0 && parts[2] <= 128) { print tolower(ip); next }
+            }
+            # Одиночный IPv4 -> добавляем /32
+            if (ip ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) {
+              print ip "/32"
+              next
+            }
+          }
+          ' "$TEMP_FILE" | LC_ALL=C sort -u > files/ru-blocklist-ip.txt
 
           TOTAL_IPS=$(wc -l < files/ru-blocklist-ip.txt | tr -d ' ')
+          echo ""
           echo "✅ Собрано уникальных диапазонов: $TOTAL_IPS"
           
           if [ "$TOTAL_IPS" -eq 0 ]; then
-            echo " Ошибка: список IP пустой после фильтрации"
+            echo "❌ Ошибка: список IP пустой после фильтрации"
             exit 1
           fi
 
@@ -92,8 +141,8 @@ jobs:
         run: |
           echo "⚙️ Генерация JSON и компиляция в бинарный формат..."
           
-          # Создаем временный файл ПЕРЕД использованием
           TEMP_JSON=$(mktemp)
+          trap "rm -f $TEMP_JSON" EXIT
           
           jq -R -s -c 'split("\n") | map(select(length > 0))' files/ru-blocklist-ip.txt | \
             jq '{
@@ -114,8 +163,6 @@ jobs:
             echo "❌ Ошибка компиляции .srs"
             exit 1
           fi
-          
-          rm -f "$TEMP_JSON"
 
       - name: Commit and push changes
         run: |
@@ -134,7 +181,7 @@ jobs:
             
             for i in 1 2 3; do
               if git push; then
-                echo " Изменения успешно отправлены в репозиторий!"
+                echo "📤 Изменения успешно отправлены в репозиторий!"
                 break
               else
                 echo "⚠️ Ошибка push, попытка $i/3. Делаем rebase и пробуем снова..."
