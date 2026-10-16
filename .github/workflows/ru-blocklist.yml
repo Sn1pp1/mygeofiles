@@ -5,7 +5,7 @@ on:
     branches: [main]
     paths: 
       - '.github/workflows/ru-blocklist.yml'
-      - 'files/add/add-blocklist.txt' # ДОБАВЛЕНО: автозапуск при изменении файла
+      - 'files/add/add-blocklist.txt'
   workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
@@ -26,7 +26,6 @@ jobs:
     - name: Download latest sing-box binary
       run: |
         LATEST_TAG=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
-        echo "Latest version: $LATEST_TAG"
         wget -q "https://github.com/SagerNet/sing-box/releases/download/${LATEST_TAG}/sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
         tar -xzf "sing-box-${LATEST_TAG#v}-linux-amd64.tar.gz"
         sudo mv "sing-box-${LATEST_TAG#v}-linux-amd64/sing-box" /usr/local/bin/
@@ -77,170 +76,70 @@ jobs:
         TEMP_CLEAN=$(mktemp)
         trap "rm -f $TEMP_RAW $TEMP_CLEAN" EXIT
 
-        echo "📊 СТАТИСТИКА ЗАГРУЗКИ"
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
         TOTAL_BEFORE=0
 
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
 
-          COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
-          { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
-          /^[[:space:]]*$/ { next }
-          /^[[:space:]]*#/ { next }
-          /^regexp:/ { next }
-          /^include:/ { next }
-          {
-            # geosite формат
-            sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
-            sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
-            sub(/^root:/, ""); sub(/^\./, "")
-            # mihomo/clash формат
-            sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, "")
-            sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, "")
-            # Удаление wildcard префикса
-            sub(/^\*\./, "")
-          }
-          /^[[:space:]]*$/ { next }
-          /\.$/ { next }
-          {
-            d = $0
-            sub(/@.*$/, "", d)
-            sub(/[[:space:]].*$/, "", d)
-            if (d == "") next
-            if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
-            if (d ~ /:/) next
-            # Фильтр мусора без точек
-            if (d !~ /\./) {
-              if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
+          COUNT=$(curl -fsSL --retry 3 --max-time 30 "$URL" 2>/dev/null | awk '
+            { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+            /^[[:space:]]*$/ || /^[[:space:]]*#/ || /^regexp:/ || /^include:/ { next }
+            {
+              sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
+              sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
+              sub(/^root:/, ""); sub(/^\./, ""); sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, "")
+              sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, ""); sub(/^\*\./, "")
+              sub(/@.*$/, ""); sub(/[[:space:]].*$/, "")
+              if ($0 == "" || $0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ || $0 ~ /:/ || $0 ~ /\.\./ || length($0) > 253 || $0 ~ /[^a-zA-Z0-9._-]/) next
+              if ($0 !~ /\./) {
+                if ($0 != "ru" && $0 != "su" && $0 != "by" && $0 != "moscow" && $0 != "local" && $0 != "lan" && $0 != "localhost" && $0 != "internal" && $0 != "localdomain" && $0 != "example" && $0 != "invalid" && $0 != "test" && $0 !~ /^xn--/) next
+              }
+              c++
             }
-            if (d ~ /\.\./) next
-            if (length(d) > 253) next
-            if (d ~ /[^a-zA-Z0-9._-]/) next
-            c++
-          }
-          END { print c+0 }
+            END { print c+0 }
           ' 2>/dev/null) || COUNT=0
 
-          curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
+          curl -fsSL --retry 3 --max-time 30 "$URL" >> "$TEMP_RAW" 2>/dev/null || true
           echo "" >> "$TEMP_RAW"
-
-          printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
+          printf "  %-40s %6s\n" "$SHORT_NAME..." "$COUNT"
           TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
         done
 
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE записей"
-        echo ""
-
-        echo "🧹 Очистка и нормализация..."
-
         awk '
-        { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
-        /^[[:space:]]*$/ { next }
-        /^[[:space:]]*#/ { next }
-        /^regexp:/ { next }
-        /^include:/ { next }
-        {
-          # geosite формат
-          sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
-          sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
-          sub(/^root:/, ""); sub(/^\./, "")
-          # mihomo/clash формат
-          sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, "")
-          sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, "")
-          # Удаление wildcard префикса
-          sub(/^\*\./, "")
-        }
-        /^[[:space:]]*$/ { next }
-        /\.$/ { next }
-        {
-          d = $0
-          sub(/@.*$/, "", d)
-          sub(/[[:space:]].*$/, "", d)
-
-          if (d == "") next
-          if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
-          if (d ~ /:/) next
-          
-          # Фильтр мусора без точек
-          if (d !~ /\./) {
-            if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
+          { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+          /^[[:space:]]*$/ || /^[[:space:]]*#/ || /^regexp:/ || /^include:/ { next }
+          {
+            sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
+            sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
+            sub(/^root:/, ""); sub(/^\./, ""); sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, "")
+            sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, ""); sub(/^\*\./, "")
+            sub(/@.*$/, ""); sub(/[[:space:]].*$/, "")
+            if ($0 == "" || $0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ || $0 ~ /:/ || $0 ~ /\.\./ || length($0) > 253 || $0 ~ /[^a-zA-Z0-9._-]/) next
+            if ($0 !~ /\./) {
+              if ($0 != "ru" && $0 != "su" && $0 != "by" && $0 != "moscow" && $0 != "local" && $0 != "lan" && $0 != "localhost" && $0 != "internal" && $0 != "localdomain" && $0 != "example" && $0 != "invalid" && $0 != "test" && $0 !~ /^xn--/) next
+            }
+            print tolower($0)
           }
+        ' "$TEMP_RAW" | LC_ALL=C sort -u > files/ru-blocklist.txt
 
-          if (d ~ /\.\./) next
-          if (length(d) > 253) next
-          if (d ~ /[^a-zA-Z0-9._-]/) next
-
-          print tolower(d)
-        }
-        ' "$TEMP_RAW" > "$TEMP_CLEAN"
-
-        BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN" | tr -d ' ')
-
-        echo "🔍 Сортировка и удаление дубликатов..."
-        LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-blocklist.txt
-
-        if [ ! -s files/ru-blocklist.txt ]; then
-          echo "❌ Ошибка: Файл пустой после обработки!"
-          exit 1
-        fi
-
+        if [ ! -s files/ru-blocklist.txt ]; then echo "❌ Error: File is empty"; exit 1; fi
+        
         AFTER_DEDUP=$(wc -l < files/ru-blocklist.txt | tr -d ' ')
-        REMOVED=$((BEFORE_DEDUP - AFTER_DEDUP))
-        SIZE=$(du -h files/ru-blocklist.txt | cut -f1)
-
-        if [ "$BEFORE_DEDUP" -gt 0 ]; then
-          PCT=$(awk "BEGIN {printf \"%.1f\", $REMOVED * 100 / $BEFORE_DEDUP}")
-        else
-          PCT="0.0"
-        fi
-
-        echo ""
-        echo "📊 ИТОГОВАЯ СТАТИСТИКА"
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        printf "  Записей после чистки:           %6s\n" "$BEFORE_DEDUP"
-        printf "  Удалено дубликатов:             %6s (%s%%)\n" "$REMOVED" "$PCT"
-        printf "  ✅ В итоговом файле:            %6s доменов\n" "$AFTER_DEDUP"
-        printf "  Размер файла:                   %6s\n" "$SIZE"
-        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo ""
-        echo " Первые 5 записей из ru-blocklist.txt:"
-        head -5 files/ru-blocklist.txt | sed 's/^/   ✓ /'
+        echo "✅ Total domains: $AFTER_DEDUP"
 
     - name: Convert to SRS format
       run: |
-        echo "🔄 Генерация SRS файла..."
-
         domains=$(grep -v '^$' files/ru-blocklist.txt | jq -R -s 'split("\n") | map(select(length > 0))')
         echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/ru-blocklist.json
-
         sing-box rule-set compile --output files/srs/ru-blocklist.srs /tmp/ru-blocklist.json
-
-        SRS_SIZE=$(du -h files/srs/ru-blocklist.srs | cut -f1)
-        echo "✅ SRS файл создан: files/srs/ru-blocklist.srs ($SRS_SIZE)"
 
     - name: Commit and push result
       run: |
         git config user.name "ru-blocklist Bot"
         git config user.email "ru-blocklist-bot@github.com"
-
         git pull --rebase origin main 2>/dev/null || true
-
-        if [ ! -f files/ru-blocklist.txt ]; then
-          echo "❌ Ошибка: файл ru-blocklist.txt не найден!"
-          exit 1
-        fi
-
         git add files/ru-blocklist.txt files/srs/ru-blocklist.srs
-
         if ! git diff --staged --quiet; then
           git commit -m "🔄 Update ru-blocklist.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
-          for i in 1 2 3; do
-            git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
-          done
-          echo "📤 Файлы успешно обновлены"
-        else
-          echo "⏭️ Списки не изменились, пропуск коммита"
+          for i in 1 2 3; do git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }; done
         fi
