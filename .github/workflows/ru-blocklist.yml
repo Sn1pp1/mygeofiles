@@ -3,7 +3,9 @@ name: Build ru-blocklist
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/ru-blocklist.yml']
+    paths: 
+      - '.github/workflows/ru-blocklist.yml'
+      - 'files/add/add-blocklist.txt' # ДОБАВЛЕНО: автозапуск при изменении файла
   workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
@@ -83,7 +85,6 @@ jobs:
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
 
-          # Считаем строки с той же логикой, что и основной парсер
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
           /^[[:space:]]*$/ { next }
@@ -91,9 +92,15 @@ jobs:
           /^regexp:/ { next }
           /^include:/ { next }
           {
+            # geosite формат
             sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
             sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
             sub(/^root:/, ""); sub(/^\./, "")
+            # mihomo/clash формат
+            sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, "")
+            sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, "")
+            # Удаление wildcard префикса
+            sub(/^\*\./, "")
           }
           /^[[:space:]]*$/ { next }
           /\.$/ { next }
@@ -104,7 +111,7 @@ jobs:
             if (d == "") next
             if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
             if (d ~ /:/) next
-            # Whitelist только известных TLD
+            # Фильтр мусора без точек
             if (d !~ /\./) {
               if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
             }
@@ -129,7 +136,6 @@ jobs:
 
         echo "🧹 Очистка и нормализация..."
 
-        # === ОСНОВНОЙ ПАРСЕР ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -137,15 +143,20 @@ jobs:
         /^regexp:/ { next }
         /^include:/ { next }
         {
+          # geosite формат
           sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
           sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
           sub(/^root:/, ""); sub(/^\./, "")
+          # mihomo/clash формат
+          sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, "")
+          sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, "")
+          # Удаление wildcard префикса
+          sub(/^\*\./, "")
         }
         /^[[:space:]]*$/ { next }
         /\.$/ { next }
         {
           d = $0
-
           sub(/@.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
 
@@ -153,7 +164,7 @@ jobs:
           if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
           if (d ~ /:/) next
           
-          # === WHITELIST TLD: только ru, su, by, moscow и punycode (xn--*) ===
+          # Фильтр мусора без точек
           if (d !~ /\./) {
             if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
           }
