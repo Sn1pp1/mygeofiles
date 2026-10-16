@@ -580,6 +580,7 @@ daz3d.com
 debian.map.fastlydns.net
 deckbrew.xyz
 decrypt.day
+deepl.
 deepl.com
 deepmind.com
 deepmind.google
@@ -693,6 +694,7 @@ dv9cjr-dlsdk.appsflyersdk.com
 dv9cjr-launches.appsflyersdk.com
 dw.com
 dweb.link
+dyson.
 dyson.com
 dzcdn.net
 e-hentai.org
@@ -1522,6 +1524,7 @@ instastyle.tv
 instgram.com
 intagram.com
 intagrm.com
+intel.
 intel.com
 intel.de
 intel.nl
@@ -1875,6 +1878,7 @@ neformat.com.ua
 neo4j.com
 netacad.com
 netapp.com
+netflix.
 netflix.ca
 netflix.com
 netflix.com.edgesuite.net
@@ -1983,6 +1987,7 @@ notepad-plus-plus.org
 notion-emojis.s3-us-west-2.amazonaws.com
 notion-media.com
 notion-static.com
+notion.
 notion.com
 notion.new
 notion.site
@@ -2064,6 +2069,7 @@ ooni.org
 opal.google
 opal.google.com
 open.spotify.com
+openai.
 openai.com
 openai.com.cdn.cloudflare.net
 openai.qualtrics.com
@@ -2782,6 +2788,7 @@ tik-tokapi.com
 tiktok-minis.com
 tiktok-row.net
 tiktok-row.org
+tiktok.
 tiktok.com
 tiktokapis.com
 tiktokcdn-com.akamaized.net
@@ -2944,6 +2951,7 @@ v2ray.com
 v2ray.cool
 vagrantcloud.com
 vaio.com
+vans.
 vectorworks.net
 veeam.com
 velocidrone.com
