@@ -160,14 +160,12 @@ jobs:
                 sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^domain_suffix:/, "")
                 sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, ""); sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, ""); sub(/^\*\./, "")
                 
-                # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: явное удаление конечной точки
                 sub(/\.$/, "")
                 sub(/@.*$/, ""); sub(/[[:space:]].*$/, "")
                 sub(/^[[:space:]\.]+/, "", line); sub(/[[:space:]\.]+$/, "", line)
 
                 if (line == "" || line ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ || line ~ /:/ || line ~ /\.\./ || length(line) > 253 || line ~ /[^a-zA-Z0-9._-]/) next
                 
-                # Железобетонный Whitelist TLD (включая localhost)
                 if (line !~ /\./) {
                   if (line != "ru" && line != "su" && line != "by" && line != "moscow" && line != "local" && line != "lan" && line != "localhost" && line != "internal" && line != "localdomain" && line != "example" && line != "invalid" && line != "test" && line !~ /^xn--/) next
                 }
@@ -220,7 +218,7 @@ jobs:
           sha256sum geosite.dat > geosite.dat.sha256
           sha256sum geoip.dat > geoip.dat.sha256
 
-      - name: Generate changelog
+      - name: Generate changelog with statistics
         run: |
           {
             echo "## 🔄 Build #${{ github.run_number }}"
@@ -232,6 +230,28 @@ jobs:
             echo "- **Geoip categories:** $(ls -1 data/geoip 2>/dev/null | wc -l)"
             echo "- **geosite.dat:** $(du -h geosite.dat | cut -f1)"
             echo "- **geoip.dat:** $(du -h geoip.dat | cut -f1)"
+            echo ""
+            echo "### 📊 Geosite Statistics"
+            echo "| Category | Entries |"
+            echo "|----------|---------|"
+            for f in data/geosite/*; do
+              if [ -f "$f" ]; then
+                name=$(basename "$f")
+                count=$(wc -l < "$f" | tr -d ' ')
+                echo "| \`$name\` | $count |"
+              fi
+            done
+            echo ""
+            echo "### 📊 Geoip Statistics"
+            echo "| Category | Entries |"
+            echo "|----------|---------|"
+            for f in data/geoip/*; do
+              if [ -f "$f" ]; then
+                name=$(basename "$f")
+                count=$(wc -l < "$f" | tr -d ' ')
+                echo "| \`$name\` | $count |"
+              fi
+            done
             echo ""
             echo "### 🔐 Checksums"
             echo '```'
