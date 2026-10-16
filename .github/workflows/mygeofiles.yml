@@ -159,7 +159,7 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          echo "🔍 Проверяем и валидируем IP-адреса..."
+          echo "🔍 Проверяем и жестко фильтруем содержимое data/geoip/..."
           python3 -c '
           import os, glob, ipaddress
 
@@ -175,21 +175,23 @@ jobs:
                   line = line.strip()
                   if not line or line.startswith("#"):
                       continue
+                  # Отсекаем сразу всё, что содержит знак минус (например, / -1)
+                  if "-" in line:
+                      print(f"   ⚠️ Удалена строка с минусом: {line}")
+                      continue
                   try:
                       net = ipaddress.ip_network(line, strict=False)
-                      # Строгая проверка префиксов (исключаем некорректные маски вроде /-1)
                       if net.version == 4 and not (0 <= net.prefixlen <= 32):
                           continue
                       if net.version == 6 and not (0 <= net.prefixlen <= 128):
                           continue
-                      
                       valid_lines.append(str(net) + "\n")
                   except ValueError:
                       print(f"   ⚠️ Некорректная запись пропущена: {line}")
               
               removed = total - len(valid_lines)
               if removed > 0:
-                  print(f"   • {os.path.basename(f)}: отфильтровано {removed} невалидных строк")
+                  print(f"   • {os.path.basename(f)}: удалено {removed} невалидных строк")
               
               if valid_lines:
                   with open(f, "w", encoding="utf-8") as file:
