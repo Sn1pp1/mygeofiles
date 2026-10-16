@@ -8,7 +8,7 @@ on:
     branches: [main]
     paths: 
       - '.github/workflows/ru-list-ip.yml'
-      - 'files/add/add-ru-list-ip.txt' # ДОБАВЛЕНО: автозапуск при изменении файла
+      - 'files/add/add-ru-list-ip.txt'
 
 jobs:
   build:
@@ -21,24 +21,19 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq curl
+        run: sudo apt-get update && sudo apt-get install -y jq curl
 
       - name: Download sing-box
         run: |
           SING_BOX_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
-          echo "Downloading sing-box version: $SING_BOX_VERSION"
-          
           curl -sL "https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION#v}-linux-amd64.tar.gz" | tar xz -C /tmp
           mv /tmp/sing-box-${SING_BOX_VERSION#v}-linux-amd64/sing-box ./sing-box
           chmod +x ./sing-box
-          ./sing-box version
 
       - name: Fetch and process IP lists
         run: |
+          set -euo pipefail
           mkdir -p files/srs
-          
           TEMP_FILE=$(mktemp)
           trap "rm -f $TEMP_FILE" EXIT
 
@@ -46,132 +41,67 @@ jobs:
             "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.txt"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/ru.list"
             "https://github.com/hydraponique/roscomvpn-geoip/raw/refs/heads/master/release/text/direct.txt"
-            "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-ru-list-ip.txt" # ДОБАВЛЕНО
+            "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-ru-list-ip.txt"
           )
 
-          echo "📊 Загрузка данных из источников..."
           TOTAL_BEFORE=0
-          
           for url in "${SOURCES[@]}"; do
             SHORT_NAME=$(echo "$url" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
             
-            # Считаем валидные строки перед скачиванием
             COUNT=$(curl -fsL --connect-timeout 10 --max-time 30 "$url" 2>/dev/null | awk '
-            { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
-            /^[[:space:]]*$/ { next }
-            /^[[:space:]]*#/ { next }
-            {
-              ip = $0
-              if (ip ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) {
-                split(ip, parts, "[./]")
-                if (parts[5] >= 0 && parts[5] <= 32) { c++; next }
+              { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+              /^[[:space:]]*$/ || /^[[:space:]]*#/ { next }
+              {
+                if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) { split($0, p, "[./]"); if (p[5] >= 0 && p[5] <= 32) { c++; next } }
+                if ($0 ~ /^([0-9a-fA-F:]+)\/[0-9]+$/) { split($0, p, "/"); if (p[2] >= 0 && p[2] <= 128) { c++; next } }
+                if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) { c++; next }
               }
-              if (ip ~ /^([0-9a-fA-F:]+)\/[0-9]+$/) {
-                split(ip, parts, "/")
-                if (parts[2] >= 0 && parts[2] <= 128) { c++; next }
-              }
-              if (ip ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) { c++; next }
-            }
-            END { print c+0 }
+              END { print c+0 }
             ' 2>/dev/null) || COUNT=0
             
-            curl -fsL --connect-timeout 10 --max-time 30 "$url" >> "$TEMP_FILE" 2>/dev/null || echo "⚠️ Ошибка загрузки: $url"
+            curl -fsL --connect-timeout 10 --max-time 30 "$url" >> "$TEMP_FILE" 2>/dev/null || true
             echo "" >> "$TEMP_FILE"
-            
-            printf "  %-40s %6s записей\n" "$SHORT_NAME..." "$COUNT"
+            printf "  %-40s %6s\n" "$SHORT_NAME..." "$COUNT"
             TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
           done
 
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "  ИТОГО скачано (до очистки):     $TOTAL_BEFORE записей"
-          echo ""
-
-          echo "🧹 Очистка, валидация CIDR и сортировка..."
-          
-          # Строгий парсер: валидирует маски и добавляет /32 к одиночным IPv4
           awk '
-          { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
-          /^[[:space:]]*$/ { next }
-          /^[[:space:]]*#/ { next }
-          {
-            ip = $0
-            # Валидный IPv4 CIDR
-            if (ip ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) {
-              split(ip, parts, "[./]")
-              if (parts[5] >= 0 && parts[5] <= 32) { print ip; next }
+            { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+            /^[[:space:]]*$/ || /^[[:space:]]*#/ { next }
+            {
+              if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) {
+                split($0, p, "[./]"); if (p[5] >= 0 && p[5] <= 32) { print $0; next }
+              }
+              if ($0 ~ /^([0-9a-fA-F:]+)\/[0-9]+$/) {
+                split($0, p, "/"); if (p[2] >= 0 && p[2] <= 128) { print tolower($0); next }
+              }
+              if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) { print $0 "/32"; next }
             }
-            # Валидный IPv6 CIDR
-            if (ip ~ /^([0-9a-fA-F:]+)\/[0-9]+$/) {
-              split(ip, parts, "/")
-              if (parts[2] >= 0 && parts[2] <= 128) { print tolower(ip); next }
-            }
-            # Одиночный IPv4 -> добавляем /32
-            if (ip ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) {
-              print ip "/32"
-              next
-            }
-          }
           ' "$TEMP_FILE" | LC_ALL=C sort -u > files/ru-list-ip.txt
 
-          TOTAL_IPS=$(wc -l < files/ru-list-ip.txt | tr -d ' ')
-          echo ""
-          echo "✅ Собрано уникальных диапазонов: $TOTAL_IPS"
-          
-          if [ "$TOTAL_IPS" -eq 0 ]; then
-            echo "❌ Ошибка: список IP пустой после фильтрации"
-            exit 1
-          fi
+          if [ ! -s files/ru-list-ip.txt ]; then echo "❌ Error: File is empty"; exit 1; fi
+          echo "✅ Total IP ranges: $(wc -l < files/ru-list-ip.txt | tr -d ' ')"
 
       - name: Generate JSON and Compile to .srs
         run: |
-          echo "⚙️ Генерация JSON и компиляция в бинарный формат..."
-          
           TEMP_JSON=$(mktemp)
           trap "rm -f $TEMP_JSON" EXIT
           
           jq -R -s -c 'split("\n") | map(select(length > 0))' files/ru-list-ip.txt | \
-            jq '{
-              "version": 1,
-              "rules": [
-                {
-                  "ip_cidr": .
-                }
-              ]
-            }' > "$TEMP_JSON"
+            jq '{"version": 1, "rules": [{"ip_cidr": .}]}' > "$TEMP_JSON"
 
           ./sing-box rule-set compile "$TEMP_JSON" -o files/srs/ru-list-ip.srs
           
-          if [ -f files/srs/ru-list-ip.srs ]; then
-            SRS_SIZE=$(du -h files/srs/ru-list-ip.srs | cut -f1)
-            echo "✅ Файл ru-list-ip.srs успешно создан (Размер: $SRS_SIZE)"
-          else
-            echo "❌ Ошибка компиляции .srs"
-            exit 1
-          fi
+          if [ ! -f files/srs/ru-list-ip.srs ]; then echo "❌ Error: Compilation failed"; exit 1; fi
+          echo "✅ SRS file created: $(du -h files/srs/ru-list-ip.srs | cut -f1)"
 
       - name: Commit and push changes
         run: |
           git config user.name "ru-list-ip Bot"
           git config user.email "ru-list-ip-bot@github.com"
-          
           git pull --rebase origin main 2>/dev/null || true
-          
           git add files/ru-list-ip.txt files/srs/ru-list-ip.srs
-          
-          if git diff --staged --quiet; then
-            echo "⏭️ Нет изменений для коммита (списки не изменились)."
-          else
-            MSK_TIME=$(TZ='Europe/Moscow' date '+%Y-%m-%d %H:%M MSK')
-            git commit -m "🔄 Update ru-list-ip.txt and SRS ($MSK_TIME)"
-            
-            for i in 1 2 3; do
-              if git push; then
-                echo "📤 Изменения успешно отправлены в репозиторий!"
-                break
-              else
-                echo "⚠️ Ошибка push, попытка $i/3. Делаем rebase и пробуем снова..."
-                sleep $((RANDOM % 5 + 1))
-                git pull --rebase origin main
-              fi
-            done
+          if ! git diff --staged --quiet; then
+            git commit -m "🔄 Update ru-list-ip.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+            for i in 1 2 3; do git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }; done
           fi
