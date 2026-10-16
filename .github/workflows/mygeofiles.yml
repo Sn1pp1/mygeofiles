@@ -188,7 +188,7 @@ jobs:
           echo ""
           go install github.com/Loyalsoldier/geoip@latest
           echo "🚀 Запускаем компиляцию..."
-          if ! $(go env GOPATH)/bin/geoip -c geoip_config.json 2>&1; then
+          if ! $(go env GOPATH)/bin/geoip convert -c geoip_config.json 2>&1; then
             echo "❌ Ошибка компиляции geoip.dat"
             echo "📄 Содержимое data/geoip/ для отладки:"
             for f in data/geoip/*; do
