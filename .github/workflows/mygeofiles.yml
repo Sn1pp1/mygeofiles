@@ -76,9 +76,10 @@ jobs:
             ["direct"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct.txt"
             ["ru-blocklist"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist.txt"
           )
+          # Убираем дефисы в именах для geoip во избежание конфликта парсера v2fly/geoip с суффиксами
           declare -A GEOIP=(
-            ["direct-ip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct-ip.txt"
-            ["ru-blocklist-ip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist-ip.txt"
+            ["directip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct-ip.txt"
+            ["rublocklistip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist-ip.txt"
           )
 
           process_categories() {
