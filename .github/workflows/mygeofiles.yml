@@ -206,7 +206,9 @@ jobs:
 
           echo '{"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}], "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}' > geoip_config.json
 
-          go install github.com/v2fly/geoip@${{ env.GEOIP_VER }}$(go env GOPATH)/bin/geoip -c geoip_config.json
+          go install github.com/v2fly/geoip@${{ env.GEOIP_VER }}
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          geoip -c geoip_config.json
           echo "✅ geoip.dat created: $(du -h geoip.dat | cut -f1)"
 
       - name: Validate generated files
