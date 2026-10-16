@@ -54,7 +54,6 @@ jobs:
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
 
-          # Считаем строки с той же логикой, что и основной парсер
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
           /^[[:space:]]*$/ { next }
@@ -77,14 +76,13 @@ jobs:
             if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
             if (d ~ /:/) next
             
-            # === ИСПРАВЛЕНО: Разрешаем localhost и безопасные зарезервированные однословные TLD ===
             if (d !~ /\./) {
               if (d != "localhost" && d != "local" && d != "lan" && d != "internal" && d != "localdomain" && d != "example" && d != "invalid" && d != "test") next
             }
             
             if (d ~ /\.\./) next
             if (length(d) > 253) next
-            if (d ~ /[^a-zA-Z0-9._*-]/) next # Разрешаем *, точку, дефис, подчеркивание
+            if (d ~ /[^a-zA-Z0-9._*-]/) next
             
             c++
           }
@@ -104,7 +102,6 @@ jobs:
 
         echo "🧹 Очистка и нормализация..."
 
-        # === ОСНОВНОЙ ПАРСЕР (та же логика, что и при подсчете) ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -127,7 +124,6 @@ jobs:
           if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
           if (d ~ /:/) next
           
-          # === ИСПРАВЛЕНО: Разрешаем localhost и безопасные зарезервированные однословные TLD ===
           if (d !~ /\./) {
             if (d != "localhost" && d != "local" && d != "lan" && d != "internal" && d != "localdomain" && d != "example" && d != "invalid" && d != "test") next
           }
@@ -183,16 +179,24 @@ jobs:
 
     - name: Commit and push result
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git config user.name "direct Bot"
+        git config user.email "direct-bot@github.com"
+
         git pull --rebase origin main 2>/dev/null || true
+
+        if [ ! -f files/direct.txt ]; then
+          echo "❌ Ошибка: файл direct.txt не найден!"
+          exit 1
+        fi
+
         git add files/direct.txt files/srs/direct.srs
+
         if ! git diff --staged --quiet; then
-          git commit -m "chore: update direct lists ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          git commit -m "🔄 Update direct.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
           for i in 1 2 3; do
             git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
           done
-          echo "📤 Файлы успешно обновлены"
+          echo " Файлы успешно обновлены"
         else
           echo "⏭️ Списки не изменились, пропуск коммита"
         fi
