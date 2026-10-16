@@ -73,12 +73,12 @@ jobs:
           }
 
           declare -A GEOSITE=(
-            ["direct"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/direct.txt"
-            ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
+            ["direct"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct.txt"
+            ["ru-blocklist"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist.txt"
           )
           declare -A GEOIP=(
-            ["direct-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/direct-ip.txt"
-            ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
+            ["direct-ip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct-ip.txt"
+            ["ru-blocklist-ip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist-ip.txt"
           )
 
           process_categories() {
@@ -159,12 +159,9 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          echo "🔍 Проверяем и фильтруем содержимое data/geoip/ через Python..."
+          echo "🔍 Проверяем и валидируем IP-адреса..."
           python3 -c '
-          import os, re, glob
-
-          cidr_ipv4 = re.compile(r"^(\d{1,3}\.){3}\d{1,3}/([0-2]?[0-9]|3[0-2])$")
-          cidr_ipv6 = re.compile(r"^([0-9a-fA-F:]+):?([0-9a-fA-F:]*)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$")
+          import os, glob, ipaddress
 
           for f in glob.glob("data/geoip/*"):
               if not os.path.isfile(f):
@@ -178,20 +175,23 @@ jobs:
                   line = line.strip()
                   if not line or line.startswith("#"):
                       continue
-                  if cidr_ipv4.match(line) or cidr_ipv6.match(line):
-                      valid_lines.append(line + "\n")
+                  try:
+                      net = ipaddress.ip_network(line, strict=False)
+                      valid_lines.append(str(net) + "\n")
+                  except ValueError:
+                      print(f"   ⚠️ Некорректная запись пропущена: {line}")
               
               removed = total - len(valid_lines)
               if removed > 0:
-                  print(f"   • {os.path.basename(f)}: удалено {removed} некорректных строк")
+                  print(f"   • {os.path.basename(f)}: отфильтровано {removed} не-IP строк")
               
               if valid_lines:
                   with open(f, "w", encoding="utf-8") as file:
                       file.writelines(valid_lines)
-                  print(f"   ✅ {os.path.basename(f)}: осталось {len(valid_lines)} валидных CIDR")
+                  print(f"   ✅ {os.path.basename(f)}: сохранено {len(valid_lines)} валидных CIDR")
               else:
                   os.remove(f)
-                  print(f"   ❌ {os.path.basename(f)} пуст после фильтрации, удален")
+                  print(f"   ❌ {os.path.basename(f)} пуст, удален")
           '
 
           file_count=$(ls -1 data/geoip 2>/dev/null | wc -l)
