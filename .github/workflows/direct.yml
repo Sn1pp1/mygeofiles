@@ -3,7 +3,9 @@ name: Build direct
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/direct.yml']
+    paths: 
+      - '.github/workflows/direct.yml'
+      - 'files/add/add-direct.txt'
   workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
@@ -52,7 +54,6 @@ jobs:
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
 
-          # Считаем строки с той же логикой, что и основной парсер
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
           /^[[:space:]]*$/ { next }
@@ -73,13 +74,14 @@ jobs:
             if (d == "") next
             if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
             if (d ~ /:/) next
-            # Whitelist только известных TLD
+            
+            # ИСПРАВЛЕНО: Разрешаем локальные TLD и wildcard (*)
             if (d !~ /\./) {
-              if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
+              if (d != "local" && d != "lan" && d != "home" && d != "corp" && d !~ /^xn--/) next
             }
             if (d ~ /\.\./) next
             if (length(d) > 253) next
-            if (d ~ /[^a-zA-Z0-9._-]/) next
+            if (d ~ /[^a-zA-Z0-9._*-]/) next # Добавлен * для поддержки *.domain.com
             c++
           }
           END { print c+0 }
@@ -98,7 +100,6 @@ jobs:
 
         echo "🧹 Очистка и нормализация..."
 
-        # === ОСНОВНОЙ ПАРСЕР ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -114,7 +115,6 @@ jobs:
         /\.$/ { next }
         {
           d = $0
-
           sub(/@.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
 
@@ -122,14 +122,14 @@ jobs:
           if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
           if (d ~ /:/) next
           
-          # === WHITELIST TLD: только ru, su, by, moscow и punycode (xn--*) ===
+          # ИСПРАВЛЕНО: Разрешаем локальные TLD и wildcard (*)
           if (d !~ /\./) {
-            if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
+            if (d != "local" && d != "lan" && d != "home" && d != "corp" && d !~ /^xn--/) next
           }
 
           if (d ~ /\.\./) next
           if (length(d) > 253) next
-          if (d ~ /[^a-zA-Z0-9._-]/) next
+          if (d ~ /[^a-zA-Z0-9._*-]/) next # Добавлен *
 
           print tolower(d)
         }
@@ -170,31 +170,20 @@ jobs:
     - name: Convert to SRS format
       run: |
         echo "🔄 Генерация SRS файла..."
-
         domains=$(grep -v '^$' files/direct.txt | jq -R -s 'split("\n") | map(select(length > 0))')
         echo "{\"version\":1,\"rules\":[{\"domain_suffix\":$domains}]}" | jq '.' > /tmp/direct.json
-
         sing-box rule-set compile --output files/srs/direct.srs /tmp/direct.json
-
         SRS_SIZE=$(du -h files/srs/direct.srs | cut -f1)
         echo "✅ SRS файл создан: files/srs/direct.srs ($SRS_SIZE)"
 
     - name: Commit and push result
       run: |
-        git config user.name "direct Bot"
-        git config user.email "direct-bot@github.com"
-
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
         git pull --rebase origin main 2>/dev/null || true
-
-        if [ ! -f files/direct.txt ]; then
-          echo "❌ Ошибка: файл direct.txt не найден!"
-          exit 1
-        fi
-
         git add files/direct.txt files/srs/direct.srs
-
         if ! git diff --staged --quiet; then
-          git commit -m "🔄 Update direct.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+          git commit -m "chore: update direct lists ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
           for i in 1 2 3; do
             git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }
           done
