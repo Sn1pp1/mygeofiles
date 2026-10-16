@@ -94,14 +94,19 @@ a.e.f.ip6.arpa
 asusrouter.com
 b.e.f.ip6.arpa
 d.f.ip6.arpa
+example
 hiwifi.com
 home.arpa
 instant.arubanetworks.com
+internal
+invalid
 kis.v2.scr.kaspersky-labs.com
 lan
 leike.cc
 local
 local.adguard.org
+localdomain
+localhost
 localhost.ptlogin2.qq.com
 localhost.sec.qq.com
 miwifi.com
@@ -115,6 +120,7 @@ router.ctc
 routerlogin.com
 setmeup.arubanetworks.com
 tendawifi.com
+test
 tplinkwifi.net
 tplogin.cn
 ts.net
