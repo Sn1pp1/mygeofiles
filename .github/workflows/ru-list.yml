@@ -3,7 +3,9 @@ name: Build ru-list
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/ru-list.yml']
+    paths: 
+      - '.github/workflows/ru-list.yml'
+      - 'files/add/add-ru-list.txt'
   workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
@@ -99,6 +101,7 @@ jobs:
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/dzen.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/winline.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/fonbet.list"
+          "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-ru-list.txt"
         )
 
         TEMP_RAW=$(mktemp)
@@ -113,7 +116,6 @@ jobs:
         for URL in "${SOURCES[@]}"; do
           SHORT_NAME=$(echo "$URL" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
 
-          # Считаем строки с той же логикой, что и основной парсер
           COUNT=$(curl -fsSL --retry 3 --retry-delay 2 --max-time 30 "$URL" 2>/dev/null | awk '
           { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
           /^[[:space:]]*$/ { next }
@@ -121,9 +123,15 @@ jobs:
           /^regexp:/ { next }
           /^include:/ { next }
           {
+            # geosite формат
             sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
             sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
             sub(/^root:/, ""); sub(/^\./, "")
+            # mihomo/clash формат
+            sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, "")
+            sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, "")
+            # Удаление wildcard префикса (как и +.)
+            sub(/^\*\./, "")
           }
           /^[[:space:]]*$/ { next }
           /\.$/ { next }
@@ -134,7 +142,6 @@ jobs:
             if (d == "") next
             if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
             if (d ~ /:/) next
-            # Whitelist только известных российских TLD
             if (d !~ /\./) {
               if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
             }
@@ -159,7 +166,6 @@ jobs:
 
         echo "🧹 Очистка и нормализация..."
 
-        # === ОСНОВНОЙ ПАРСЕР ===
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -170,12 +176,16 @@ jobs:
           sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^keyword:/, "")
           sub(/^full:/, ""); sub(/^host:/, ""); sub(/^suffix:/, "")
           sub(/^root:/, ""); sub(/^\./, "")
+          # mihomo/clash формат
+          sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, "")
+          sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, "")
+          # Удаление wildcard префикса (как и +.)
+          sub(/^\*\./, "")
         }
         /^[[:space:]]*$/ { next }
         /\.$/ { next }
         {
           d = $0
-
           sub(/@.*$/, "", d)
           sub(/[[:space:]].*$/, "", d)
 
@@ -183,7 +193,6 @@ jobs:
           if (d ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
           if (d ~ /:/) next
           
-          # === WHITELIST TLD: только ru, su, by, moscow и punycode (xn--*) ===
           if (d !~ /\./) {
             if (d != "ru" && d != "su" && d != "by" && d != "moscow" && d !~ /^xn--/) next
           }
@@ -198,7 +207,7 @@ jobs:
 
         BEFORE_DEDUP=$(wc -l < "$TEMP_CLEAN" | tr -d ' ')
 
-        echo " Сортировка и удаление дубликатов..."
+        echo "🔍 Сортировка и удаление дубликатов..."
         LC_ALL=C sort -u "$TEMP_CLEAN" > files/ru-list.txt
 
         if [ ! -s files/ru-list.txt ]; then
@@ -226,9 +235,8 @@ jobs:
         echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
         echo ""
         
-        # Проверка TLD (с защитой от Broken pipe)
         echo "🔍 Найденные TLD в списке:"
-        { grep -E '^(ru|su|by|moscow|xn--[a-z0-9]+)$' files/ru-list.txt || true; } | head -10 | sed 's/^/   ✓ TLD: /'
+        { grep -E '^(ru|su|by|moscow|xn--.*)$' files/ru-list.txt || true; } | head -10 | sed 's/^/   ✓ TLD: /'
         echo ""
         echo " Первые 5 обычных доменов:"
         { grep '\.' files/ru-list.txt || true; } | head -5 | sed 's/^/   ✓ /'
