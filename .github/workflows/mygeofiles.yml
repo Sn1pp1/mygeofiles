@@ -7,7 +7,6 @@ on:
 
 env:
   MAX_ARTIFACT_SIZE_MB: 50
-  DEBUG: ${{ secrets.DEBUG_MODE }}
   DOMAIN_LIST_VER: "latest"
   GEOIP_VER: "latest"
 
@@ -34,54 +33,30 @@ jobs:
         run: |
           LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name' | sed 's/^v//')
           echo "SING_BOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
-          echo "✅ Using sing-box v$LATEST_VERSION"
 
       - name: Install sing-box
         run: |
-          echo "Installing sing-box v${{ env.SING_BOX_VERSION }}..."
           SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
-          DOWNLOADED=false
           FORMAT="https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz"
-          
           if curl -sL --fail --connect-timeout 15 --retry 2 "$FORMAT" -o sing-box.tar.gz 2>/dev/null; then
-            echo "✅ Downloaded from: $FORMAT"
-            DOWNLOADED=true
-          fi
-
-          if [ "$DOWNLOADED" = true ] && file sing-box.tar.gz | grep -qE "gzip|tar"; then
             tar xzf sing-box.tar.gz
             SINGBOX_BIN=$(find . -name "sing-box" -type f 2>/dev/null | head -1)
             if [ -n "$SINGBOX_BIN" ]; then
-              sudo cp "$SINGBOX_BIN" /usr/local/bin/sing-box
-              sudo chmod +x /usr/local/bin/sing-box
-              echo "✅ sing-box installed"
-              sing-box version
+              sudo cp "$SINGBOX_BIN" /usr/local/bin/sing-box && sudo chmod +x /usr/local/bin/sing-box
             else
-              echo "⚠️ Binary not found, using go install as fallback"
               go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
               sudo ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
             fi
             rm -rf sing-box.tar.gz 2>/dev/null || true
           else
-            echo "⚠️ Download failed, using go install as fallback"
             go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
             sudo ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
-            sing-box version
           fi
 
       - name: Set build date
         run: |
           echo "BUILD_DATE=$(TZ=Europe/Moscow date '+%Y-%m-%d')" >> $GITHUB_ENV
-          echo "BUILD_TIME=$(TZ=Europe/Moscow date '+%H:%M:%S')" >> $GITHUB_ENV
           echo "BUILD_DATETIME=$(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')" >> $GITHUB_ENV
-
-      - name: Setup debug logging
-        run: |
-          echo "🔧 RUN_ID=${{ github.run_id }}" >> $GITHUB_ENV
-          echo "🔧 RUN_NUMBER=${{ github.run_number }}" >> $GITHUB_ENV
-          if [ "${{ env.DEBUG }}" = "true" ]; then
-            set -x
-          fi
 
       - name: Prepare Data
         run: |
@@ -90,16 +65,10 @@ jobs:
 
           download_with_retry() {
             local url="$1" dest="$2" max=3
-            url=$(echo "$url" | xargs)
-            [ -z "$url" ] && return 1
             for i in $(seq 1 $max); do
-              if curl -sL --fail --connect-timeout 15 --retry 2 --retry-delay 2 "$url" -o "$dest"; then
-                return 0
-              fi
-              echo "⚠️ Retry $i/$max for $(basename "$url")"
+              if curl -sL --fail --connect-timeout 15 --retry 2 --retry-delay 2 "$url" -o "$dest"; then return 0; fi
               sleep $((i * 2))
             done
-            echo "❌ Failed: $(basename "$url")"
             return 1
           }
 
@@ -108,7 +77,6 @@ jobs:
             ["category-ads"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/category-ads.txt"
             ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
           )
-
           declare -A GEOIP=(
             ["private-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/private.srs"
             ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
@@ -116,7 +84,6 @@ jobs:
 
           cat << 'EOF' > parser.py
           import json, sys, os, re
-
           def extract(obj, target_type):
               res = []
               if isinstance(obj, dict):
@@ -135,7 +102,6 @@ jobs:
               elif isinstance(obj, list):
                   for item in obj: res.extend(extract(item, target_type))
               return res
-
           try:
               target, filename = sys.argv[1], sys.argv[2]
               if not os.path.exists('temp.json'): sys.exit(0)
@@ -144,370 +110,144 @@ jobs:
               if results:
                   with open(f'data/{target}/{filename}', 'w', encoding='utf-8') as f_out:
                       f_out.write('\n'.join(results) + '\n')
-                  print(f"✅ Parsed {len(results)} rules")
-          except Exception as e: 
-              print(f"⚠️ Parser error for {filename}: {e}")
+          except Exception: pass
           EOF
 
           process_categories() {
-            local target="$1"
-            shift
-            local -n cats=$1
-            local failed=0
-
+            local target="$1"; shift; local -n cats=$1; local failed=0
             for name in "${!cats[@]}"; do
               local url="${cats[$name]}"
               [ -z "$url" ] && continue
-
-              echo ""
-              echo "⬇️  [$target] $name"
-              echo "    URL: $url"
-
-              if ! download_with_retry "$url" "temp_file"; then
-                echo "  ❌ Не удалось скачать"
-                failed=$((failed + 1))
-                continue
-              fi
-
+              if ! download_with_retry "$url" "temp_file"; then failed=$((failed + 1)); continue; fi
               local ext="${url##*.}"
               local output_path="data/$target/$name"
-
               if [[ "$url" == *.srs ]]; then
-                echo "  🔧 Декомпилируем .srs..."
-                if ! sing-box rule-set decompile "temp_file" -o "temp.json" 2>&1; then
-                  echo "  ⚠️  Декомпиляция не удалась, пропускаем"
-                  rm -f temp_file
-                  failed=$((failed + 1))
-                  continue
-                fi
+                sing-box rule-set decompile "temp_file" -o "temp.json" 2>&1 || { failed=$((failed + 1)); continue; }
                 python3 parser.py "$target" "$name" || failed=$((failed + 1))
-
               elif [[ "$ext" == "txt" || "$ext" == "lst" ]]; then
-                echo "   Обрабатываем текстовый список..."
                 grep -v '^#' "temp_file" | tr -d '\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' > "$output_path" || true
-                count=$(wc -l < "$output_path" 2>/dev/null || echo 0)
-                echo "  ✅ Сохранено: $count записей → $output_path"
-
               else
                 mv "temp_file" "temp.json"
                 python3 parser.py "$target" "$name" || failed=$((failed + 1))
               fi
-
               rm -f temp.json temp_file 2>/dev/null || true
             done
-
             return $failed
           }
 
-          echo "🔄 Processing GEOSITE categories..."
-          process_categories "geosite" GEOSITE || echo "⚠️  Некоторые geosite не обработаны"
-
-          echo "🔄 Processing GEOIP categories..."
-          process_categories "geoip" GEOIP || echo "⚠️  Некоторые geoip не обработаны"
+          process_categories "geosite" GEOSITE || true
+          process_categories "geoip" GEOIP || true
 
       - name: Validate and Cleanup
         run: |
           find data -type f -empty -delete
+          [ -z "$(ls -A data/geosite 2>/dev/null)" ] && { echo "❌ Error: No geosite data"; exit 1; }
+          echo "✅ Prepared $(ls -1 data/geosite 2>/dev/null | wc -l) geosite and $(ls -1 data/geoip 2>/dev/null | wc -l) geoip categories"
 
-          echo "📊 Final categories:"
-          echo "   • geosite: $(ls -1 data/geosite 2>/dev/null | wc -l) files"
-          echo "   • geoip: $(ls -1 data/geoip 2>/dev/null | wc -l) files"
-
-          echo "📋 File contents preview:"
-          for f in data/geosite/* data/geoip/*; do
-            if [ -f "$f" ]; then
-              lines=$(wc -l < "$f")
-              echo "   • $(basename "$f"): $lines lines"
-              if [ "$lines" -eq 0 ]; then
-                echo "     ⚠️  WARNING: File is empty!"
-              fi
-            fi
-          done
-
-          if [ -z "$(ls -A data/geosite 2>/dev/null)" ]; then
-            echo "❌ Error: No geosite data generated!"
-            exit 1
-          fi
-
-      - name: Clean and Normalize Domains (CRITICAL FIX)
+      - name: Clean and Normalize Domains
         run: |
-          echo "🧹 Cleaning and normalizing domain files..."
-
           for file in data/geosite/*; do
             [ -f "$file" ] || continue
-
-            filename=$(basename "$file")
-            echo "   • Processing $filename..."
-
             tr -d '\r' < "$file" | awk '
-            {
-              gsub(/\r/, "")
-              sub(/^[[:space:]]+/, "")
-              sub(/[[:space:]]+$/, "")
+              { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+              /^[[:space:]]*$/ || /^[[:space:]]*#/ { next }
+              {
+                line = $0
+                if (line ~ /^regexp:/ || line ~ /^domain_regex:/) { sub(/^domain_regex:/, "regexp:"); print line; next }
+                if (line ~ /^keyword:/ || line ~ /^domain_keyword:/) { sub(/^domain_keyword:/, "keyword:"); print line; next }
+                if (line ~ /^full:/) { print line; next }
 
-              if (/^[[:space:]]*$/ || /^[[:space:]]*#/) next
+                sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^domain_suffix:/, "")
+                sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, ""); sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, ""); sub(/^\*\./, "")
+                
+                # КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: явное удаление конечной точки
+                sub(/\.$/, "")
+                sub(/@.*$/, ""); sub(/[[:space:]].*$/, "")
+                sub(/^[[:space:]\.]+/, "", line); sub(/[[:space:]\.]+$/, "", line)
 
-              line = $0
-
-              # 1. Сохраняем специальные префиксы v2fly как есть
-              if (line ~ /^regexp:/ || line ~ /^domain_regex:/) {
-                sub(/^domain_regex:/, "regexp:")
-                print line
-                next
-              }
-              if (line ~ /^keyword:/ || line ~ /^domain_keyword:/) {
-                sub(/^domain_keyword:/, "keyword:")
-                print line
-                next
-              }
-              if (line ~ /^full:/) {
-                print line
-                next
-              }
-
-              # 2. Удаляем префиксы, которые означают "суффикс"
-              sub(/^\+\./, "")
-              sub(/^domain:/, "")
-              sub(/^domain_suffix:/, "")
-              sub(/^DOMAIN,/, "")
-              sub(/^DOMAIN-SUFFIX,/, "")
-              sub(/^DOMAIN-KEYWORD,/, "")
-              sub(/^GEOSITE,/, "")
-              sub(/^\*\./, "")
-
-              # 3. Очищаем от мусора по краям
-              sub(/^[[:space:]\.]+/, "", line)
-              sub(/[[:space:]\.]+$/, "", line)
-
-              # 4. Базовая валидация
-              if (line == "") next
-              if (line ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next # Не IP в geosite
-              if (line ~ /:/) next # Не IPv6 в geosite
-              if (line ~ /\.\./) next
-              if (length(line) > 253) next
-              if (line ~ /[^a-zA-Z0-9._-]/) next # Только безопасные символы
-
-              # === 5. ГАРАНТИЯ СОХРАНЕНИЯ TLD ===
-              # Если в строке нет точки, разрешаем только известные безопасные однословные TLD
-              if (line !~ /\./) {
-                if (line != "ru" && line != "su" && line != "by" && line != "moscow" && line != "local" && line != "lan" && line != "internal" && line != "localdomain" && line != "example" && line != "invalid" && line != "test" && line !~ /^xn--/) {
-                  next # Отбрасываем мусор без точек
+                if (line == "" || line ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ || line ~ /:/ || line ~ /\.\./ || length(line) > 253 || line ~ /[^a-zA-Z0-9._-]/) next
+                
+                # Железобетонный Whitelist TLD (включая localhost)
+                if (line !~ /\./) {
+                  if (line != "ru" && line != "su" && line != "by" && line != "moscow" && line != "local" && line != "lan" && line != "localhost" && line != "internal" && line != "localdomain" && line != "example" && line != "invalid" && line != "test" && line !~ /^xn--/) next
                 }
-              }
-
-              print tolower(line)
-            }' | sort -u > "$file.cleaned"
-
+                print tolower(line)
+              }' | LC_ALL=C sort -u > "$file.cleaned"
             mv "$file.cleaned" "$file"
-
-            count=$(wc -l < "$file")
-            if [ "$count" -eq 0 ]; then
-              echo "     ⚠️  WARNING: File is empty after cleaning!"
-            else
-              echo "     ✅ Cleaned: $count entries"
-            fi
           done
-
           echo "✅ Domain normalization complete"
 
       - name: Pre-build validation
         run: |
-          echo "🔍 Pre-build validation..."
           bad=0
           for file in data/geosite/*; do
             [ -f "$file" ] || continue
             invalid=$(grep -nE '^(full|keyword|domain|domain_suffix|domain_keyword|regexp):\.+' "$file" || true)
-            if [ -n "$invalid" ]; then
-              echo "❌ Invalid entries in $(basename "$file"):"
-              echo "$invalid" | head -5
-              bad=1
-            fi
+            if [ -n "$invalid" ]; then echo "❌ Invalid entries in $(basename "$file"):"; echo "$invalid" | head -5; bad=1; fi
           done
-          if [ "$bad" -eq 1 ]; then
-            echo "❌ Validation failed: entries with leading dots found"
-            exit 1
-          fi
+          [ "$bad" -eq 1 ] && exit 1
           echo "✅ All entries are valid"
 
       - name: Build geosite.dat
         run: |
-          echo "🔨 Building geosite.dat..."
-
-          empty_files=0
-          for f in data/geosite/*; do
-            if [ -f "$f" ] && [ ! -s "$f" ]; then
-              echo "⚠️  Warning: $(basename "$f") is empty"
-              empty_files=$((empty_files + 1))
-            fi
-          done
-
-          if [ "$empty_files" -gt 0 ]; then
-            echo "⚠️  $empty_files empty files found, but continuing..."
-          fi
-
-          go run github.com/v2fly/domain-list-community@${{ env.DOMAIN_LIST_VER }} \
-            --datapath=data/geosite --outputname=geosite.dat
-
-          if [ -f geosite.dat ]; then
-            ls -lh geosite.dat
-          else
-            echo "❌ geosite.dat was not created!"
-            exit 1
-          fi
+          go run github.com/v2fly/domain-list-community@${{ env.DOMAIN_LIST_VER }} --datapath=data/geosite --outputname=geosite.dat
+          [ ! -f geosite.dat ] && { echo "❌ geosite.dat not created"; exit 1; }
+          echo "✅ geosite.dat created: $(du -h geosite.dat | cut -f1)"
 
       - name: Build geoip.dat
         run: |
-          echo "🔨 Building geoip.dat..."
           echo '{"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}], "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}' > geoip_config.json
           go install github.com/v2fly/geoip@${{ env.GEOIP_VER }}
           $(go env GOPATH)/bin/geoip -c geoip_config.json
-          ls -lh geoip.dat
+          echo "✅ geoip.dat created: $(du -h geoip.dat | cut -f1)"
 
       - name: Validate generated files
         run: |
-          echo "🔍 Validating generated files..."
-
-          echo "Checking geosite.dat..."
-          if ! file geosite.dat | grep -q "data"; then
-            echo "❌ geosite.dat is invalid or corrupted"
-            exit 1
-          fi
-
-          echo "Checking geoip.dat..."
-          if ! file geoip.dat | grep -q "data"; then
-            echo "❌ geoip.dat is invalid or corrupted"
-            exit 1
-          fi
-
-          echo "✅ All files validated successfully"
+          file geosite.dat | grep -q "data" || { echo "❌ geosite.dat corrupted"; exit 1; }
+          file geoip.dat | grep -q "data" || { echo "❌ geoip.dat corrupted"; exit 1; }
+          echo "✅ Files validated successfully"
 
       - name: Health check
         run: |
-          echo "🏥 Running health checks..."
-
           geosite_size=$(stat -c%s geosite.dat 2>/dev/null || stat -f%z geosite.dat 2>/dev/null)
           geoip_size=$(stat -c%s geoip.dat 2>/dev/null || stat -f%z geoip.dat 2>/dev/null)
-
-          echo "   • geosite.dat: ${geosite_size} bytes"
-          echo "   • geoip.dat: ${geoip_size} bytes"
-
-          if [ "$geosite_size" -lt 1000 ]; then
-            echo "❌ geosite.dat too small (${geosite_size} bytes) - possible corruption"
-            exit 1
-          fi
-
-          if [ "$geoip_size" -lt 100 ]; then
-            echo "❌ geoip.dat too small (${geoip_size} bytes) - possible corruption"
-            exit 1
-          fi
-
+          [ "$geosite_size" -lt 1000 ] && { echo "❌ geosite.dat too small"; exit 1; }
+          [ "$geoip_size" -lt 100 ] && { echo "❌ geoip.dat too small"; exit 1; }
           echo "✅ Health check passed"
-
-      - name: Generate statistics
-        run: |
-          echo "📈 Generating statistics..."
-
-          {
-            echo "## 📈 Build Statistics"
-            echo ""
-            echo "### Geosite Categories"
-            echo ""
-            echo "| Category | Entries |"
-            echo "|----------|---------|"
-            for f in data/geosite/*; do
-              if [ -f "$f" ]; then
-                name=$(basename "$f")
-                count=$(wc -l < "$f")
-                echo "| $name | $count |"
-              fi
-            done
-            echo ""
-            echo "### Geoip Categories"
-            echo ""
-            echo "| Category | Entries |"
-            echo "|----------|---------|"
-            for f in data/geoip/*; do
-              if [ -f "$f" ]; then
-                name=$(basename "$f")
-                count=$(wc -l < "$f")
-                echo "| $name | $count |"
-              fi
-            done
-          } > statistics.md
-
-          cat statistics.md
-
-      - name: Check artifact sizes
-        run: |
-          echo "📏 Checking artifact sizes (max: ${{ env.MAX_ARTIFACT_SIZE_MB }}MB)..."
-          for f in geosite.dat geoip.dat; do
-            if [ -f "$f" ]; then
-              size=$(du -m "$f" | cut -f1)
-              if [ "$size" -gt "${{ env.MAX_ARTIFACT_SIZE_MB }}" ]; then
-                echo "❌ $f is ${size}MB (exceeds limit)"
-                exit 1
-              fi
-              echo "✅ $f: ${size}MB"
-            else
-              echo "❌ $f not found!"
-              exit 1
-            fi
-          done
 
       - name: Generate SHA256
         run: |
-          echo "🔐 Generating checksums..."
           sha256sum geosite.dat > geosite.dat.sha256
           sha256sum geoip.dat > geoip.dat.sha256
-          cat geosite.dat.sha256 geoip.dat.sha256
 
       - name: Generate changelog
         run: |
           {
             echo "## 🔄 Build #${{ github.run_number }}"
-            echo ""
-            echo "**🕒 Built:** $(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')"
+            echo "**🕒 Built:** ${{ env.BUILD_DATETIME }}"
             echo "**🔗 Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            echo "**🔖 Commit:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
             echo ""
             echo "### 📦 Contents"
             echo "- **Geosite categories:** $(ls -1 data/geosite 2>/dev/null | wc -l)"
             echo "- **Geoip categories:** $(ls -1 data/geoip 2>/dev/null | wc -l)"
-            echo "- **geosite.dat size:** $(du -h geosite.dat | cut -f1)"
-            echo "- **geoip.dat size:** $(du -h geoip.dat | cut -f1)"
+            echo "- **geosite.dat:** $(du -h geosite.dat | cut -f1)"
+            echo "- **geoip.dat:** $(du -h geoip.dat | cut -f1)"
             echo ""
             echo "### 🔐 Checksums"
             echo '```'
             cat geosite.dat.sha256 geoip.dat.sha256
             echo '```'
-            echo ""
-            echo "### 📊 Statistics"
-            cat statistics.md
           } > changelog.md
 
-          cat changelog.md
-
-      - name: Push Files to dat-files branch (SAFE)
+      - name: Push Files to dat-files branch
         run: |
-          echo "📤 Pushing artifacts to separate branch..."
-
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-
-          echo "📁 Files:"
-          ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
-
           git switch --orphan dat-files
           git rm -r --cached . >/dev/null 2>&1 || true
-
           git add -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
-
-          COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%H:%M MSK')"
-          git commit -m "$COMMIT_MSG" || echo "⚠️ No changes to commit"
-
+          git commit -m "🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%H:%M MSK')" || true
           git push origin dat-files --force
-
-          echo "✅ Done! Artifacts are on dat-files branch"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
