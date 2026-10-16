@@ -76,7 +76,6 @@ jobs:
             ["direct"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct.txt"
             ["ru-blocklist"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist.txt"
           )
-          # Убираем дефисы в именах для geoip во избежание конфликта парсера v2fly/geoip с суффиксами
           declare -A GEOIP=(
             ["directip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct-ip.txt"
             ["rublocklistip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist-ip.txt"
@@ -160,13 +159,14 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          echo "🔍 Строгая очистка и валидация data/geoip/..."
+          echo "🔍 Абсолютно строгая валидация и очистка IP-адресов..."
           python3 -c '
           import os, glob, ipaddress
 
           for f in glob.glob("data/geoip/*"):
               if not os.path.isfile(f):
                   continue
+              print(f"📄 Проверка файла: {os.path.basename(f)}")
               with open(f, "r", encoding="utf-8", errors="ignore") as file:
                   lines = file.readlines()
               
@@ -176,22 +176,26 @@ jobs:
                   if not line or line.startswith("#"):
                       continue
                   try:
+                      # strict=False позволяет нормально парсить сети со смещениями, но мы проверяем prefixlen ниже
                       net = ipaddress.ip_network(line, strict=False)
-                      if net.version == 4 and not (0 <= net.prefixlen <= 32):
-                          continue
-                      if net.version == 6 and not (0 <= net.prefixlen <= 128):
-                          continue
-                      valid_lines.append(str(net) + "\n")
-                  except Exception:
-                      pass
+                      
+                      # Жесткий фильтр диапазона масок: IPv4 (0-32), IPv6 (0-128)
+                      if net.version == 4 and (0 <= net.prefixlen <= 32):
+                          valid_lines.append(str(net) + "\n")
+                      elif net.version == 6 and (0 <= net.prefixlen <= 128):
+                          valid_lines.append(str(net) + "\n")
+                      else:
+                          print(f"   ⚠️ Пропущен неверный префикс: {line}")
+                  except Exception as e:
+                      print(f"   ⚠️ Отброшена битая строка \"{line}\": {e}")
               
               if valid_lines:
                   with open(f, "w", encoding="utf-8") as file:
                       file.writelines(valid_lines)
-                  print(f"   ✅ {os.path.basename(f)}: записано {len(valid_lines)} валидных строк")
+                  print(f"   ✅ Записано валидных строк: {len(valid_lines)}")
               else:
                   os.remove(f)
-                  print(f"   ❌ {os.path.basename(f)} пуст, удален")
+                  print(f"   ❌ Файл пуст, удален!")
           '
 
           file_count=$(ls -1 data/geoip 2>/dev/null | wc -l)
