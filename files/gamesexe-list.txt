@@ -9,31 +9,42 @@ PnkBstrA.exe
 PnkBstrB.exe
 EAAntiCheat.GameService.exe
 EAAntiCheat.Installer.exe
+XignCode3.exe
+GameMon.des
+FACEITClient.exe
+FACEITAC.exe
+mhyprot2.exe
 Xenuine.exe
 tenprotect.exe
-mhyprot2.exe
+RiotClientServices.exe
 
-# === ЛАУНЧЕРЫ И ПЛАТФОРМЫ ===
+# === ЛАУНЧЕРЫ И ИГРОВЫЕ ПЛАТФОРМЫ ===
 steam.exe
 steamwebhelper.exe
 EpicGamesLauncher.exe
 Battle.net.exe
 Agent.exe
 EADesktop.exe
+Origin.exe
 UbisoftConnect.exe
 UbisoftGameLauncher.exe
 GalaxyClient.exe
 XboxApp.exe
 GamingServices.exe
 WeGame.exe
-RiotClientServices.exe
-RiotClientUx.exe
-BsgLauncher.exe
+Amazon Games.exe
+Paradox Launcher.exe
+RockstarGamesLauncher.exe
+NetEaseUU.exe
 
-# === ИГРЫ ===
+# === ОНЛАЙН-ИГРЫ ===
+cs2.exe
+dota2.exe
+rustclient.exe
 VALORANT.exe
 League of Legends.exe
 Legends of Runeterra.exe
+lor.exe
 Wow.exe
 WowClassic.exe
 Overwatch.exe
@@ -50,19 +61,34 @@ WoTBlitz.exe
 WoWsBlitz.exe
 r5apex.exe
 bf2042.exe
+NeedForSpeed.exe
+fc24.exe
+fc25.exe
+fc26.exe
+fc27.exe
 RainbowSix.exe
 TheDivision2.exe
+AssassinsCreedValhalla.exe
 TslGame.exe
 PUBG-Win64-Shipping.exe
 PlayGTAV.exe
 RDR2.exe
+Launcher.exe
 javaw.exe
 Minecraft.Windows.exe
 RobloxPlayerBeta.exe
 EscapeFromTarkov.exe
+Palworld-Win64-Shipping.exe
+LethalCompany.exe
+Helldivers2.exe
 
 # === СТРИМИНГ ===
 obs64.exe
 obs32.exe
 Streamlabs Desktop.exe
+XSplit.Core.exe
+TwitchStudio.exe
 OBSVirtualCamera.exe
+
+# === ГОЛОСОВАЯ СВЯЗЬ И КОММУНИКАЦИЯ ===
+SteamVoice.exe
