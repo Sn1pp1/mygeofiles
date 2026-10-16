@@ -98,7 +98,9 @@ hiwifi.com
 home.arpa
 instant.arubanetworks.com
 kis.v2.scr.kaspersky-labs.com
+lan
 leike.cc
+local
 local.adguard.org
 localhost.ptlogin2.qq.com
 localhost.sec.qq.com
