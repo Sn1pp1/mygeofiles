@@ -132,6 +132,7 @@ peiluyou.com
 phicomm.me
 plex.direct
 pool.ntp.org
+push-api.cloud.huawei.com
 push.apple.com
 push.dbankcloud.com
 push.hicloud.com
