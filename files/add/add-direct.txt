@@ -17,6 +17,7 @@ push.hicloud.com
 push.dbankcloud.com
 metrics-dra.dt.hicloud.com
 hmspush.io
+push-api.cloud.huawei.com
 resolver.msg.xiaomi.net
 api.io.mi.com
 sec-cdn.static.xiaomi.net
