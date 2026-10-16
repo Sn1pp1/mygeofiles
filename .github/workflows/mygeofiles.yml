@@ -31,11 +31,13 @@ jobs:
 
       - name: Get latest sing-box version
         run: |
+          set -euo pipefail
           LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name' | sed 's/^v//')
           echo "SING_BOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
 
       - name: Install sing-box
         run: |
+          set -euo pipefail
           SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
           FORMAT="https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz"
           if curl -sL --fail --connect-timeout 15 --retry 2 "$FORMAT" -o sing-box.tar.gz 2>/dev/null; then
@@ -55,6 +57,7 @@ jobs:
 
       - name: Set build date
         run: |
+          set -euo pipefail
           echo "BUILD_DATE=$(TZ=Europe/Moscow date '+%Y-%m-%d')" >> $GITHUB_ENV
           echo "BUILD_DATETIME=$(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')" >> $GITHUB_ENV
 
@@ -86,10 +89,13 @@ jobs:
             for name in "${!cats[@]}"; do
               local url="${cats[$name]}"
               [ -z "$url" ] && continue
-              if ! download_with_retry "$url" "temp_file"; then failed=$((failed + 1)); continue; fi
+              if ! download_with_retry "$url" "temp_file"; then 
+                echo "⚠️ Failed to download: $url"
+                failed=$((failed + 1)); continue; 
+              fi
               
               local output_path="data/$target/$name"
-              # Так как мы используем только свои .txt файлы, просто чистим их от комментариев и пустых строк
+              # Очищаем от комментариев, пустых строк и carriage return
               grep -v '^[[:space:]]*#' "temp_file" | tr -d '\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' > "$output_path" || true
               
               rm -f temp_file 2>/dev/null || true
@@ -102,6 +108,7 @@ jobs:
 
       - name: Validate and Cleanup
         run: |
+          set -euo pipefail
           find data -type f -empty -delete
           [ -z "$(ls -A data/geosite 2>/dev/null)" ] && { echo "❌ Error: No geosite data"; exit 1; }
           [ -z "$(ls -A data/geoip 2>/dev/null)" ] && { echo "❌ Error: No geoip data"; exit 1; }
@@ -109,6 +116,7 @@ jobs:
 
       - name: Clean and Normalize Domains
         run: |
+          set -euo pipefail
           for file in data/geosite/*; do
             [ -f "$file" ] || continue
             tr -d '\r' < "$file" | awk '
@@ -140,6 +148,7 @@ jobs:
 
       - name: Pre-build validation
         run: |
+          set -euo pipefail
           bad=0
           for file in data/geosite/*; do
             [ -f "$file" ] || continue
@@ -151,51 +160,107 @@ jobs:
 
       - name: Build geosite.dat
         run: |
+          set -euo pipefail
           go run github.com/v2fly/domain-list-community@${{ env.DOMAIN_LIST_VER }} --datapath=data/geosite --outputname=geosite.dat
           [ ! -f geosite.dat ] && { echo "❌ geosite.dat not created"; exit 1; }
           echo "✅ geosite.dat created: $(du -h geosite.dat | cut -f1)"
 
       - name: Build geoip.dat
         run: |
+          set -euo pipefail
           echo "🔍 Проверяем содержимое data/geoip/..."
+          
           for f in data/geoip/*; do
             [ -f "$f" ] || continue
-            lines=$(wc -l < "$f" | tr -d ' ')
-            echo "   • $(basename "$f"): $lines строк"
-            if [ "$lines" -eq 0 ]; then
-              echo "  ⚠️  Удаляем пустой файл: $(basename "$f")"
-              rm -f "$f"
+            total_lines=$(wc -l < "$f" | tr -d ' ')
+            echo "   • $(basename "$f"): $total_lines строк"
+            
+            echo "     Пример содержимого:"
+            head -3 "$f" | sed 's/^/       /'
+            
+            # Строгая очистка: оставляем ТОЛЬКО валидные CIDR
+            grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}/([0-9]|[12][0-9]|3[0-2])$|^([0-9a-fA-F:]+):?([0-9a-fA-F:]*)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$' "$f" > "$f.clean" 2>/dev/null || true
+            
+            valid_lines=$(wc -l < "$f.clean" | tr -d ' ')
+            invalid_lines=$((total_lines - valid_lines))
+            
+            if [ "$invalid_lines" -gt 0 ]; then
+              echo "     ⚠️  Удалено $invalid_lines невалидных строк"
+            fi
+            
+            if [ "$valid_lines" -gt 0 ]; then
+              mv "$f.clean" "$f"
+              echo "     ✅ Осталось $valid_lines валидных CIDR"
             else
-              # Оставляем только валидные CIDR (страховка от мусора)
-              grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/[0-9]+$|^[0-9a-fA-F:]+/[0-9]+$' "$f" > "$f.clean" || true
-              if [ -s "$f.clean" ]; then
-                mv "$f.clean" "$f"
-              else
-                echo "  ⚠️  Файл не содержит валидных CIDR, удаляем: $(basename "$f")"
-                rm -f "$f" "$f.clean"
-              fi
+              echo "     ❌ Файл не содержит валидных CIDR, удаляем"
+              rm -f "$f" "$f.clean"
             fi
           done
           
-          if [ -z "$(ls -A data/geoip 2>/dev/null)" ]; then
+          file_count=$(ls -1 data/geoip 2>/dev/null | wc -l)
+          if [ "$file_count" -eq 0 ]; then
             echo "❌ Error: Нет валидных файлов в data/geoip/"
             exit 1
           fi
-
+          
+          echo ""
+          echo "📊 Итого файлов для компиляции: $file_count"
           echo "🔨 Building geoip.dat..."
-          echo '{"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}], "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}' > geoip_config.json
+          
+          cat > geoip_config.json << 'EOJSON'
+          {
+            "input": [
+              {
+                "type": "text",
+                "action": "add",
+                "args": {
+                  "inputDir": "data/geoip"
+                }
+              }
+            ],
+            "output": [
+              {
+                "type": "v2rayGeoIPDat",
+                "action": "output",
+                "args": {
+                  "outputDir": ".",
+                  "outputName": "geoip.dat"
+                }
+              }
+            ]
+          }
+EOJSON
+          
+          echo "📄 Конфиг geoip_config.json:"
+          cat geoip_config.json
+          echo ""
+          
           go install github.com/v2fly/geoip@${{ env.GEOIP_VER }}
-          $(go env GOPATH)/bin/geoip -c geoip_config.json
+          
+          echo "🚀 Запускаем компиляцию..."
+          if ! $(go env GOPATH)/bin/geoip -c geoip_config.json 2>&1; then
+            echo "❌ Ошибка компиляции geoip.dat"
+            echo "📄 Содержимое data/geoip/ для отладки:"
+            for f in data/geoip/*; do
+              [ -f "$f" ] || continue
+              echo "   === $(basename "$f") ==="
+              head -10 "$f"
+            done
+            exit 1
+          fi
+          
           echo "✅ geoip.dat created: $(du -h geoip.dat | cut -f1)"
 
       - name: Validate generated files
         run: |
+          set -euo pipefail
           file geosite.dat | grep -q "data" || { echo "❌ geosite.dat corrupted"; exit 1; }
           file geoip.dat | grep -q "data" || { echo "❌ geoip.dat corrupted"; exit 1; }
           echo "✅ Files validated successfully"
 
       - name: Health check
         run: |
+          set -euo pipefail
           geosite_size=$(stat -c%s geosite.dat 2>/dev/null || stat -f%z geosite.dat 2>/dev/null)
           geoip_size=$(stat -c%s geoip.dat 2>/dev/null || stat -f%z geoip.dat 2>/dev/null)
           [ "$geosite_size" -lt 1000 ] && { echo "❌ geosite.dat too small"; exit 1; }
@@ -204,11 +269,13 @@ jobs:
 
       - name: Generate SHA256
         run: |
+          set -euo pipefail
           sha256sum geosite.dat > geosite.dat.sha256
           sha256sum geoip.dat > geoip.dat.sha256
 
       - name: Generate changelog with statistics
         run: |
+          set -euo pipefail
           {
             echo "## 🔄 Build #${{ github.run_number }}"
             echo "**🕒 Built:** ${{ env.BUILD_DATETIME }}"
@@ -250,6 +317,7 @@ jobs:
 
       - name: Push Files to dat-files branch
         run: |
+          set -euo pipefail
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git switch --orphan dat-files
