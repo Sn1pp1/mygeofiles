@@ -7,8 +7,6 @@ vgc.exe
 vgtray.exe
 PnkBstrA.exe
 PnkBstrB.exe
-EAAntiCheat.GameService.exe
-EAAntiCheat.Installer.exe
 XignCode3.exe
 GameMon.des
 FACEITClient.exe
@@ -16,19 +14,24 @@ FACEITAC.exe
 mhyprot2.exe
 Xenuine.exe
 tenprotect.exe
-RiotClientServices.exe
+EAAntiCheat.GameService.exe
+EAAntiCheat.Installer.exe
 
-# === ЛАУНЧЕРЫ И ИГРОВЫЕ ПЛАТФОРМЫ ===
+# === ЛАУНЧЕРЫ ===
 steam.exe
 steamwebhelper.exe
+SteamService.exe
 EpicGamesLauncher.exe
+EpicWebHelper.exe
 Battle.net.exe
 Agent.exe
 EADesktop.exe
 Origin.exe
+OriginWebHelperService.exe
 UbisoftConnect.exe
 UbisoftGameLauncher.exe
 GalaxyClient.exe
+GalaxyClientService.exe
 XboxApp.exe
 GamingServices.exe
 WeGame.exe
@@ -36,30 +39,41 @@ Amazon Games.exe
 Paradox Launcher.exe
 RockstarGamesLauncher.exe
 NetEaseUU.exe
+RiotClientServices.exe
+RiotClientUx.exe
 
-# === ОНЛАЙН-ИГРЫ ===
+# === ИГРЫ ===
 cs2.exe
 dota2.exe
 rustclient.exe
+hl2.exe
 VALORANT.exe
 League of Legends.exe
-Legends of Runeterra.exe
+LeagueClient.exe
+LeagueClientUx.exe
+LeagueClientUxRender.exe
 lor.exe
 Wow.exe
 WowClassic.exe
+WowT.exe
+WowB.exe
 Overwatch.exe
 Diablo IV.exe
+Diablo IV Launcher.exe
 Hearthstone.exe
 GenshinImpact.exe
 YuanShen.exe
 StarRail.exe
 ZenlessZoneZero.exe
+GenshinImpactCloudGame.exe
 launcher.exe
 WorldOfTanks.exe
 WorldOfWarships.exe
 WoTBlitz.exe
 WoWsBlitz.exe
+WargamingGameCenter.exe
 r5apex.exe
+r5apex_ea.exe
 bf2042.exe
 NeedForSpeed.exe
 fc24.exe
@@ -67,22 +81,28 @@ fc25.exe
 fc26.exe
 fc27.exe
 RainbowSix.exe
+RainbowSix_Vulkan.exe
 TheDivision2.exe
 AssassinsCreedValhalla.exe
 TslGame.exe
 PUBG-Win64-Shipping.exe
+KartRider_Drift.exe
 PlayGTAV.exe
+GTA5.exe
 RDR2.exe
 Launcher.exe
 javaw.exe
+java.exe
 Minecraft.Windows.exe
 RobloxPlayerBeta.exe
+RobloxStudioBeta.exe
 EscapeFromTarkov.exe
+BsgLauncher.exe
 Palworld-Win64-Shipping.exe
 LethalCompany.exe
 Helldivers2.exe
 
-# === СТРИМИНГ ===
+# === СТРИМИНГ И ЗАПИСЬ ===
 obs64.exe
 obs32.exe
 Streamlabs Desktop.exe
@@ -90,5 +110,5 @@ XSplit.Core.exe
 TwitchStudio.exe
 OBSVirtualCamera.exe
 
-# === ГОЛОСОВАЯ СВЯЗЬ И КОММУНИКАЦИЯ ===
+# === ГОЛОСОВАЯ СВЯЗЬ ===
 SteamVoice.exe
