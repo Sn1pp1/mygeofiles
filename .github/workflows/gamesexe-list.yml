@@ -36,7 +36,6 @@ jobs:
 
         echo "🧹 Парсинг и очистка..."
 
-        # Парсинг через awk
         awk '
         { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
         /^[[:space:]]*$/ { next }
@@ -62,42 +61,22 @@ jobs:
         head -10 "$TEMP_CLEAN" | sed 's/^/   ✓ /'
         echo ""
 
-        # === ГЕНЕРАЦИЯ JSON ЧЕРЕЗ PYTHON (heredoc) ===
-        cat > /tmp/generate_json.py << 'PYEOF'
-import json
-import sys
-
-input_file = sys.argv[1]
-output_file = sys.argv[2]
-
-processes = []
-with open(input_file, 'r') as f:
-    for line in f:
-        line = line.strip()
-        if line:
-            processes.append(line)
-
-data = {
-    "version": 1,
-    "rules": [
+        # === ГЕНЕРАЦИЯ JSON ЧЕРЕЗ JQ ===
+        echo "🔄 Генерация JSON..."
+        
+        jq -n --rawfile processes "$TEMP_CLEAN" '
         {
-            "process_name": processes
-        }
-    ]
-}
-
-with open(output_file, 'w') as f:
-    json.dump(data, f, indent=2)
-
-print(f"✅ JSON создан: {output_file}")
-print(f"📦 Количество процессов: {len(processes)}")
-PYEOF
-
-        python3 /tmp/generate_json.py "$TEMP_CLEAN" files/json/gamesexe-list.json
+          "version": 1,
+          "rules": [
+            {
+              "process_name": ($processes | split("\n") | map(select(length > 0)))
+            }
+          ]
+        }' > files/json/gamesexe-list.json
 
         # Валидация JSON
-        echo " Валидация JSON..."
-        if ! python3 -m json.tool files/json/gamesexe-list.json > /dev/null 2>&1; then
+        echo "🔍 Валидация JSON..."
+        if ! jq empty files/json/gamesexe-list.json 2>/dev/null; then
           echo "❌ Ошибка: Невалидный JSON!"
           cat files/json/gamesexe-list.json
           exit 1
@@ -107,7 +86,7 @@ PYEOF
         echo "✅ Файл создан: files/json/gamesexe-list.json ($JSON_SIZE)"
         
         echo ""
-        echo " Содержимое JSON (первые 20 строк):"
+        echo "📄 Содержимое JSON (первые 20 строк):"
         head -20 files/json/gamesexe-list.json
 
     - name: Commit and push
@@ -128,7 +107,7 @@ PYEOF
               echo "📤 Файл успешно обновлен"
               break
             else
-              echo "⚠️ Push не удался, обновляем ветку (попытка $i)..."
+              echo "️ Push не удался, обновляем ветку (попытка $i)..."
               git fetch origin main
               git reset --soft origin/main
               git add files/json/gamesexe-list.json
