@@ -86,9 +86,9 @@ jobs:
             for name in "${!cats[@]}"; do
               local url="${cats[$name]}"
               [ -z "$url" ] && continue
-              if ! download_with_retry "$url" "temp_file"; then 
+              if ! download_with_retry "$url" "temp_file"; then
                 echo "⚠️ Failed to download: $url"
-                failed=$((failed + 1)); continue; 
+                failed=$((failed + 1)); continue;
               fi
               local output_path="data/$target/$name"
               grep -v '^[[:space:]]*#' "temp_file" | tr -d '\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' > "$output_path" || true
@@ -153,7 +153,7 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          echo "🔍 Проверяем содержимое data/geoip/..."
+          echo " Проверяем содержимое data/geoip/..."
           for f in data/geoip/*; do
             [ -f "$f" ] || continue
             total_lines=$(wc -l < "$f" | tr -d ' ')
@@ -170,7 +170,7 @@ jobs:
               mv "$f.clean" "$f"
               echo "     ✅ Осталось $valid_lines валидных CIDR"
             else
-              echo "     ❌ Файл не содержит валидных CIDR, удаляем"
+              echo "      Файл не содержит валидных CIDR, удаляем"
               rm -f "$f" "$f.clean"
             fi
           done
@@ -180,13 +180,13 @@ jobs:
             exit 1
           fi
           echo ""
-          echo " Итого файлов для компиляции: $file_count"
-          echo "🔨 Building geoip.dat..."
+          echo "📊 Итого файлов для компиляции: $file_count"
+          echo "🔨 Building geoip.dat через Loyalsoldier/geoip..."
           echo '{"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}], "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}' > geoip_config.json
-          echo " Конфиг geoip_config.json:"
+          echo "📄 Конфиг geoip_config.json:"
           cat geoip_config.json
           echo ""
-          go install github.com/v2fly/geoip@${{ env.GEOIP_VER }}
+          go install github.com/Loyalsoldier/geoip@latest
           echo "🚀 Запускаем компиляцию..."
           if ! $(go env GOPATH)/bin/geoip -c geoip_config.json 2>&1; then
             echo "❌ Ошибка компиляции geoip.dat"
@@ -222,7 +222,7 @@ jobs:
       - name: Generate changelog with statistics
         run: |
           {
-            echo "##  Build #${{ github.run_number }}"
+            echo "## 🔄 Build #${{ github.run_number }}"
             echo "**🕒 Built:** ${{ env.BUILD_DATETIME }}"
             echo "**🔗 Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             echo ""
