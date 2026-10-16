@@ -159,7 +159,7 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          echo "🔍 Проверяем и жестко фильтруем содержимое data/geoip/..."
+          echo "🔍 Строгая очистка и валидация data/geoip/..."
           python3 -c '
           import os, glob, ipaddress
 
@@ -169,15 +169,10 @@ jobs:
               with open(f, "r", encoding="utf-8", errors="ignore") as file:
                   lines = file.readlines()
               
-              total = len(lines)
               valid_lines = []
               for line in lines:
-                  line = line.strip()
+                  line = line.strip().strip("\ufeff")
                   if not line or line.startswith("#"):
-                      continue
-                  # Отсекаем сразу всё, что содержит знак минус (например, / -1)
-                  if "-" in line:
-                      print(f"   ⚠️ Удалена строка с минусом: {line}")
                       continue
                   try:
                       net = ipaddress.ip_network(line, strict=False)
@@ -186,17 +181,13 @@ jobs:
                       if net.version == 6 and not (0 <= net.prefixlen <= 128):
                           continue
                       valid_lines.append(str(net) + "\n")
-                  except ValueError:
-                      print(f"   ⚠️ Некорректная запись пропущена: {line}")
-              
-              removed = total - len(valid_lines)
-              if removed > 0:
-                  print(f"   • {os.path.basename(f)}: удалено {removed} невалидных строк")
+                  except Exception:
+                      pass
               
               if valid_lines:
                   with open(f, "w", encoding="utf-8") as file:
                       file.writelines(valid_lines)
-                  print(f"   ✅ {os.path.basename(f)}: сохранено {len(valid_lines)} валидных CIDR")
+                  print(f"   ✅ {os.path.basename(f)}: записано {len(valid_lines)} валидных строк")
               else:
                   os.remove(f)
                   print(f"   ❌ {os.path.basename(f)} пуст, удален")
@@ -204,14 +195,12 @@ jobs:
 
           file_count=$(ls -1 data/geoip 2>/dev/null | wc -l)
           if [ "$file_count" -eq 0 ]; then
-            echo "❌ Error: Нет валидных файлов в data/geoip/"
+            echo "❌ Error: Нет файлов для компиляции geoip!"
             exit 1
           fi
 
           echo ""
-          echo "📊 Итого файлов для компиляции: $file_count"
           echo "🔨 Building geoip.dat..."
-
           echo '{"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}], "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}' > geoip_config.json
 
           go install github.com/v2fly/geoip@${{ env.GEOIP_VER }}
