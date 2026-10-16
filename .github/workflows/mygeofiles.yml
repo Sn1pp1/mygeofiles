@@ -1,3 +1,4 @@
+
 name: Build mygeofiles
 
 on:
@@ -5,70 +6,63 @@ on:
     - cron: '0 */6 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
-  MAX_ARTIFACT_SIZE_MB: 50
   DOMAIN_LIST_VER: "latest"
-  GEOIP_VER: "latest"
+  GEOIP_TAG: "202608050239"
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
-    strategy:
-      fail-fast: true
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/checkout@v7
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v7
         with:
-          go-version: 'stable'
-          cache: true
-
-      - name: Get latest sing-box version
-        run: |
-          LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name' | sed 's/^v//')
-          echo "SING_BOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
-
-      - name: Install sing-box
-        run: |
-          SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
-          FORMAT="https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz"
-          if curl -sL --fail --connect-timeout 15 --retry 2 "$FORMAT" -o sing-box.tar.gz 2>/dev/null; then
-            tar xzf sing-box.tar.gz
-            SINGBOX_BIN=$(find . -name "sing-box" -type f 2>/dev/null | head -1)
-            if [ -n "$SINGBOX_BIN" ]; then
-              sudo cp "$SINGBOX_BIN" /usr/local/bin/sing-box && sudo chmod +x /usr/local/bin/sing-box
-            else
-              go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
-              sudo ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
-            fi
-            rm -rf sing-box.tar.gz 2>/dev/null || true
-          else
-            go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
-            sudo ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
-          fi
+          go-version: '1.26.x'
+          cache: false
 
       - name: Set build date
+        shell: bash
         run: |
-          echo "BUILD_DATE=$(TZ=Europe/Moscow date '+\%Y-\%m-\%d')" >> $GITHUB_ENV
-          echo "BUILD_DATETIME=$(TZ=Europe/Moscow date '+\%Y-\%m-\%d \%H:\%M MSK')" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(TZ=Europe/Moscow date '+%Y-%m-%d')" >> "$GITHUB_ENV"
+          echo "BUILD_DATETIME=$(TZ=Europe/Moscow date '+%Y-%m-%d %H:%M MSK')" >> "$GITHUB_ENV"
 
       - name: Prepare Data
+        shell: bash
         run: |
-          set -euo pipefail
+          set -Eeuo pipefail
           mkdir -p data/geosite data/geoip
 
           download_with_retry() {
-            local url="$1" dest="$2" max=3
-            for i in $(seq 1$max); do
-              if curl -sL --fail --connect-timeout 15 --retry 2 --retry-delay 2 "$url" -o "$dest"; then return 0; fi
-              sleep $((i * 2))
+            local url="$1"
+            local dest="$2"
+            local tmp="${dest}.download"
+
+            for attempt in 1 2 3; do
+              if curl -fsSL \
+                --connect-timeout 15 \
+                --max-time 90 \
+                --retry 1 \
+                --retry-delay 2 \
+                "$url" -o "$tmp"; then
+                mv "$tmp" "$dest"
+                return 0
+              fi
+
+              rm -f "$tmp"
+              echo "Download attempt ${attempt}/3 failed: ${url}"
+              sleep $((attempt * 2))
             done
+
             return 1
           }
 
@@ -76,212 +70,436 @@ jobs:
             ["direct"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct.txt"
             ["ru-blocklist"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist.txt"
           )
+
           declare -A GEOIP=(
-            ["directip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct-ip.txt"
-            ["rublocklistip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist-ip.txt"
+            ["direct-ip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct-ip.txt"
+            ["ru-blocklist-ip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist-ip.txt"
           )
 
           process_categories() {
-            local target="$1"; shift; local -n cats=$1; local failed=0
-            for name in "${!cats[@]}"; do
-              local url="${cats[$name]}"
-              [ -z "$url" ] && continue
-              if ! download_with_retry "$url" "temp_file"; then
-                echo "⚠️ Failed to download: $url"
-                failed=$((failed + 1)); continue;
+            local target="$1"
+            local categories_name="$2"
+            local failed=0
+            local name url output_path tmp
+            local -n categories="$categories_name"
+
+            for name in "${!categories[@]}"; do
+              url="${categories[$name]}"
+              output_path="data/${target}/${name}"
+              tmp="${RUNNER_TEMP}/${name}.txt"
+
+              if ! download_with_retry "$url" "$tmp"; then
+                echo "::error::Failed to download ${url}"
+                failed=1
+                continue
               fi
-              local output_path="data/$target/$name"
-              grep -v '^[[:space:]]*#' "temp_file" | tr -d '\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' > "$output_path" || true
-              rm -f temp_file 2>/dev/null || true
+
+              tr -d '\r' < "$tmp" \
+                | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//' \
+                > "$output_path"
+
+              rm -f "$tmp"
+              echo "Downloaded ${target}/${name}: $(wc -l < "$output_path" | tr -d ' ') lines"
             done
-            return $failed
+
+            return "$failed"
           }
 
-          process_categories "geosite" GEOSITE || true
-          process_categories "geoip" GEOIP || true
+          process_categories geosite GEOSITE
+          process_categories geoip GEOIP
 
-      - name: Validate and Cleanup
+      - name: Validate downloaded data
+        shell: bash
         run: |
-          find data -type f -empty -delete
-          [ -z "$(ls -A data/geosite 2>/dev/null)" ] && { echo "❌ Error: No geosite data"; exit 1; }
-          [ -z "$(ls -A data/geoip 2>/dev/null)" ] && { echo "❌ Error: No geoip data"; exit 1; }
-          echo "✅ Prepared $(ls -1 data/geosite 2>/dev/null \vert{} wc -l) geosite and$(ls -1 data/geoip 2>/dev/null | wc -l) geoip categories"
+          set -Eeuo pipefail
+
+          for file in \
+            data/geosite/direct \
+            data/geosite/ru-blocklist \
+            data/geoip/direct-ip \
+            data/geoip/ru-blocklist-ip; do
+
+            if [[ ! -s "$file" ]]; then
+              echo "::error::Required input is missing or empty: $file"
+              exit 1
+            fi
+          done
+
+          echo "✅ All four input lists downloaded and are non-empty."
 
       - name: Clean and Normalize Domains
+        shell: bash
         run: |
+          set -Eeuo pipefail
+
           for file in data/geosite/*; do
-            [ -f "$file" ] || continue
-            tr -d '\r' < "$file" | awk '
-              { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
-              /^[[:space:]]*$/ || /^[[:space:]]*#/ { next }
+            [[ -f "$file" ]] || continue
+
+            awk '
+              function trim(s) {
+                sub(/^[[:space:]]+/, "", s)
+                sub(/[[:space:]]+$/, "", s)
+                return s
+              }
+
               {
                 line = $0
-                if (line ~ /^regexp:/ || line ~ /^domain_regex:/) { sub(/^domain_regex:/, "regexp:"); print line; next }
-                if (line ~ /^keyword:/ || line ~ /^domain_keyword:/) { sub(/^domain_keyword:/, "keyword:"); print line; next }
-                if (line ~ /^full:/) { print line; next }
-                sub(/^\+\./, ""); sub(/^domain:/, ""); sub(/^domain_suffix:/, "")
-                sub(/^DOMAIN,/, ""); sub(/^DOMAIN-SUFFIX,/, ""); sub(/^DOMAIN-KEYWORD,/, ""); sub(/^GEOSITE,/, ""); sub(/^\*\./, "")
-                sub(/\.$/, "")
-                sub(/@.*$/, ""); sub(/[[:space:]].*$/, "")
-                sub(/^[[:space:]\.]+/, "", line); sub(/[[:space:]\.]+$/, "", line)
-                if (line == "" || line ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/ || line ~ /:/ || line ~ /\.\./ || length(line) > 253 || line ~ /[^a-zA-Z0-9._-]/) next
-                if (line !~ /\./) {
-                  if (line != "ru" && line != "su" && line != "by" && line != "moscow" && line != "local" && line != "lan" && line != "localhost" && line != "internal" && line != "localdomain" && line != "example" && line != "invalid" && line != "test" && line !~ /^xn--/) next
+                gsub(/\r/, "", line)
+                line = trim(line)
+
+                if (line == "" || line ~ /^#/) next
+
+                sub(/[[:space:]]+#.*$/, "", line)
+                line = trim(line)
+
+                if (line == "") next
+
+                if (line ~ /^domain_regex:/)
+                  sub(/^domain_regex:/, "regexp:", line)
+                else if (line ~ /^DOMAIN-REGEX,/)
+                  sub(/^DOMAIN-REGEX,/, "regexp:", line)
+
+                if (line ~ /^domain_keyword:/)
+                  sub(/^domain_keyword:/, "keyword:", line)
+                else if (line ~ /^DOMAIN-KEYWORD,/)
+                  sub(/^DOMAIN-KEYWORD,/, "keyword:", line)
+
+                if (line ~ /^DOMAIN,/)
+                  sub(/^DOMAIN,/, "full:", line)
+                else if (line ~ /^DOMAIN-SUFFIX,/)
+                  sub(/^DOMAIN-SUFFIX,/, "", line)
+
+                if (line ~ /^GEOSITE,/) next
+
+                if (line ~ /^(regexp|keyword|full):/) {
+                  print tolower(line)
+                  next
                 }
-                print tolower(line)
-              }' | LC_ALL=C sort -u > "$file.cleaned"
-            mv "$file.cleaned" "$file"
+
+                sub(/^domain_suffix:/, "", line)
+                sub(/^domain:/, "", line)
+                sub(/^\+\./, "", line)
+                sub(/^\*\./, "", line)
+                sub(/^\./, "", line)
+                sub(/\.$/, "", line)
+                sub(/@.*$/, "", line)
+                sub(/[[:space:]].*$/, "", line)
+
+                line = tolower(line)
+
+                if (line == "") next
+                if (line ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next
+                if (line ~ /:/ || line ~ /\.\./ || length(line) > 253) next
+                if (line ~ /[^a-z0-9._-]/) next
+
+                if (line !~ /\./) {
+                  if (line != "ru" &&
+                      line != "su" &&
+                      line != "by" &&
+                      line != "moscow" &&
+                      line != "local" &&
+                      line != "lan" &&
+                      line != "localhost" &&
+                      line != "internal" &&
+                      line != "localdomain" &&
+                      line != "example" &&
+                      line != "invalid" &&
+                      line != "test" &&
+                      line !~ /^xn--/) next
+                }
+
+                print line
+              }
+            ' "$file" | LC_ALL=C sort -u > "${file}.cleaned"
+
+            mv "${file}.cleaned" "$file"
+
+            echo "Normalized $(basename "$file"): $(wc -l < "$file" | tr -d ' ') entries"
           done
-          echo "✅ Domain normalization complete"
+
+          echo "✅ Domain normalization complete."
 
       - name: Pre-build validation
+        shell: bash
         run: |
-          python3 -c '
-          import glob, re
-          bad = 0
-          pattern = re.compile(r"^(full|keyword|domain|domain_suffix|domain_keyword|regexp):\.\.+")
-          for file in glob.glob("data/geosite/*"):
-              with open(file, "r", encoding="utf-8", errors="ignore") as f:
-                  for i, line in enumerate(f, 1):
-                      if pattern.match(line.strip()):
-                          print(f"❌ Invalid entry in {file}:{i} -> {line.strip()}")
-                          bad = 1
+          set -Eeuo pipefail
+
+          python3 - <<'PY'
+          import glob
+          import re
+          import sys
+
+          bad = False
+          pattern = re.compile(
+              r"^(full|keyword|domain|domain_suffix|domain_keyword|regexp):\.\.+"
+          )
+
+          for path in glob.glob("data/geosite/*"):
+              with open(path, "r", encoding="utf-8", errors="replace") as handle:
+                  for number, raw_line in enumerate(handle, 1):
+                      line = raw_line.strip()
+                      if pattern.match(line):
+                          print(
+                              f"::error file={path},line={number}::"
+                              f"Invalid entry: {line}"
+                          )
+                          bad = True
+
           if bad:
-              exit(1)
-          print("✅ All entries are valid")
-          '
+              sys.exit(1)
+
+          print("✅ Domain input validation passed.")
+          PY
 
       - name: Build geosite.dat
+        shell: bash
         run: |
-          go run github.com/v2fly/domain-list-community@${{ env.DOMAIN_LIST_VER }} --datapath=data/geosite --outputname=geosite.dat
-          [ ! -f geosite.dat ] && { echo "❌ geosite.dat not created"; exit 1; }
-          echo "✅ geosite.dat created: $(du -h geosite.dat | cut -f1)"
+          set -Eeuo pipefail
 
-      - name: Build geoip.dat
-        run: |
-          echo "🔍 Абсолютно строгая валидация и очистка IP-адресов..."
-          python3 -c '
-          import os, glob, ipaddress
+          go run "github.com/v2fly/domain-list-community@${DOMAIN_LIST_VER}" \
+            --datapath=data/geosite \
+            --outputname=geosite.dat
 
-          for f in glob.glob("data/geoip/*"):
-              if not os.path.isfile(f):
-                  continue
-              print(f"📄 Проверка файла: {os.path.basename(f)}")
-              with open(f, "r", encoding="utf-8", errors="ignore") as file:
-                  lines = file.readlines()
-              
-              valid_lines = []
-              for line in lines:
-                  line = line.strip().strip("\ufeff")
-                  if not line or line.startswith("#"):
-                      continue
-                  try:
-                      # strict=False позволяет нормально парсить сети со смещениями, но мы проверяем prefixlen ниже
-                      net = ipaddress.ip_network(line, strict=False)
-                      
-                      # Жесткий фильтр диапазона масок: IPv4 (0-32), IPv6 (0-128)
-                      if net.version == 4 and (0 <= net.prefixlen <= 32):
-                          valid_lines.append(str(net) + "\n")
-                      elif net.version == 6 and (0 <= net.prefixlen <= 128):
-                          valid_lines.append(str(net) + "\n")
-                      else:
-                          print(f"   ⚠️ Пропущен неверный префикс: {line}")
-                  except Exception as e:
-                      print(f"   ⚠️ Отброшена битая строка \"{line}\": {e}")
-              
-              if valid_lines:
-                  with open(f, "w", encoding="utf-8") as file:
-                      file.writelines(valid_lines)
-                  print(f"   ✅ Записано валидных строк: {len(valid_lines)}")
-              else:
-                  os.remove(f)
-                  print(f"   ❌ Файл пуст, удален!")
-          '
-
-          file_count=$(ls -1 data/geoip 2>/dev/null | wc -l)
-          if [ "$file_count" -eq 0 ]; then
-            echo "❌ Error: Нет файлов для компиляции geoip!"
+          if [[ ! -s geosite.dat ]]; then
+            echo "::error::geosite.dat was not created or is empty."
             exit 1
           fi
 
-          echo ""
-          echo "🔨 Building geoip.dat..."
-          echo '{"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}], "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}' > geoip_config.json
+          echo "✅ geosite.dat created: $(du -h geosite.dat | cut -f1)"
 
-          go install github.com/v2fly/geoip@${{ env.GEOIP_VER }}
-          export PATH="$(go env GOPATH)/bin:$PATH"
-          geoip -c geoip_config.json
+      - name: Build geoip.dat
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          echo "🔍 Validating and cleaning IP lists..."
+
+          python3 - <<'PY'
+          import glob
+          import ipaddress
+          import os
+          import sys
+
+          total = 0
+
+          for path in glob.glob("data/geoip/*"):
+              if not os.path.isfile(path):
+                  continue
+
+              networks = set()
+
+              with open(path, "r", encoding="utf-8", errors="replace") as handle:
+                  for raw_line in handle:
+                      line = raw_line.strip().lstrip("\ufeff")
+
+                      if not line or line.startswith("#"):
+                          continue
+
+                      line = line.split("#", 1)[0].split("//", 1)[0].strip()
+
+                      if not line:
+                          continue
+
+                      try:
+                          network = ipaddress.ip_network(line, strict=False)
+                      except ValueError:
+                          print(
+                              f"⚠️ {os.path.basename(path)}: "
+                              f"ignoring invalid entry: {line}"
+                          )
+                          continue
+
+                      # A /0 route matches every IP address and must not
+                      # accidentally turn a category into a catch-all rule.
+                      if network.prefixlen == 0:
+                          print(
+                              f"⚠️ {os.path.basename(path)}: "
+                              f"skipping default route {network}"
+                          )
+                          continue
+
+                      networks.add(str(network))
+
+              if not networks:
+                  print(
+                      f"::error::{os.path.basename(path)} "
+                      "has no valid IP networks after cleanup"
+                  )
+                  sys.exit(1)
+
+              with open(path, "w", encoding="utf-8", newline="\n") as handle:
+                  for network in sorted(networks):
+                      handle.write(network + "\n")
+
+              total += len(networks)
+              print(
+                  f"✅ {os.path.basename(path)}: "
+                  f"{len(networks)} unique networks"
+              )
+
+          if total == 0:
+              print("::error::No valid IP networks remain.")
+              sys.exit(1)
+          PY
+
+          echo "🔧 Downloading pinned GeoIP compiler source (${GEOIP_TAG})..."
+
+          GEOIP_SOURCE="${RUNNER_TEMP}/v2fly-geoip"
+          rm -rf "$GEOIP_SOURCE"
+
+          git clone --depth 1 --branch "$GEOIP_TAG" \
+            https://github.com/v2fly/geoip.git "$GEOIP_SOURCE"
+
+          echo "🔨 Building the pinned GeoIP compiler..."
+
+          (
+            cd "$GEOIP_SOURCE"
+            go build -trimpath -o "$GITHUB_WORKSPACE/geoip-compiler" .
+          )
+
+          cat > geoip_config.json <<'JSON'
+          {
+            "input": [
+              {
+                "type": "text",
+                "action": "add",
+                "args": {
+                  "inputDir": "data/geoip"
+                }
+              }
+            ],
+            "output": [
+              {
+                "type": "v2rayGeoIPDat",
+                "action": "output",
+                "args": {
+                  "outputDir": ".",
+                  "outputName": "geoip.dat"
+                }
+              }
+            ]
+          }
+          JSON
+
+          ./geoip-compiler -c geoip_config.json
+
+          if [[ ! -s geoip.dat ]]; then
+            echo "::error::geoip.dat was not created or is empty."
+            exit 1
+          fi
+
           echo "✅ geoip.dat created: $(du -h geoip.dat | cut -f1)"
 
       - name: Validate generated files
+        shell: bash
         run: |
-          file geosite.dat | grep -q "data" || { echo "❌ geosite.dat corrupted"; exit 1; }
-          file geoip.dat | grep -q "data" || { echo "❌ geoip.dat corrupted"; exit 1; }
-          echo "✅ Files validated successfully"
+          set -Eeuo pipefail
+
+          for file in geosite.dat geoip.dat; do
+            if [[ ! -s "$file" ]]; then
+              echo "::error::Generated file is missing or empty: $file"
+              exit 1
+            fi
+
+            file "$file"
+          done
+
+          echo "✅ Generated files exist and are non-empty."
 
       - name: Health check
+        shell: bash
         run: |
-          geosite_size=$(stat -c%s geosite.dat 2>/dev/null || stat -f%z geosite.dat 2>/dev/null)
-          geoip_size=$(stat -c%s geoip.dat 2>/dev/null || stat -f%z geoip.dat 2>/dev/null)
-          [ "$geosite_size" -lt 1000 ] && { echo "❌ geosite.dat too small"; exit 1; }
-          [ "$geoip_size" -lt 100 ] && { echo "❌ geoip.dat too small"; exit 1; }
-          echo "✅ Health check passed"
+          set -Eeuo pipefail
+
+          geosite_size=$(stat -c%s geosite.dat)
+          geoip_size=$(stat -c%s geoip.dat)
+
+          if (( geosite_size < 1000 )); then
+            echo "::error::geosite.dat is too small (${geosite_size} bytes)."
+            exit 1
+          fi
+
+          if (( geoip_size < 100 )); then
+            echo "::error::geoip.dat is too small (${geoip_size} bytes)."
+            exit 1
+          fi
+
+          echo "✅ Health check passed: geosite=${geosite_size} bytes, geoip=${geoip_size} bytes."
 
       - name: Generate SHA256
+        shell: bash
         run: |
+          set -Eeuo pipefail
+
           sha256sum geosite.dat > geosite.dat.sha256
           sha256sum geoip.dat > geoip.dat.sha256
 
       - name: Generate changelog with statistics
+        shell: bash
         run: |
+          set -Eeuo pipefail
+
           {
-            echo "## 🔄 Build #${{ github.run_number }}"
-            echo "**🕒 Built:** ${{ env.BUILD_DATETIME }}"
-            echo "**🔗 Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            echo ""
-            echo "###   Contents"
-            echo "- **Geosite categories:** $(ls -1 data/geosite 2>/dev/null | wc -l)"
-            echo "- **Geoip categories:** $(ls -1 data/geoip 2>/dev/null | wc -l)"
+            echo "## 🔄 Build #${GITHUB_RUN_NUMBER}"
+            echo "**🕒 Built:** ${BUILD_DATETIME}"
+            echo "**🔗 Run:** ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo
+            echo "### Contents"
+            echo "- **Geosite categories:** $(find data/geosite -maxdepth 1 -type f | wc -l | tr -d ' ')"
+            echo "- **GeoIP categories:** $(find data/geoip -maxdepth 1 -type f | wc -l | tr -d ' ')"
             echo "- **geosite.dat:** $(du -h geosite.dat | cut -f1)"
             echo "- **geoip.dat:** $(du -h geoip.dat | cut -f1)"
-            echo ""
-            echo "### 📊 Geosite Statistics"
+            echo
+            echo "### Geosite Statistics"
             echo "| Category | Entries |"
-            echo "|----------|---------|"
-            for f in data/geosite/*; do
-              if [ -f "$f" ]; then
-                name=$(basename "$f")
-                count=$(wc -l < "$f" | tr -d ' ')
-                echo "| \`$name\` | $count |"
-              fi
+            echo "|---|---:|"
+
+            for file in data/geosite/*; do
+              [[ -f "$file" ]] || continue
+              printf '| `%s` | %s |\n' \
+                "$(basename "$file")" \
+                "$(wc -l < "$file" | tr -d ' ')"
             done
-            echo ""
-            echo "### 📊 Geoip Statistics"
-            echo "| Category | Entries |"
-            echo "|----------|---------|"
-            for f in data/geoip/*; do
-              if [ -f "$f" ]; then
-                name=$(basename "$f")
-                count=$(wc -l < "$f" | tr -d ' ')
-                echo "| \`$name\` | $count |"
-              fi
+
+            echo
+            echo "### GeoIP Statistics"
+            echo "| Category | Networks |"
+            echo "|---|---:|"
+
+            for file in data/geoip/*; do
+              [[ -f "$file" ]] || continue
+              printf '| `%s` | %s |\n' \
+                "$(basename "$file")" \
+                "$(wc -l < "$file" | tr -d ' ')"
             done
-            echo ""
-            echo "### 🔐 Checksums"
-            echo '```'
+
+            echo
+            echo "### SHA256"
+            echo '```text'
             cat geosite.dat.sha256 geoip.dat.sha256
             echo '```'
           } > changelog.md
 
       - name: Push Files to dat-files branch
+        shell: bash
         run: |
+          set -Eeuo pipefail
+
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
+
           git switch --orphan dat-files
           git rm -r --cached . >/dev/null 2>&1 || true
-          git add -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
-          git commit -m "🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%H:%M MSK')" || true
-          git push origin dat-files --force
+
+          git add -f \
+            geosite.dat \
+            geoip.dat \
+            geosite.dat.sha256 \
+            geoip.dat.sha256
+
+          git commit -m "Update dat files [Build #${GITHUB_RUN_NUMBER}] - $(TZ=Europe/Moscow date '+%H:%M MSK')"
+
+          git push origin HEAD:dat-files --force
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
