@@ -87,7 +87,7 @@ jobs:
               local url="${cats[$name]}"
               [ -z "$url" ] && continue
               if ! download_with_retry "$url" "temp_file"; then
-                echo "️ Failed to download: $url"
+                echo "⚠️ Failed to download: $url"
                 failed=$((failed + 1)); continue;
               fi
               local output_path="data/$target/$name"
@@ -153,7 +153,7 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          echo "🔍 Проверяем содержимое data/geoip/..."
+          echo " Проверяем содержимое data/geoip/..."
           for f in data/geoip/*; do
             [ -f "$f" ] || continue
             total_lines=$(wc -l < "$f" | tr -d ' ')
@@ -181,15 +181,14 @@ jobs:
           fi
           echo ""
           echo "📊 Итого файлов для компиляции: $file_count"
-          echo " Building geoip.dat через Loyalsoldier/geoip..."
+          echo "🔨 Building geoip.dat через Loyalsoldier/geoip..."
           
           # Loyalsoldier/geoip требует формат prefix:ip/cidr
-          # Добавляем префикс (имя файла без расширения) к каждой строке
-          echo " Добавляем префиксы к файлам..."
+          # Дефисы в префиксах не допускаются, заменяем на подчеркивания
+          echo "🔧 Добавляем префиксы к файлам..."
           for f in data/geoip/*; do
             [ -f "$f" ] || continue
-            name=$(basename "$f")
-            # Создаем временный файл с префиксами
+            name=$(basename "$f" | tr '-' '_')
             while IFS= read -r line || [ -n "$line" ]; do
               echo "${name}:${line}"
             done < "$f" > "$f.prefixed"
@@ -260,7 +259,7 @@ jobs:
               fi
             done
             echo ""
-            echo "###  Geoip Statistics"
+            echo "### 📊 Geoip Statistics"
             echo "| Category | Entries |"
             echo "|----------|---------|"
             for f in data/geoip/*; do
