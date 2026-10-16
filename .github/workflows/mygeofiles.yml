@@ -72,7 +72,7 @@ jobs:
           )
 
           declare -A GEOIP=(
-            ["direct-ip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/direct-ip.txt"
+            ["private-ip"]="https://github.com/Loyalsoldier/geoip/raw/refs/heads/release/text/private.txt"
             ["ru-blocklist-ip"]="https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/ru-blocklist-ip.txt"
           )
 
