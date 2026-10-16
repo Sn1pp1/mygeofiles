@@ -1,0 +1,68 @@
+# === АНТИЧИТЫ ===
+EasyAntiCheat.exe
+EasyAntiCheat_Setup.exe
+BEService.exe
+BEService_x64.exe
+vgc.exe
+vgtray.exe
+PnkBstrA.exe
+PnkBstrB.exe
+EAAntiCheat.GameService.exe
+EAAntiCheat.Installer.exe
+Xenuine.exe
+tenprotect.exe
+mhyprot2.exe
+
+# === ЛАУНЧЕРЫ И ПЛАТФОРМЫ ===
+steam.exe
+steamwebhelper.exe
+EpicGamesLauncher.exe
+Battle.net.exe
+Agent.exe
+EADesktop.exe
+UbisoftConnect.exe
+UbisoftGameLauncher.exe
+GalaxyClient.exe
+XboxApp.exe
+GamingServices.exe
+WeGame.exe
+RiotClientServices.exe
+RiotClientUx.exe
+BsgLauncher.exe
+
+# === ИГРЫ ===
+VALORANT.exe
+League of Legends.exe
+Legends of Runeterra.exe
+Wow.exe
+WowClassic.exe
+Overwatch.exe
+Diablo IV.exe
+Hearthstone.exe
+GenshinImpact.exe
+YuanShen.exe
+StarRail.exe
+ZenlessZoneZero.exe
+launcher.exe
+WorldOfTanks.exe
+WorldOfWarships.exe
+WoTBlitz.exe
+WoWsBlitz.exe
+r5apex.exe
+bf2042.exe
+RainbowSix.exe
+TheDivision2.exe
+TslGame.exe
+PUBG-Win64-Shipping.exe
+PlayGTAV.exe
+RDR2.exe
+javaw.exe
+Minecraft.Windows.exe
+RobloxPlayerBeta.exe
+EscapeFromTarkov.exe
+
+# === СТРИМИНГ ===
+obs64.exe
+obs32.exe
+Streamlabs Desktop.exe
+OBSVirtualCamera.exe
