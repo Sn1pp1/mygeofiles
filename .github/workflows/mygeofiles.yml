@@ -24,31 +24,14 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get latest Go version
-        run: |
-          GO_VERSION=$(curl -s https://go.dev/VERSION?m=text | head -n 1 | sed 's/go//' | cut -d. -f1,2)
-          echo "GO_VERSION=$GO_VERSION" >> $GITHUB_ENV
-          echo "✅ Using Go v$GO_VERSION"
-
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version: 'stable'
           cache: true
-
-      - name: Cache Go modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/go/pkg/mod
-            ~/.cache/go-build
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
 
       - name: Get latest sing-box version
         run: |
-          # Используем jq для надежного получения версии
           LATEST_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name' | sed 's/^v//')
           echo "SING_BOX_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
           echo "✅ Using sing-box v$LATEST_VERSION"
@@ -58,8 +41,6 @@ jobs:
           echo "Installing sing-box v${{ env.SING_BOX_VERSION }}..."
           SING_BOX_VERSION=${{ env.SING_BOX_VERSION }}
           DOWNLOADED=false
-
-          # Стандартный стабильный URL от SagerNet
           FORMAT="https://github.com/SagerNet/sing-box/releases/download/v${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION}-linux-amd64.tar.gz"
           
           if curl -sL --fail --connect-timeout 15 --retry 2 "$FORMAT" -o sing-box.tar.gz 2>/dev/null; then
@@ -76,7 +57,7 @@ jobs:
               echo "✅ sing-box installed"
               sing-box version
             else
-              echo "⚠️ Binary not found in archive, using go install as fallback"
+              echo "⚠️ Binary not found, using go install as fallback"
               go install github.com/SagerNet/sing-box/cmd/sing-box@v${SING_BOX_VERSION}
               sudo ln -sf $(go env GOPATH)/bin/sing-box /usr/local/bin/sing-box
             fi
@@ -133,7 +114,6 @@ jobs:
             ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
           )
 
-          # Python парсер для извлечения правил из JSON (декомпилированных .srs)
           cat << 'EOF' > parser.py
           import json, sys, os, re
 
@@ -204,7 +184,6 @@ jobs:
 
               elif [[ "$ext" == "txt" || "$ext" == "lst" ]]; then
                 echo "   Обрабатываем текстовый список..."
-                # ДОБАВЛЕНО: tr -d '\r' для удаления скрытых символов возврата каретки
                 grep -v '^#' "temp_file" | tr -d '\r' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' > "$output_path" || true
                 count=$(wc -l < "$output_path" 2>/dev/null || echo 0)
                 echo "  ✅ Сохранено: $count записей → $output_path"
@@ -250,7 +229,7 @@ jobs:
             exit 1
           fi
 
-      - name: Clean and Normalize Domains
+      - name: Clean and Normalize Domains (CRITICAL FIX)
         run: |
           echo "🧹 Cleaning and normalizing domain files..."
 
@@ -260,37 +239,64 @@ jobs:
             filename=$(basename "$file")
             echo "   • Processing $filename..."
 
-            # ДОБАВЛЕНО: tr -d '\r' перед awk для безопасности
-            sed -E "
-              s/^[[:space:]'\"]+//
-              s/[[:space:]'\"]+$//
-              /^$/d
-              /^#/d
-              s/^\*\.(.+)$/\1/
-              s/\.\././g
-            " "$file" | tr -d '\r' | \
-            awk '
-              {
-                line = $0
-                if (line ~ /^(regexp|domain_regex):/) { print line; next }
-                if (match(line, /^(full|keyword|domain|domain_suffix|domain_keyword):/)) {
-                  prefix = substr(line, 1, RLENGTH)
-                  value = substr(line, RLENGTH + 1)
-                  sub(/^\.+/, "", value)
-                  sub(/\.+$/, "", value)
-                  if (value == "" || index(value, "*") > 0) next
-                  print prefix value
-                  next
-                }
-                sub(/^\.+/, "", line)
-                sub(/\.+$/, "", line)
-                if (line == "" || index(line, "*") > 0) next
+            tr -d '\r' < "$file" | awk '
+            {
+              gsub(/\r/, "")
+              sub(/^[[:space:]]+/, "")
+              sub(/[[:space:]]+$/, "")
+
+              if (/^[[:space:]]*$/ || /^[[:space:]]*#/) next
+
+              line = $0
+
+              # 1. Сохраняем специальные префиксы v2fly как есть
+              if (line ~ /^regexp:/ || line ~ /^domain_regex:/) {
+                sub(/^domain_regex:/, "regexp:")
                 print line
+                next
               }
-            ' | \
-            grep -E '^(full:|regexp:|keyword:|domain:|domain_suffix:|domain_keyword:|domain_regex:)?[a-zA-Z0-9_@.-]' | \
-            grep -vE '^(full|regexp|keyword|domain|domain_suffix|domain_keyword|domain_regex):$' | \
-            sort -u > "$file.cleaned"
+              if (line ~ /^keyword:/ || line ~ /^domain_keyword:/) {
+                sub(/^domain_keyword:/, "keyword:")
+                print line
+                next
+              }
+              if (line ~ /^full:/) {
+                print line
+                next
+              }
+
+              # 2. Удаляем префиксы, которые означают "суффикс"
+              sub(/^\+\./, "")
+              sub(/^domain:/, "")
+              sub(/^domain_suffix:/, "")
+              sub(/^DOMAIN,/, "")
+              sub(/^DOMAIN-SUFFIX,/, "")
+              sub(/^DOMAIN-KEYWORD,/, "")
+              sub(/^GEOSITE,/, "")
+              sub(/^\*\./, "")
+
+              # 3. Очищаем от мусора по краям
+              sub(/^[[:space:]\.]+/, "", line)
+              sub(/[[:space:]\.]+$/, "", line)
+
+              # 4. Базовая валидация
+              if (line == "") next
+              if (line ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) next # Не IP в geosite
+              if (line ~ /:/) next # Не IPv6 в geosite
+              if (line ~ /\.\./) next
+              if (length(line) > 253) next
+              if (line ~ /[^a-zA-Z0-9._-]/) next # Только безопасные символы
+
+              # === 5. ГАРАНТИЯ СОХРАНЕНИЯ TLD ===
+              # Если в строке нет точки, разрешаем только известные безопасные однословные TLD
+              if (line !~ /\./) {
+                if (line != "ru" && line != "su" && line != "by" && line != "moscow" && line != "local" && line != "lan" && line != "internal" && line != "localdomain" && line != "example" && line != "invalid" && line != "test" && line !~ /^xn--/) {
+                  next # Отбрасываем мусор без точек
+                }
+              }
+
+              print tolower(line)
+            }' | sort -u > "$file.cleaned"
 
             mv "$file.cleaned" "$file"
 
@@ -310,7 +316,7 @@ jobs:
           bad=0
           for file in data/geosite/*; do
             [ -f "$file" ] || continue
-            invalid=$(grep -nE '^\.+|^(full|keyword|domain|domain_suffix|domain_keyword):\.+' "$file" || true)
+            invalid=$(grep -nE '^(full|keyword|domain|domain_suffix|domain_keyword|regexp):\.+' "$file" || true)
             if [ -n "$invalid" ]; then
               echo "❌ Invalid entries in $(basename "$file"):"
               echo "$invalid" | head -5
@@ -491,19 +497,14 @@ jobs:
           echo "📁 Files:"
           ls -lh geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
 
-          # Создаём изолированную orphan-ветку
-          git checkout --orphan dat-files
-
-          # Чистим ТОЛЬКО индекс (--cached), файлы на диске остаются!
+          git switch --orphan dat-files
           git rm -r --cached . >/dev/null 2>&1 || true
 
-          # Добавляем только артефакты
           git add -f geosite.dat geoip.dat geosite.dat.sha256 geoip.dat.sha256
 
           COMMIT_MSG="🔄 Update dat files [Build #${{ github.run_number }}] - $(TZ=Europe/Moscow date '+%H:%M MSK')"
           git commit -m "$COMMIT_MSG" || echo "⚠️ No changes to commit"
 
-          # Force push только в dat-files — main не тронут
           git push origin dat-files --force
 
           echo "✅ Done! Artifacts are on dat-files branch"
