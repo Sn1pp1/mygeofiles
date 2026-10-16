@@ -37,6 +37,7 @@ jobs:
 
         SOURCES=(
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/private.list"
+          "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-direct.txt"
         )
 
         TEMP_RAW=$(mktemp)
