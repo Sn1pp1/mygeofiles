@@ -136,14 +136,20 @@ jobs:
 
       - name: Pre-build validation
         run: |
-          bad=0
-          for file in data/geosite/*; do
-            [ -f "$file" ] || continue
-            invalid=$(grep -nE '^(full\vert{}keyword\vert{}domain\vert{}domain_suffix\vert{}domain_keyword\vert{}regexp):\.+' "$file" || true)
-            if [ -n "$invalid" ]; then echo "❌ Invalid entries in $(basename "$file"):"; echo "$invalid" | head -5; bad=1; fi
-          done
-          [ "$bad" -eq 1 ] && exit 1
-          echo "✅ All entries are valid"
+          python3 -c '
+          import glob, re
+          bad = 0
+          pattern = re.compile(r"^(full|keyword|domain|domain_suffix|domain_keyword|regexp):\.\.+")
+          for file in glob.glob("data/geosite/*"):
+              with open(file, "r", encoding="utf-8", errors="ignore") as f:
+                  for i, line in enumerate(f, 1):
+                      if pattern.match(line.strip()):
+                          print(f"❌ Invalid entry in {file}:{i} -> {line.strip()}")
+                          bad = 1
+          if bad:
+              exit(1)
+          print("✅ All entries are valid")
+          '
 
       - name: Build geosite.dat
         run: |
