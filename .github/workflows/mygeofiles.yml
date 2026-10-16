@@ -87,7 +87,7 @@ jobs:
               local url="${cats[$name]}"
               [ -z "$url" ] && continue
               if ! download_with_retry "$url" "temp_file"; then
-                echo "⚠️ Failed to download: $url"
+                echo "️ Failed to download: $url"
                 failed=$((failed + 1)); continue;
               fi
               local output_path="data/$target/$name"
@@ -103,7 +103,7 @@ jobs:
       - name: Validate and Cleanup
         run: |
           find data -type f -empty -delete
-          [ -z "$(ls -A data/geosite 2>/dev/null)" ] && { echo "❌ Error: No geosite data"; exit 1; }
+          [ -z "$(ls -A data/geosite 2>/dev/null)" ] && { echo " Error: No geosite data"; exit 1; }
           [ -z "$(ls -A data/geoip 2>/dev/null)" ] && { echo "❌ Error: No geoip data"; exit 1; }
           echo "✅ Prepared $(ls -1 data/geosite 2>/dev/null | wc -l) geosite and $(ls -1 data/geoip 2>/dev/null | wc -l) geoip categories"
 
@@ -153,72 +153,51 @@ jobs:
 
       - name: Build geoip.dat
         run: |
-          echo " Проверяем содержимое data/geoip/..."
+          echo "🔍 Проверяем и фильтруем содержимое data/geoip/..."
           for f in data/geoip/*; do
             [ -f "$f" ] || continue
             total_lines=$(wc -l < "$f" | tr -d ' ')
             echo "   • $(basename "$f"): $total_lines строк"
-            echo "     Пример содержимого:"
-            head -3 "$f" | sed 's/^/       /'
-            grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}/([0-9]|[12][0-9]|3[0-2])$|^([0-9a-fA-F:]+):?([0-9a-fA-F:]*)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$' "$f" > "$f.clean" 2>/dev/null || true
+            
+            # Удаляем 0.0.0.0/8 и оставляем только валидные CIDR
+            grep -v '^0\.0\.0\.0/8$' "$f" | \
+            grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}/([0-9]|[12][0-9]|3[0-2])$|^([0-9a-fA-F:]+):?([0-9a-fA-F:]*)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$' > "$f.clean" 2>/dev/null || true
+            
             valid_lines=$(wc -l < "$f.clean" | tr -d ' ')
-            invalid_lines=$((total_lines - valid_lines))
-            if [ "$invalid_lines" -gt 0 ]; then
-              echo "     ⚠️ Удалено $invalid_lines невалидных строк"
+            removed=$((total_lines - valid_lines))
+            
+            if [ "$removed" -gt 0 ]; then
+              echo "     ⚠️ Удалено $removed строк (включая 0.0.0.0/8)"
             fi
+            
             if [ "$valid_lines" -gt 0 ]; then
               mv "$f.clean" "$f"
               echo "     ✅ Осталось $valid_lines валидных CIDR"
             else
-              echo "     ❌ Файл не содержит валидных CIDR, удаляем"
+              echo "      Файл пуст после фильтрации, удаляем"
               rm -f "$f" "$f.clean"
             fi
           done
+          
           file_count=$(ls -1 data/geoip 2>/dev/null | wc -l)
           if [ "$file_count" -eq 0 ]; then
             echo "❌ Error: Нет валидных файлов в data/geoip/"
             exit 1
           fi
+          
           echo ""
           echo "📊 Итого файлов для компиляции: $file_count"
-          echo "🔨 Building geoip.dat через Loyalsoldier/geoip..."
+          echo "🔨 Building geoip.dat..."
           
-          # Loyalsoldier/geoip требует формат prefix:ip/cidr
-          # Дефисы в префиксах не допускаются, заменяем на подчеркивания
-          echo "🔧 Добавляем префиксы к файлам..."
-          for f in data/geoip/*; do
-            [ -f "$f" ] || continue
-            name=$(basename "$f" | tr '-' '_')
-            while IFS= read -r line || [ -n "$line" ]; do
-              echo "${name}:${line}"
-            done < "$f" > "$f.prefixed"
-            mv "$f.prefixed" "$f"
-            echo "   • Добавлен префикс '${name}:'"
-          done
-          
-          # Создаем конфиг
           echo '{"input": [{"type": "text", "action": "add", "args": {"inputDir": "data/geoip"}}], "output": [{"type": "v2rayGeoIPDat", "action": "output", "args": {"outputDir": ".", "outputName": "geoip.dat"}}]}' > geoip_config.json
-          echo "📄 Конфиг geoip_config.json:"
-          cat geoip_config.json
-          echo ""
           
-          go install github.com/Loyalsoldier/geoip@latest
-          echo " Запускаем компиляцию..."
-          if ! $(go env GOPATH)/bin/geoip convert -c geoip_config.json 2>&1; then
-            echo "❌ Ошибка компиляции geoip.dat"
-            echo "📄 Содержимое data/geoip/ для отладки:"
-            for f in data/geoip/*; do
-              [ -f "$f" ] || continue
-              echo "   === $(basename "$f") ==="
-              head -10 "$f"
-            done
-            exit 1
-          fi
+          go install github.com/v2fly/geoip@${{ env.GEOIP_VER }}
+          $(go env GOPATH)/bin/geoip -c geoip_config.json
           echo "✅ geoip.dat created: $(du -h geoip.dat | cut -f1)"
 
       - name: Validate generated files
         run: |
-          file geosite.dat | grep -q "data" || { echo " geosite.dat corrupted"; exit 1; }
+          file geosite.dat | grep -q "data" || { echo "❌ geosite.dat corrupted"; exit 1; }
           file geoip.dat | grep -q "data" || { echo "❌ geoip.dat corrupted"; exit 1; }
           echo "✅ Files validated successfully"
 
@@ -227,7 +206,7 @@ jobs:
           geosite_size=$(stat -c%s geosite.dat 2>/dev/null || stat -f%z geosite.dat 2>/dev/null)
           geoip_size=$(stat -c%s geoip.dat 2>/dev/null || stat -f%z geoip.dat 2>/dev/null)
           [ "$geosite_size" -lt 1000 ] && { echo "❌ geosite.dat too small"; exit 1; }
-          [ "$geoip_size" -lt 100 ] && { echo " geoip.dat too small"; exit 1; }
+          [ "$geoip_size" -lt 100 ] && { echo "❌ geoip.dat too small"; exit 1; }
           echo "✅ Health check passed"
 
       - name: Generate SHA256
@@ -238,11 +217,11 @@ jobs:
       - name: Generate changelog with statistics
         run: |
           {
-            echo "##  Build #${{ github.run_number }}"
+            echo "## 🔄 Build #${{ github.run_number }}"
             echo "**🕒 Built:** ${{ env.BUILD_DATETIME }}"
             echo "**🔗 Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             echo ""
-            echo "### 📦 Contents"
+            echo "###  Contents"
             echo "- **Geosite categories:** $(ls -1 data/geosite 2>/dev/null | wc -l)"
             echo "- **Geoip categories:** $(ls -1 data/geoip 2>/dev/null | wc -l)"
             echo "- **geosite.dat:** $(du -h geosite.dat | cut -f1)"
