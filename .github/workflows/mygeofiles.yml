@@ -77,7 +77,7 @@ jobs:
             ["ru-blocklist"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist.txt"
           )
           declare -A GEOIP=(
-            ["directip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/directip.txt"
+            ["direct-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/srs/direct-ip.srs"
             ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
           )
 
