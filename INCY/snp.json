@@ -25,7 +25,7 @@
     "geosite:ru-blocklist"
   ],
   "BlockSites": [
-    "geosite:category-ads"
+    
   ],
   "DirectIp": [
     "geoip:private-ip"
