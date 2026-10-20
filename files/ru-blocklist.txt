@@ -201,6 +201,8 @@ api.protonmail.ch
 api.pwnedpasswords.com
 api.radarr.video
 api.service-kp.com
+api.shipbook.io
+api.soi.lat
 api.srvkp.com
 api.srvkp.net
 api.theins.info
