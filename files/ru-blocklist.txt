@@ -207,6 +207,7 @@ api.srvkp.com
 api.srvkp.net
 api.theins.info
 api.themoviedb.org
+api.trakt.tv
 api.twitter.com
 apiary.io
 apis.google.com
@@ -1467,6 +1468,7 @@ indeed.com
 indiehackers.com
 infineon.com
 informit.com
+ingest.us.sentry.io
 insanelymac.com
 insearch.site
 insideevs.com
@@ -1834,6 +1836,7 @@ mos-gorsud.com
 moscowtimes.ru
 mouser.com
 mouser.fi
+movietrailer.app
 mrakopedia.net
 mssg.me
 mullvad.net
