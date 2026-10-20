@@ -93,3 +93,6 @@ unixtimestamp.com
 api.soi.lat
 m.soi.lat
 api.shipbook.io
+api.trakt.tv
+movietrailer.app
+ingest.us.sentry.io
