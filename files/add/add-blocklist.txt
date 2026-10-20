@@ -90,3 +90,6 @@ revouninstaller.b-cdn.net
 revouninstaller.com
 archive.org
 unixtimestamp.com
+api.soi.lat
+m.soi.lat
+api.shipbook.io
