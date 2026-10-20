@@ -37,7 +37,7 @@ jobs:
         set -euo pipefail
 
         SOURCES=(
-          "https://github.com/hydraponique/roscomvpn-geosite/raw/refs/heads/master/data/category-ru"
+          "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-ru-list.txt"
           "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/rules/category-ru.lst"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/2gis.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/autoru.list"
@@ -100,7 +100,6 @@ jobs:
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/dzen.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/winline.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/fonbet.list"
-          "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-ru-list.txt"
         )
 
         TEMP_RAW=$(mktemp)
