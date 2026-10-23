@@ -493,6 +493,9 @@ drweb.com
 drweb.fr
 drweb.kz
 drweb.uz
+ds-servers.com
+dsn.host
+dsncdn.net
 dtf.ru
 durovscode.com
 dvbank.ru
