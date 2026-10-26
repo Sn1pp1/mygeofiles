@@ -2915,7 +2915,9 @@ static.files.bbci.co.uk
 static.lostfilm.top
 static.rutracker.cc
 static.siege-amazon.com
+static.voidboost.com
 static1.e621.net
+statichdrezka.ac
 statology.org
 status.discord.com
 status.discordapp.com
@@ -2930,6 +2932,7 @@ strana.news
 strana.today
 strava.com
 stream.voidboost.cc
+stream.voidboost.one
 streamable.com
 streamingdisney.net
 studychat.app
@@ -3241,6 +3244,7 @@ vndb.org
 voanews.com
 vod-fy.crunchyrollcdn.com
 voidboost.cc
+voidslam.org
 volkswagen-classic-parts.com
 vot-tak.tv
 vpngate.jp
