@@ -39,6 +39,8 @@ jobs:
 
           SOURCES=(
             "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-blocklist-ip.txt"
+            "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/text/ru-blocked.txt"
+            "https://github.com/runetfreedom/russia-blocked-geoip/raw/refs/heads/release/text/ru-blocked-community.txt"
             "https://antifilter.network/downloads/custom.lst"
             "https://community.antifilter.download/list/community.lst"
             "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/community_ips.lst"
