@@ -40,7 +40,6 @@ jobs:
           "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-torrent-list.txt"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/tracker.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-public-tracker.list"
-          "https://raw.githubusercontent.com/sakib-m/Pi-hole-Torrent-Blocklist/main/all-torrent-trackers.txt"
         )
 
         TEMP_RAW=$(mktemp)
