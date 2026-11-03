@@ -41,6 +41,9 @@ jobs:
             "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-ru-list-ip.txt"
             "https://github.com/Davoyan/mihomo-rule-sets/raw/refs/heads/main/ip-for-ru/lists/ips-for-ru.txt"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/ru.list"
+            "https://github.com/shadow-netlab/traffic-guard-lists/raw/refs/heads/main/public/antiscanner.list"
+            "https://github.com/shadow-netlab/traffic-guard-lists/raw/refs/heads/main/public/government_networks.list"
+            "https://github.com/shadow-netlab/traffic-guard-lists/raw/refs/heads/main/public/skipa.list"
           )
 
           TOTAL_BEFORE=0
