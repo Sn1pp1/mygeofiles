@@ -39,8 +39,7 @@ jobs:
         SOURCES=(
           "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-torrent-list.txt"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/tracker.list"
-		      "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-public-tracker.list"
-          
+		  "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-public-tracker.list"
         )
 
         TEMP_RAW=$(mktemp)
