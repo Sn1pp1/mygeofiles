@@ -38,6 +38,7 @@ jobs:
 
         SOURCES=(
           "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-ru-list.txt"
+          "https://github.com/q0wqex/mihomo-rule-sets/raw/refs/heads/main/wld.yaml"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/2gis.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/autoru.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/aviasales.list"
