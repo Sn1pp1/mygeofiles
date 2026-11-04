@@ -97,4 +97,3 @@ api.trakt.tv
 movietrailer.app
 ingest.us.sentry.io
 warmane.com
-snp.mooo.com
