@@ -935,6 +935,9 @@ level3.ssl.blizzard.com
 leyuansu.com
 lf126.net
 lf127.net
+limbuscompany.global
+limbuscompanyapi.com
+limbuscompanycdn.org
 lingxigames.com
 lion.secure.dyn.riotcdn.net
 lofter.com
@@ -1188,6 +1191,7 @@ prismlauncher.org
 prod.cloudflare.cdn.ea.com
 prodforza.blob.core.windows.net
 projectapex.com
+projectmoon.studio
 protondb.com
 proximabeta.com
 pubg.com
@@ -1322,6 +1326,7 @@ simcity-buildit.com
 simcity.com
 skate2.com
 sketchfab.com
+skinswap.com
 skydweller.cn
 skylanders.com
 sl916.com
