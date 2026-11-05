@@ -154,6 +154,7 @@ blizzcon-a.akamaihd.net
 blox.com
 bluearchive-cn.com
 bluearchive.jp
+bluearchive.nexon.com
 blz-contentstack.com
 blzddist1-a.akamaihd.net
 blzddistkr1-a.akamaihd.net
