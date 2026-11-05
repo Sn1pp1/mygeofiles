@@ -38,7 +38,6 @@ jobs:
 
         SOURCES=(
           "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-games-list.txt"
-          "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-games-list.txt"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/2kgames.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/activision-blizzard.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bethesda.list"
@@ -72,6 +71,13 @@ jobs:
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/xbox.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/forza.list"
           "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/gaijin.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bluepoch-games.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bilibili-game.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/gamesplanet.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/humblebundle.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/itchio.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/bluearchive.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/aligames.list"
         )
 
         TEMP_RAW=$(mktemp)
