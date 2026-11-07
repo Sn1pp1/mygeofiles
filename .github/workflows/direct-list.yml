@@ -38,6 +38,9 @@ jobs:
 
         SOURCES=(
           "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-direct-list.txt"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/win-update.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/apple-update.list"
+          "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/apple.list"
         )
 
         TEMP_RAW=$(mktemp)
