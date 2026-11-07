@@ -874,7 +874,6 @@ ihappystudio.cn
 ihappystudio.com
 ihykb.com
 img4399.com
-in.th
 industrialtoys.com
 infinityward.com
 insights-collector.gog.com
@@ -933,6 +932,7 @@ legendofzelda.cn
 legendofzelda.com.cn
 level3.blizzard.com
 level3.ssl.blizzard.com
+levelinfinite.com
 leyuansu.com
 lf126.net
 lf127.net
@@ -1441,6 +1441,7 @@ tcfmglobal.com
 teamneedforspeed.com
 tellmewhygame.com
 tencent-gcloud.com
+tencentgames.com
 tencentstart.com
 testplus.cn
 texasholdemcup.cn
@@ -1623,6 +1624,7 @@ xvcf1.xboxlive.com
 xvcf2.xboxlive.com
 xz.pphimalayanrt.com
 ycgame.com
+ydshengxue.com
 ydstatic.com
 yeah.net
 yeyou.com
