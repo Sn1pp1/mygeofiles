@@ -1,7 +1,4 @@
-0.pool.ntp.org
-1.pool.ntp.org
-2.pool.ntp.org
-3.pool.ntp.org
+3gppnetwork.org
 alt1-mtalk.google.com
 alt2-mtalk.google.com
 alt3-mtalk.google.com
@@ -12,14 +9,24 @@ alt7-mtalk.google.com
 alt8-mtalk.google.com
 android.apis.google.com
 captive.apple.com
+clients3.google.com
+configuration.apple.com
 connectivitycheck.android.com
 connectivitycheck.gstatic.com
 device-provisioning.googleapis.com
 firebaseinstallations.googleapis.com
 fr-api.xmpush.global.xiaomi.com
 gateway.push.samsungosp.com
+gdmf.apple.com
 idmb-api.xmpush.global.xiaomi.com
+ipv6.microsoft.com
+keenetic.link
+keenetic.name
+keenetic.pro
+mesu.apple.com
 mipush.xmpush.xiaomi.com
+msftconnecttest.com
+msftncsi.com
 mtalk-dev.google.com
 mtalk-staging.google.com
 mtalk.google.com
@@ -36,6 +43,7 @@ push.samsungosp.com
 push.vivo.com
 push.xiaomi.com
 pushmessage.samsung.com
+routerlogin.net
 ru-api.xmpush.global.xiaomi.com
 samsungpushservice.com
 scs.samsungqbe.com
@@ -60,5 +68,3 @@ time5.apple.com
 time6.apple.com
 time7.apple.com
 wns.windows.com
-www.msftconnecttest.com
-www.msftncsi.com
