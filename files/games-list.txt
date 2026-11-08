@@ -944,6 +944,7 @@ lion.secure.dyn.riotcdn.net
 lofter.com
 log-upload-os.hoyoverse.com
 log-upload.mihoyo.com
+logon.wowcircle.me
 lol-europe.com
 lol.dyn.riotcdn.net
 lol.secure.dyn.riotcdn.net
@@ -1296,6 +1297,7 @@ rsg.ms
 rsg.sc
 rstatic.net
 rtm.tnt-ea.com
+ru.logon.wowcircle.me
 ruinedking.com
 s.team
 sanguosha.com
