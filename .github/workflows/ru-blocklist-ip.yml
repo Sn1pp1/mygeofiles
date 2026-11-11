@@ -25,8 +25,8 @@ jobs:
 
       - name: Download sing-box
         run: |
-          SING_BOX_VERSION=$(curl -s https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
-          curl -sL "https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION#v}-linux-amd64.tar.gz" | tar xz -C /tmp
+          SING_BOX_VERSION=$(curl -fsSL https://api.github.com/repos/SagerNet/sing-box/releases/latest | jq -r '.tag_name')
+          curl -fsSL "https://github.com/SagerNet/sing-box/releases/download/${SING_BOX_VERSION}/sing-box-${SING_BOX_VERSION#v}-linux-amd64.tar.gz" | tar xz -C /tmp
           mv /tmp/sing-box-${SING_BOX_VERSION#v}-linux-amd64/sing-box ./sing-box
           chmod +x ./sing-box
 
@@ -58,16 +58,28 @@ jobs:
           )
 
           TOTAL_BEFORE=0
+
           for url in "${SOURCES[@]}"; do
             SHORT_NAME=$(echo "$url" | sed 's|.*/\([^/]*/[^/]*\)$|\1|' | cut -c1-40)
 
             COUNT=$(curl -fsL --connect-timeout 10 --max-time 30 "$url" 2>/dev/null | awk '
-              { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+              {
+                gsub(/\r/, "")
+                sub(/^[[:space:]]+/, "")
+                sub(/[[:space:]]+$/, "")
+              }
               /^[[:space:]]*$/ || /^[[:space:]]*#/ { next }
               {
-                sub(/#.*$/, ""); sub(/[[:space:]]+$/, "")
-                if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) { split($0, p, "[./]"); if (p[5] >= 0 && p[5] <= 32) { c++; next } }
-                if ($0 ~ /^([0-9a-fA-F:]+)\/[0-9]+$/) { split($0, p, "/"); if (p[2] >= 0 && p[2] <= 128) { c++; next } }
+                sub(/#.*$/, "")
+                sub(/[[:space:]]+$/, "")
+                if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) {
+                  split($0, p, "[./]")
+                  if (p[5] >= 0 && p[5] <= 32) { c++; next }
+                }
+                if ($0 ~ /^([0-9a-fA-F:]+)\/[0-9]+$/) {
+                  split($0, p, "/")
+                  if (p[2] >= 0 && p[2] <= 128) { c++; next }
+                }
                 if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) { c++; next }
               }
               END { print c+0 }
@@ -75,22 +87,42 @@ jobs:
 
             curl -fsL --connect-timeout 10 --max-time 30 "$url" >> "$TEMP_FILE" 2>/dev/null || true
             echo "" >> "$TEMP_FILE"
+
             printf "  %-40s %6s\n" "$SHORT_NAME..." "$COUNT"
             TOTAL_BEFORE=$((TOTAL_BEFORE + COUNT))
           done
 
           awk '
-            { gsub(/\r/, ""); sub(/^[[:space:]]+/, ""); sub(/[[:space:]]+$/, "") }
+            {
+              gsub(/\r/, "")
+              sub(/^[[:space:]]+/, "")
+              sub(/[[:space:]]+$/, "")
+            }
             /^[[:space:]]*$/ || /^[[:space:]]*#/ { next }
             {
-              sub(/#.*$/, ""); sub(/[[:space:]]+$/, "")
+              sub(/#.*$/, "")
+              sub(/[[:space:]]+$/, "")
+
               if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\/[0-9]+$/) {
-                split($0, p, "[./]"); if (p[5] >= 0 && p[5] <= 32) { print $0; next }
+                split($0, p, "[./]")
+                if (p[5] >= 0 && p[5] <= 32) {
+                  print $0
+                  next
+                }
               }
+
               if ($0 ~ /^([0-9a-fA-F:]+)\/[0-9]+$/) {
-                split($0, p, "/"); if (p[2] >= 0 && p[2] <= 128) { print tolower($0); next }
+                split($0, p, "/")
+                if (p[2] >= 0 && p[2] <= 128) {
+                  print tolower($0)
+                  next
+                }
               }
-              if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) { print $0 "/32"; next }
+
+              if ($0 ~ /^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) {
+                print $0 "/32"
+                next
+              }
             }
           ' "$TEMP_FILE" | LC_ALL=C sort -u > files/ru-blocklist-ip.txt
 
@@ -100,14 +132,21 @@ jobs:
           )
 
           for ip in "${EXCLUDED_IPS[@]}"; do
-            sed -i -Fx -e "/^${ip//./\\.}$/d" files/ru-blocklist-ip.txt
+            awk -v excluded="$ip" '$0 != excluded' files/ru-blocklist-ip.txt > files/ru-blocklist-ip.tmp
+            mv files/ru-blocklist-ip.tmp files/ru-blocklist-ip.txt
             echo "Excluded: $ip"
           done
 
-          if [ ! -s files/ru-blocklist-ip.txt ]; then echo "❌ Error: File is empty"; exit 1; fi
+          # Verify exclusions
+          for ip in "${EXCLUDED_IPS[@]}"; do
+            if grep -Fxq "$ip" files/ru-blocklist-ip.txt; then
+              echo "❌ Error: Excluded IP found: $ip"
+              exit 1
+            fi
+          done
 
-          if grep -Fxq '1.1.1.1/32' files/ru-blocklist-ip.txt; then
-            echo "❌ Error: Excluded IP found in final list"
+          if [ ! -s files/ru-blocklist-ip.txt ]; then
+            echo "❌ Error: File is empty"
             exit 1
           fi
 
@@ -123,16 +162,29 @@ jobs:
 
           ./sing-box rule-set compile "$TEMP_JSON" -o files/srs/ru-blocklist-ip.srs
 
-          if [ ! -f files/srs/ru-blocklist-ip.srs ]; then echo "❌ Error: Compilation failed"; exit 1; fi
+          if [ ! -f files/srs/ru-blocklist-ip.srs ]; then
+            echo "❌ Error: Compilation failed"
+            exit 1
+          fi
+
           echo "✅ SRS file created: $(du -h files/srs/ru-blocklist-ip.srs | cut -f1)"
 
       - name: Commit and push changes
         run: |
           git config user.name "ru-blocklist-ip Bot"
           git config user.email "ru-blocklist-ip-bot@github.com"
+
           git pull --rebase origin main 2>/dev/null || true
+
           git add files/ru-blocklist-ip.txt files/srs/ru-blocklist-ip.srs
+
           if ! git diff --staged --quiet; then
             git commit -m "🔄 Update ru-blocklist-ip.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
-            for i in 1 2 3; do git push && break || { sleep $((RANDOM % 5 + 1)); git pull --rebase origin main; }; done
+
+            for i in 1 2 3; do
+              git push && break || {
+                sleep $((RANDOM % 5 + 1))
+                git pull --rebase origin main
+              }
+            done
           fi
