@@ -166,6 +166,7 @@ analog.com
 analytics.facebook.com
 analytics.tiktok.com
 andrevi.ch
+android.clients.google.com
 angryemailtranslator.com
 anidub.com
 anilib.me
@@ -316,6 +317,7 @@ bbci.co.uk
 bcbits.com
 bdurl.net
 beacon3d.com
+beacons.gvt2.com
 beammp.com
 beamng.com
 beamng.gmbh
@@ -562,6 +564,7 @@ community.sophos.com
 como-hackearfacebook.com
 componentkit.org
 connect.ngrok-agent.com
+connectivitycheck.gstatic.com
 consent.trustarc.com
 contabo.com
 contest.com
@@ -658,7 +661,9 @@ digash.live
 digikey.com
 digital-cdn.net
 digitalcontent.sky
+digitalocean-ui.com
 digitalocean.com
+digitaloceanspaces.com
 dilcdn.com
 dis.gd
 discord-activities.com
@@ -792,6 +797,7 @@ dlfacebook.com
 dmed.technology
 dmqdd6hw24ucf.cloudfront.net
 dnb.com
+do.co
 docker.elastic.co
 docker.io
 docs.liquibase.com
@@ -1234,6 +1240,7 @@ fgacebook.com
 ficbook.net
 ficeboock.com
 filebin.net
+files.manus.cdn
 files.oaiusercontent.com
 filmitorrent.net
 filmix.ac
@@ -1245,8 +1252,10 @@ filmix.la
 findagrave.com
 findyourlimits.com
 fingerium.stream.voidboost.cc
+firebaseinstallations.googleapis.com
 firebaseremoteconfigrealtime.googleapis.com
 firefly-ps.adobe.io
+first-ns.de
 fitbit-pa.googleapis.com
 fitbit.google.com
 fitbitvestibuleshim-pa.googleapis.com
@@ -1547,7 +1556,12 @@ help.instagram.com
 hentai-foundry.com
 heroku.com
 herokucdn.com
+hetzner-cloud.de
+hetzner.cloud
 hetzner.com
+hetzner.company
+hetzner.de
+hetzner.social
 hex-rays.com
 hhvm.com
 hiddify.com
@@ -1587,6 +1601,7 @@ httpfacebook.com
 httpsfacebook.com
 httptoolkit.com
 httpwwwfacebook.com
+htznr.li
 hu1u.com
 huarun.win
 huloo.cc
@@ -1865,6 +1880,7 @@ lf16-pkgcdn.pitaya-clientai.com
 lf19-pkgcdn.pitaya-clientai.com
 lgeapi.com
 lgthinq.com
+lh3.googleusercontent.com
 lib.rus.ec
 libgen.li
 libgen.rs
@@ -2147,6 +2163,7 @@ nflxso.net
 nflxvideo.net
 nftstorage.link
 ngeo.com
+nginxconfig.io
 ngrok.com
 nhentai.com
 nhentai.net
@@ -2280,6 +2297,7 @@ olx.ua
 omnissa.com
 omtrdc.net
 omv-extras.org
+ondigitalocean.com
 onetrust.com
 onexray.com
 onfastspring.com
@@ -2338,6 +2356,7 @@ ovd.info
 ovd.legal
 ovd.news
 ovdinfo.org
+ovhcloud.com
 ozodi.org
 p16-tiktok-dm-sticker-sign-sg.ibyteimg.com
 p16-tiktokcdn-com.akamaized.net
@@ -2485,6 +2504,7 @@ privatekeys.pw
 prizrak.app
 prnt.sc
 proactivebackend-pa.googleapis.com
+prod-lt-playstoregatewayadapter-pa.googleapis.com
 prod-network-api.wbagora.com
 prod.service.minerva.devices.a2z.com
 production-copilot-host-westus.webpubsub.azure.com
@@ -2748,6 +2768,8 @@ searchfloor.org
 searchlightpictures.com
 seasonvar.ru
 sebeanus.online
+second-ns.com
+second-ns.de
 seconddinnertech.com
 secure-web.cisco.com
 securitytrails.com
@@ -2759,6 +2781,7 @@ semrush.com
 sendgrid.net
 sendy.jp
 sentry.dev
+sentry.hetzner.company
 sentry.io
 sephora.com
 serato.com
@@ -2860,6 +2883,7 @@ sovetromantica.com
 spacelift.io
 spaceship.com
 spaindisney.com
+speechs3proto2-pa.googleapis.com
 speedtest.app
 speedtest.cc
 speedtest.co
@@ -3439,6 +3463,10 @@ yithemes.com
 yle.fi
 yogalayout.com
 yostarplat.com
+your-objectstorage.com
+your-server.de
+your-storagebox.de
+your-storageshare.de
 yourdictionary.com
 youtrack.cloud
 youtu.be
