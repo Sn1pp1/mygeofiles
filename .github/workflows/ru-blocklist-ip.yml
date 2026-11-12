@@ -118,25 +118,6 @@ jobs:
             }
           ' "$TEMP_FILE" | LC_ALL=C sort -u > files/ru-blocklist-ip.txt
 
-          # Exclude unwanted IP ranges after merging all sources
-          EXCLUDED_IPS=(
-            "1.1.1.1/32"
-          )
-
-          for ip in "${EXCLUDED_IPS[@]}"; do
-            awk -v excluded="$ip" '$0 != excluded' files/ru-blocklist-ip.txt > files/ru-blocklist-ip.tmp
-            mv files/ru-blocklist-ip.tmp files/ru-blocklist-ip.txt
-            echo "Excluded: $ip"
-          done
-
-          # Verify exclusions
-          for ip in "${EXCLUDED_IPS[@]}"; do
-            if grep -Fxq "$ip" files/ru-blocklist-ip.txt; then
-              echo "❌ Error: Excluded IP found: $ip"
-              exit 1
-            fi
-          done
-
           if [ ! -s files/ru-blocklist-ip.txt ]; then
             echo "❌ Error: File is empty"
             exit 1
