@@ -219,7 +219,6 @@ analog.com
 analytics.facebook.com
 analytics.tiktok.com
 andrevi.ch
-android.clients.google.com
 angryemailtranslator.com
 anidub.com
 anilib.me
@@ -374,7 +373,6 @@ bbci.co.uk
 bcbits.com
 bdurl.net
 beacon3d.com
-beacons.gvt2.com
 beammp.com
 beamng.com
 beamng.gmbh
@@ -640,7 +638,6 @@ como-hackearfacebook.com
 componentkit.org
 compresspdf.new
 connect.ngrok-agent.com
-connectivitycheck.gstatic.com
 consent.trustarc.com
 contabo.com
 contest.com
@@ -1358,7 +1355,6 @@ fgacebook.com
 ficbook.net
 ficeboock.com
 filebin.net
-files.manus.cdn
 files.oaiusercontent.com
 filmitorrent.net
 filmix.ac
@@ -1371,7 +1367,6 @@ findagrave.com
 findyourlimits.com
 fingerium.stream.voidboost.cc
 fiotolia.com
-firebaseinstallations.googleapis.com
 firebaseremoteconfigrealtime.googleapis.com
 firefly-ps.adobe.io
 first-ns.de
@@ -2037,7 +2032,6 @@ lf16-pkgcdn.pitaya-clientai.com
 lf19-pkgcdn.pitaya-clientai.com
 lgeapi.com
 lgthinq.com
-lh3.googleusercontent.com
 lib.rus.ec
 libgen.li
 libgen.rs
@@ -2560,7 +2554,6 @@ ovd.info
 ovd.legal
 ovd.news
 ovdinfo.org
-ovhcloud.com
 oystermercury.top
 ozodi.org
 p16-tiktok-dm-sticker-sign-sg.ibyteimg.com
@@ -2722,7 +2715,6 @@ privatekeys.pw
 prizrak.app
 prnt.sc
 proactivebackend-pa.googleapis.com
-prod-lt-playstoregatewayadapter-pa.googleapis.com
 prod-network-api.wbagora.com
 prod.service.minerva.devices.a2z.com
 production-copilot-host-westus.webpubsub.azure.com
@@ -3106,7 +3098,6 @@ sovetromantica.com
 spacelift.io
 spaceship.com
 spaindisney.com
-speechs3proto2-pa.googleapis.com
 speedtest.app
 speedtest.cc
 speedtest.co
