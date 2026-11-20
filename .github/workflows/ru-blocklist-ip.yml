@@ -39,10 +39,6 @@ jobs:
 
           SOURCES=(
             "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-blocklist-ip.txt"
-            "https://community.antifilter.download/list/community.lst"
-            "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/community_ips.lst"
-            "https://antifilter.download/list/subnet.lst"
-            "https://antifilter.network/downloads/custom.lst"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/telegram.list"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/twitter.list"
             "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geoip/facebook.list"
