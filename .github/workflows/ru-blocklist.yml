@@ -38,7 +38,6 @@ jobs:
 
         SOURCES=(
           "https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/add/add-blocklist.txt"
-          "https://github.com/runetfreedom/russia-blocked-geosite/raw/refs/heads/release/ru-blocked.txt"
           "https://github.com/1andrevich/Re-filter-lists/raw/refs/heads/main/community.lst"
           "https://community.antifilter.download/list/domains.lst"
           "https://github.com/itdoginfo/allow-domains/raw/refs/heads/main/Russia/inside-raw.lst"
