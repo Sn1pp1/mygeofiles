@@ -51,20 +51,22 @@ jobs:
 
           sing-box version
 
-      - name: Download & Process Sources
+      - name: Download and process sources
         shell: bash
         run: |
           set -euo pipefail
 
           SOURCES=(
+            # Optional custom source
             "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/add/add-torrent-list.txt"
 
+            # Pi-hole Torrent Blocklist
             "https://raw.githubusercontent.com/sakib-m/Pi-hole-Torrent-Blocklist/main/all-torrent-trackers.txt"
 
-            "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tracker.list"
-
+            # MetaCubeX - public trackers only
             "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/classical/category-public-tracker.list"
 
+            # ngosang/trackerslist
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_http.txt"
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_https.txt"
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_i2p.txt"
@@ -73,6 +75,7 @@ jobs:
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_yggdrasil.txt"
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
 
+            # XIU2/TrackersListCollection
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt"
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all_aria2.txt"
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best.txt"
@@ -82,6 +85,7 @@ jobs:
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/nohttp_aria2.txt"
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/other.txt"
 
+            # adysec/tracker
             "https://raw.githubusercontent.com/adysec/tracker/main/trackers_all.txt"
             "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best.txt"
             "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best_http.txt"
@@ -111,14 +115,14 @@ jobs:
               --retry-all-errors \
               --connect-timeout 15 \
               --max-time 60 \
-              "$URL" -o "$DEST"; then
+              "$URL" -o "$DEST" && [ -s "$DEST" ]; then
 
               LINES=$(wc -l < "$DEST")
               printf "  ✓ %-35s %6s lines\n" "$NAME" "$LINES"
               SUCCESS=$((SUCCESS + 1))
 
             else
-              echo "  ✗ Failed: $URL"
+              echo "  ✗ Failed or empty: $URL"
               FAILED=$((FAILED + 1))
               rm -f "$DEST"
             fi
@@ -128,12 +132,13 @@ jobs:
 
           echo ""
           echo "Downloaded: $SUCCESS"
-          echo "Failed: $FAILED"
+          echo "Failed:     $FAILED"
 
-          # Required sources must be available.
-          # Optional sources may fail without stopping the build.
-          if [ ! -f "$TMP_DIR/0.txt" ]; then
-            echo "ERROR: Main custom source is unavailable!"
+          # Require a reasonable number of working sources.
+          MIN_SUCCESS=5
+
+          if [ "$SUCCESS" -lt "$MIN_SUCCESS" ]; then
+            echo "ERROR: Too few sources available ($SUCCESS/$MIN_SUCCESS)"
             exit 1
           fi
 
@@ -152,13 +157,17 @@ jobs:
           source_dir = Path(sys.argv[1])
           domains = set()
 
+          total_lines = 0
+          invalid_lines = 0
+          duplicate_domains = 0
+          accepted_lines = 0
+
           def extract_domain(value):
               value = value.strip().lstrip('\ufeff')
 
               if not value:
                   return None
 
-              # Reject exceptions and non-domain rules.
               if value.startswith('@@'):
                   return None
 
@@ -166,7 +175,7 @@ jobs:
               if value.startswith('||'):
                   value = value[2:].split('^')[0].split('$')[0]
 
-              # Remove known prefixes.
+              # Common domain prefixes.
               prefixes = (
                   '+.',
                   '*.',
@@ -187,36 +196,31 @@ jobs:
               if not value:
                   return None
 
-              # Extract domain from URL.
-              if '://' in value:
-                  try:
+              # Extract hostname from URLs and host:port/path.
+              try:
+                  if '://' in value:
                       parsed = urlsplit(value)
-                      value = parsed.hostname or ''
-                  except ValueError:
-                      return None
-              else:
-                  # Remove URL path and query.
-                  value = value.split('/')[0].split('?')[0]
+                  else:
+                      parsed = urlsplit('//' + value)
 
-                  # Handle domain:port.
-                  try:
-                      value = urlsplit('//' + value).hostname or ''
-                  except ValueError:
-                      return None
+                  value = parsed.hostname or ''
+
+              except ValueError:
+                  return None
 
               value = value.rstrip('.').lower()
 
               if not value:
                   return None
 
-              # Reject IP addresses.
+              # Reject IPv4 and IPv6 addresses.
               try:
                   ipaddress.ip_address(value)
                   return None
               except ValueError:
                   pass
 
-              # Normalize internationalized domains.
+              # Convert internationalized domains to ASCII.
               try:
                   value = value.encode('idna').decode('ascii')
               except UnicodeError:
@@ -281,13 +285,13 @@ jobs:
 
                   return []
 
-              # sing-box JSON/YAML domain_suffix entries.
+              # YAML / sing-box-like domain entries.
               if lower.startswith(('domain_suffix:', 'domain:')):
                   value = line.split(':', 1)[1].strip()
                   domain = extract_domain(value)
                   return [domain] if domain else []
 
-              # Hosts format: IP domain
+              # Hosts format: IP domain [aliases...]
               parts = line.split()
 
               if len(parts) >= 2:
@@ -325,13 +329,16 @@ jobs:
 
               return [domain] if domain else []
 
-          files = sorted(source_dir.glob('*.txt'))
-
-          total_lines = 0
+          files = sorted(
+              source_dir.glob('*.txt'),
+              key=lambda path: int(path.stem)
+          )
 
           for file in files:
               before = 0
               added = 0
+              duplicates = 0
+              invalid = 0
 
               for line in file.read_text(
                   encoding='utf-8',
@@ -341,21 +348,36 @@ jobs:
                   before += 1
                   total_lines += 1
 
-                  for domain in parse_line(line):
-                      if domain not in domains:
+                  parsed = parse_line(line)
+
+                  if not parsed:
+                      if line.strip() and not line.strip().startswith(('#', '!', ';')):
+                          invalid += 1
+                          invalid_lines += 1
+                      continue
+
+                  accepted_lines += 1
+
+                  for domain in parsed:
+                      if domain in domains:
+                          duplicates += 1
+                          duplicate_domains += 1
+                      else:
                           domains.add(domain)
                           added += 1
 
               print(
                   f"  {file.name:<12} "
                   f"{before:>6} lines | "
-                  f"{added:>6} new domains"
+                  f"{added:>6} new | "
+                  f"{duplicates:>6} duplicates | "
+                  f"{invalid:>6} invalid"
               )
+
+          sorted_domains = sorted(domains)
 
           output = Path('files/torrent-list.txt')
           output.parent.mkdir(parents=True, exist_ok=True)
-
-          sorted_domains = sorted(domains)
 
           if not sorted_domains:
               raise SystemExit("ERROR: No valid domains extracted!")
@@ -367,11 +389,21 @@ jobs:
 
           print()
           print("========================================")
-          print(f"Total input lines: {total_lines}")
-          print(f"Unique domains:    {len(sorted_domains)}")
-          print(f"Output:            {output}")
+          print(f"Total input lines:  {total_lines}")
+          print(f"Accepted lines:     {accepted_lines}")
+          print(f"Invalid lines:      {invalid_lines}")
+          print(f"Duplicate domains:  {duplicate_domains}")
+          print(f"Unique domains:     {len(sorted_domains)}")
+          print(f"Output:             {output}")
           print("========================================")
 
+          # Prevent publishing an unexpectedly small list.
+          MIN_DOMAINS = 100
+
+          if len(sorted_domains) < MIN_DOMAINS:
+              raise SystemExit(
+                  f"ERROR: Too few domains ({len(sorted_domains)}/{MIN_DOMAINS})"
+              )
           PY
 
           if [ ! -s files/torrent-list.txt ]; then
