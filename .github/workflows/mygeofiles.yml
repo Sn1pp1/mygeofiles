@@ -78,6 +78,7 @@ jobs:
           )
           declare -A GEOIP=(
             ["private-ip"]="https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/sing/geo/geoip/private.srs"
+            ["ru-blocklist-ip"]="https://github.com/Sn1pp1/mygeofiles/raw/refs/heads/main/files/ru-blocklist-ip.txt"
           )
 
           cat << 'EOF' > parser.py
