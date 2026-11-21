@@ -1,0 +1,469 @@
+name: Build torrent-list
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/torrent-list.yml'
+      - 'files/add/add-torrent-list.txt'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-torrent-list
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create output directory
+        run: mkdir -p files/srs
+
+      - name: Download latest sing-box binary
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          LATEST_TAG=$(curl -fsSL \
+            https://api.github.com/repos/SagerNet/sing-box/releases/latest \
+            | jq -er '.tag_name')
+
+          VERSION="${LATEST_TAG#v}"
+          ARCHIVE="sing-box-${VERSION}-linux-amd64.tar.gz"
+
+          wget -q \
+            "https://github.com/SagerNet/sing-box/releases/download/${LATEST_TAG}/${ARCHIVE}"
+
+          tar -xzf "$ARCHIVE"
+
+          sudo install \
+            "sing-box-${VERSION}-linux-amd64/sing-box" \
+            /usr/local/bin/sing-box
+
+          sing-box version
+
+      - name: Download & Process Sources
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SOURCES=(
+            "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/add/add-torrent-list.txt"
+
+            "https://raw.githubusercontent.com/sakib-m/Pi-hole-Torrent-Blocklist/main/all-torrent-trackers.txt"
+
+            "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tracker.list"
+
+            "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/classical/category-public-tracker.list"
+
+            "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_http.txt"
+            "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_https.txt"
+            "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_i2p.txt"
+            "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_udp.txt"
+            "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_ws.txt"
+            "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_yggdrasil.txt"
+            "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
+
+            "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt"
+            "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all_aria2.txt"
+            "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best.txt"
+            "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/http.txt"
+            "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/http_aria2.txt"
+            "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/nohttp.txt"
+            "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/nohttp_aria2.txt"
+            "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/other.txt"
+
+            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_all.txt"
+            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best.txt"
+            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best_http.txt"
+            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best_https.txt"
+            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best_udp.txt"
+            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best_wss.txt"
+          )
+
+          TMP_DIR=$(mktemp -d)
+          trap 'rm -rf "$TMP_DIR"' EXIT
+
+          echo "========================================"
+          echo "Downloading tracker sources"
+          echo "========================================"
+
+          SUCCESS=0
+          FAILED=0
+          INDEX=0
+
+          for URL in "${SOURCES[@]}"; do
+            NAME=$(basename "$URL")
+            DEST="$TMP_DIR/$INDEX.txt"
+
+            if curl -fsSL \
+              --retry 3 \
+              --retry-delay 2 \
+              --retry-all-errors \
+              --connect-timeout 15 \
+              --max-time 60 \
+              "$URL" -o "$DEST"; then
+
+              LINES=$(wc -l < "$DEST")
+              printf "  ✓ %-35s %6s lines\n" "$NAME" "$LINES"
+              SUCCESS=$((SUCCESS + 1))
+
+            else
+              echo "  ✗ Failed: $URL"
+              FAILED=$((FAILED + 1))
+              rm -f "$DEST"
+            fi
+
+            INDEX=$((INDEX + 1))
+          done
+
+          echo ""
+          echo "Downloaded: $SUCCESS"
+          echo "Failed: $FAILED"
+
+          # Required sources must be available.
+          # Optional sources may fail without stopping the build.
+          if [ ! -f "$TMP_DIR/0.txt" ]; then
+            echo "ERROR: Main custom source is unavailable!"
+            exit 1
+          fi
+
+          echo ""
+          echo "========================================"
+          echo "Normalizing and deduplicating domains"
+          echo "========================================"
+
+          python3 - "$TMP_DIR" <<'PY'
+          import sys
+          import re
+          import ipaddress
+          from pathlib import Path
+          from urllib.parse import urlsplit
+
+          source_dir = Path(sys.argv[1])
+          domains = set()
+
+          def extract_domain(value):
+              value = value.strip().lstrip('\ufeff')
+
+              if not value:
+                  return None
+
+              # Reject exceptions and non-domain rules.
+              if value.startswith('@@'):
+                  return None
+
+              # AdGuard domain rules.
+              if value.startswith('||'):
+                  value = value[2:].split('^')[0].split('$')[0]
+
+              # Remove known prefixes.
+              prefixes = (
+                  '+.',
+                  '*.',
+                  'domain:',
+                  'full:',
+                  'host:',
+                  'suffix:',
+                  'root:',
+              )
+
+              for prefix in prefixes:
+                  if value.lower().startswith(prefix):
+                      value = value[len(prefix):]
+                      break
+
+              value = value.strip().strip('"\'<>')
+
+              if not value:
+                  return None
+
+              # Extract domain from URL.
+              if '://' in value:
+                  try:
+                      parsed = urlsplit(value)
+                      value = parsed.hostname or ''
+                  except ValueError:
+                      return None
+              else:
+                  # Remove URL path and query.
+                  value = value.split('/')[0].split('?')[0]
+
+                  # Handle domain:port.
+                  try:
+                      value = urlsplit('//' + value).hostname or ''
+                  except ValueError:
+                      return None
+
+              value = value.rstrip('.').lower()
+
+              if not value:
+                  return None
+
+              # Reject IP addresses.
+              try:
+                  ipaddress.ip_address(value)
+                  return None
+              except ValueError:
+                  pass
+
+              # Normalize internationalized domains.
+              try:
+                  value = value.encode('idna').decode('ascii')
+              except UnicodeError:
+                  return None
+
+              if len(value) > 253 or '.' not in value:
+                  return None
+
+              labels = value.split('.')
+
+              for label in labels:
+                  if not label or len(label) > 63:
+                      return None
+
+                  if not re.fullmatch(
+                      r'[a-z0-9](?:[a-z0-9-]*[a-z0-9])?',
+                      label
+                  ):
+                      return None
+
+              # Reject numeric TLDs.
+              if labels[-1].isdigit():
+                  return None
+
+              return value
+
+          def parse_line(line):
+              line = line.strip().lstrip('\ufeff')
+
+              if not line:
+                  return []
+
+              # Full-line comments.
+              if line.startswith(('#', '!', ';')):
+                  return []
+
+              lower = line.lower()
+
+              # Unsupported rule types.
+              if lower.startswith((
+                  'regexp:',
+                  'include:',
+                  'geosite:',
+                  'domain-keyword,',
+                  'domain-regex,',
+                  'ip-cidr,',
+                  'ip-cidr6,',
+                  'ipcidr:',
+                  'process-name,',
+                  'geoip:',
+                  'geosite,',
+              )):
+                  return []
+
+              # Mihomo / Clash domain rules.
+              if lower.startswith(('domain-suffix,', 'domain,')):
+                  parts = line.split(',')
+
+                  if len(parts) >= 2:
+                      domain = extract_domain(parts[1])
+                      return [domain] if domain else []
+
+                  return []
+
+              # sing-box JSON/YAML domain_suffix entries.
+              if lower.startswith(('domain_suffix:', 'domain:')):
+                  value = line.split(':', 1)[1].strip()
+                  domain = extract_domain(value)
+                  return [domain] if domain else []
+
+              # Hosts format: IP domain
+              parts = line.split()
+
+              if len(parts) >= 2:
+                  try:
+                      ipaddress.ip_address(parts[0])
+
+                      result = []
+
+                      for item in parts[1:]:
+                          domain = extract_domain(item)
+
+                          if domain:
+                              result.append(domain)
+
+                      return result
+
+                  except ValueError:
+                      pass
+
+              # YAML list entries.
+              line = re.sub(r'^-\s*', '', line).strip()
+
+              # Remove inline comments.
+              line = re.split(r'\s+#|\s+//|\s+;', line, maxsplit=1)[0]
+              line = line.strip()
+
+              if not line:
+                  return []
+
+              # Reject unsupported comma-based rules.
+              if ',' in line:
+                  return []
+
+              domain = extract_domain(line)
+
+              return [domain] if domain else []
+
+          files = sorted(source_dir.glob('*.txt'))
+
+          total_lines = 0
+
+          for file in files:
+              before = 0
+              added = 0
+
+              for line in file.read_text(
+                  encoding='utf-8',
+                  errors='ignore'
+              ).splitlines():
+
+                  before += 1
+                  total_lines += 1
+
+                  for domain in parse_line(line):
+                      if domain not in domains:
+                          domains.add(domain)
+                          added += 1
+
+              print(
+                  f"  {file.name:<12} "
+                  f"{before:>6} lines | "
+                  f"{added:>6} new domains"
+              )
+
+          output = Path('files/torrent-list.txt')
+          output.parent.mkdir(parents=True, exist_ok=True)
+
+          sorted_domains = sorted(domains)
+
+          if not sorted_domains:
+              raise SystemExit("ERROR: No valid domains extracted!")
+
+          output.write_text(
+              '\n'.join(sorted_domains) + '\n',
+              encoding='utf-8'
+          )
+
+          print()
+          print("========================================")
+          print(f"Total input lines: {total_lines}")
+          print(f"Unique domains:    {len(sorted_domains)}")
+          print(f"Output:            {output}")
+          print("========================================")
+
+          PY
+
+          if [ ! -s files/torrent-list.txt ]; then
+            echo "ERROR: Output file is empty!"
+            exit 1
+          fi
+
+          echo ""
+          echo "First 20 domains:"
+          head -20 files/torrent-list.txt
+
+      - name: Convert to SRS format
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          domains = [
+              line.strip()
+              for line in Path('files/torrent-list.txt').read_text(
+                  encoding='utf-8'
+              ).splitlines()
+              if line.strip()
+          ]
+
+          if not domains:
+              raise SystemExit("ERROR: Empty domain list!")
+
+          data = {
+              "version": 1,
+              "rules": [
+                  {
+                      "domain_suffix": domains
+                  }
+              ]
+          }
+
+          Path('/tmp/torrent-list.json').write_text(
+              json.dumps(data, ensure_ascii=False, indent=2),
+              encoding='utf-8'
+          )
+
+          print(f"Domains for SRS: {len(domains)}")
+          PY
+
+          sing-box rule-set compile \
+            --output files/srs/torrent-list.srs \
+            /tmp/torrent-list.json
+
+          if [ ! -s files/srs/torrent-list.srs ]; then
+            echo "ERROR: SRS compilation failed!"
+            exit 1
+          fi
+
+          echo "SRS compiled successfully."
+
+      - name: Commit and push result
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "torrent-list Bot"
+          git config user.email "torrent-list-bot@github.com"
+
+          git add \
+            files/torrent-list.txt \
+            files/srs/torrent-list.srs
+
+          if git diff --cached --quiet; then
+            echo "No changes detected."
+            exit 0
+          fi
+
+          git commit -m "🔄 Update torrent-list.txt and SRS ($(TZ='Europe/Moscow' date +'%Y-%m-%d %H:%M MSK'))"
+
+          for i in 1 2 3; do
+            if git pull --rebase origin main && git push origin HEAD:main; then
+              echo "Changes pushed successfully."
+              exit 0
+            fi
+
+            echo "Push attempt $i failed."
+
+            git rebase --abort 2>/dev/null || true
+
+            if [ "$i" -lt 3 ]; then
+              sleep $((RANDOM % 5 + 1))
+            fi
+          done
+
+          echo "ERROR: Unable to push changes."
+          exit 1
