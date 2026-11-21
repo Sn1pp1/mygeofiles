@@ -57,16 +57,9 @@ jobs:
           set -euo pipefail
 
           SOURCES=(
-            # Optional custom source
             "https://raw.githubusercontent.com/Sn1pp1/mygeofiles/main/files/add/add-torrent-list.txt"
-
-            # Pi-hole Torrent Blocklist
             "https://raw.githubusercontent.com/sakib-m/Pi-hole-Torrent-Blocklist/main/all-torrent-trackers.txt"
-
-            # MetaCubeX - public trackers only
             "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/classical/category-public-tracker.list"
-
-            # ngosang/trackerslist
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_http.txt"
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_https.txt"
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_i2p.txt"
@@ -74,8 +67,6 @@ jobs:
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_ws.txt"
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all_yggdrasil.txt"
             "https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"
-
-            # XIU2/TrackersListCollection
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt"
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all_aria2.txt"
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/best.txt"
@@ -84,14 +75,6 @@ jobs:
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/nohttp.txt"
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/nohttp_aria2.txt"
             "https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/other.txt"
-
-            # adysec/tracker
-            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_all.txt"
-            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best.txt"
-            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best_http.txt"
-            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best_https.txt"
-            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best_udp.txt"
-            "https://raw.githubusercontent.com/adysec/tracker/main/trackers_best_wss.txt"
           )
 
           TMP_DIR=$(mktemp -d)
@@ -120,7 +103,6 @@ jobs:
               LINES=$(wc -l < "$DEST")
               printf "  ✓ %-35s %6s lines\n" "$NAME" "$LINES"
               SUCCESS=$((SUCCESS + 1))
-
             else
               echo "  ✗ Failed or empty: $URL"
               FAILED=$((FAILED + 1))
@@ -144,7 +126,7 @@ jobs:
 
           echo ""
           echo "========================================"
-          echo "Normalizing and deduplicating domains"
+          echo "Normalizing and validating domains"
           echo "========================================"
 
           python3 - "$TMP_DIR" <<'PY'
@@ -158,32 +140,82 @@ jobs:
           domains = set()
 
           total_lines = 0
-          invalid_lines = 0
-          duplicate_domains = 0
           accepted_lines = 0
+          duplicate_domains = 0
+          invalid_lines = 0
+          rejected = {}
+
+          # Domains known to be unrelated to tracker infrastructure.
+          # Keep this list conservative to avoid removing valid trackers.
+          DENY_EXACT = {
+              "docs.github.com",
+              "www.2600.com",
+              "www.proxmox.com",
+              "dataforai.com",
+              "elementsbrowser.com",
+              "camera.lei001.com",
+              "speedtest.iperson.xyz",
+              "bms-hosxp.com",
+              "commento.getblog.cn",
+              "discover.curiousfacts.blog",
+              "0123456789nonexistent.com",
+          }
+
+          # Common TLDs used to detect accidentally concatenated ports:
+          # example.com80, tracker.net00, tracker.org80, etc.
+          COMMON_SUFFIXES = (
+              "com", "net", "org", "edu", "gov", "mil",
+              "info", "biz", "name", "pro", "aero",
+              "ru", "рф", "by", "ua", "kz", "cn",
+              "de", "fr", "nl", "pl", "se", "no",
+              "fi", "uk", "eu", "io", "me", "tv",
+              "cc", "to", "xyz", "top", "club",
+              "site", "online", "tech", "app",
+          )
+
+          def reject(reason):
+              rejected[reason] = rejected.get(reason, 0) + 1
+              return None
+
+          def looks_like_port_corruption(host):
+              """
+              Detect likely damaged hostnames such as:
+              tracker.example.com80
+
+              Do not repair them automatically.
+              """
+              last_label = host.rsplit(".", 1)[-1]
+
+              match = re.fullmatch(r"([a-z-]+)(\d{2,5})", last_label)
+              if not match:
+                  return False
+
+              possible_tld = match.group(1)
+
+              return possible_tld in COMMON_SUFFIXES
 
           def extract_domain(value):
-              value = value.strip().lstrip('\ufeff')
+              value = value.strip().lstrip("\ufeff")
 
               if not value:
-                  return None
+                  return reject("empty")
 
-              if value.startswith('@@'):
-                  return None
+              if value.startswith("@@"):
+                  return reject("adguard_exception")
 
               # AdGuard domain rules.
-              if value.startswith('||'):
-                  value = value[2:].split('^')[0].split('$')[0]
+              if value.startswith("||"):
+                  value = value[2:].split("^")[0].split("$")[0]
 
-              # Common domain prefixes.
+              # Remove supported prefixes.
               prefixes = (
-                  '+.',
-                  '*.',
-                  'domain:',
-                  'full:',
-                  'host:',
-                  'suffix:',
-                  'root:',
+                  "+.",
+                  "*.",
+                  "domain:",
+                  "full:",
+                  "host:",
+                  "suffix:",
+                  "root:",
               )
 
               for prefix in prefixes:
@@ -191,105 +223,127 @@ jobs:
                       value = value[len(prefix):]
                       break
 
-              value = value.strip().strip('"\'<>')
+              value = value.strip().strip("\"'<>")
 
               if not value:
-                  return None
+                  return reject("empty")
 
-              # Extract hostname from URLs and host:port/path.
+              # Remove common aria2 option prefix.
+              if value.lower().startswith("--bt-tracker="):
+                  value = value.split("=", 1)[1].strip()
+
+              # Extract hostname from URL or host:port/path.
               try:
-                  if '://' in value:
+                  if "://" in value:
                       parsed = urlsplit(value)
                   else:
-                      parsed = urlsplit('//' + value)
+                      parsed = urlsplit("//" + value)
 
-                  value = parsed.hostname or ''
+                  host = parsed.hostname or ""
+
+                  # Accessing .port validates malformed ports.
+                  port = parsed.port
+
+                  if port is not None and not (1 <= port <= 65535):
+                      return reject("invalid_port")
 
               except ValueError:
-                  return None
+                  return reject("invalid_url_or_port")
 
-              value = value.rstrip('.').lower()
+              host = host.rstrip(".").lower()
 
-              if not value:
-                  return None
+              if not host:
+                  return reject("no_hostname")
 
-              # Reject IPv4 and IPv6 addresses.
+              # Reject IP addresses.
               try:
-                  ipaddress.ip_address(value)
-                  return None
+                  ipaddress.ip_address(host)
+                  return reject("ip_address")
               except ValueError:
                   pass
 
-              # Convert internationalized domains to ASCII.
+              # Convert IDN to ASCII/Punycode.
               try:
-                  value = value.encode('idna').decode('ascii')
+                  host = host.encode("idna").decode("ascii")
               except UnicodeError:
-                  return None
+                  return reject("invalid_idn")
 
-              if len(value) > 253 or '.' not in value:
-                  return None
+              if len(host) > 253:
+                  return reject("hostname_too_long")
 
-              labels = value.split('.')
+              if "." not in host:
+                  return reject("single_label")
+
+              labels = host.split(".")
 
               for label in labels:
-                  if not label or len(label) > 63:
-                      return None
+                  if not label:
+                      return reject("empty_label")
+
+                  if len(label) > 63:
+                      return reject("label_too_long")
 
                   if not re.fullmatch(
-                      r'[a-z0-9](?:[a-z0-9-]*[a-z0-9])?',
+                      r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?",
                       label
                   ):
-                      return None
+                      return reject("invalid_label")
 
-              # Reject numeric TLDs.
+              # Numeric TLDs are not valid public domain suffixes.
               if labels[-1].isdigit():
-                  return None
+                  return reject("numeric_tld")
 
-              return value
+              if looks_like_port_corruption(host):
+                  return reject("suspected_port_corruption")
+
+              if host in DENY_EXACT:
+                  return reject("known_unrelated_domain")
+
+              return host
 
           def parse_line(line):
-              line = line.strip().lstrip('\ufeff')
+              line = line.strip().lstrip("\ufeff")
 
               if not line:
-                  return []
+                  return [], "empty"
 
               # Full-line comments.
-              if line.startswith(('#', '!', ';')):
-                  return []
+              if line.startswith(("#", "!", ";")):
+                  return [], "comment"
 
               lower = line.lower()
 
               # Unsupported rule types.
               if lower.startswith((
-                  'regexp:',
-                  'include:',
-                  'geosite:',
-                  'domain-keyword,',
-                  'domain-regex,',
-                  'ip-cidr,',
-                  'ip-cidr6,',
-                  'ipcidr:',
-                  'process-name,',
-                  'geoip:',
-                  'geosite,',
+                  "regexp:",
+                  "include:",
+                  "geosite:",
+                  "domain-keyword,",
+                  "domain-regex,",
+                  "ip-cidr,",
+                  "ip-cidr6,",
+                  "ipcidr:",
+                  "process-name,",
+                  "geoip:",
+                  "geosite,",
               )):
-                  return []
+                  return [], "unsupported_rule"
 
               # Mihomo / Clash domain rules.
-              if lower.startswith(('domain-suffix,', 'domain,')):
-                  parts = line.split(',')
+              if lower.startswith(("domain-suffix,", "domain,")):
+                  parts = line.split(",")
 
                   if len(parts) >= 2:
                       domain = extract_domain(parts[1])
-                      return [domain] if domain else []
+                      return ([domain], None) if domain else ([], "invalid")
 
-                  return []
+                  return [], "invalid"
 
               # YAML / sing-box-like domain entries.
-              if lower.startswith(('domain_suffix:', 'domain:')):
-                  value = line.split(':', 1)[1].strip()
+              if lower.startswith(("domain_suffix:", "domain:")):
+                  value = line.split(":", 1)[1].strip()
                   domain = extract_domain(value)
-                  return [domain] if domain else []
+                  return ([domain], None) if domain else ([], "invalid")
 
               # Hosts format: IP domain [aliases...]
               parts = line.split()
@@ -302,35 +356,34 @@ jobs:
 
                       for item in parts[1:]:
                           domain = extract_domain(item)
-
                           if domain:
                               result.append(domain)
 
-                      return result
+                      return (result, None) if result else ([], "invalid")
 
                   except ValueError:
                       pass
 
               # YAML list entries.
-              line = re.sub(r'^-\s*', '', line).strip()
+              line = re.sub(r"^-\s*", "", line).strip()
 
               # Remove inline comments.
-              line = re.split(r'\s+#|\s+//|\s+;', line, maxsplit=1)[0]
+              line = re.split(r"\s+#|\s+//|\s+;", line, maxsplit=1)[0]
               line = line.strip()
 
               if not line:
-                  return []
+                  return [], "empty"
 
               # Reject unsupported comma-based rules.
-              if ',' in line:
-                  return []
+              if "," in line:
+                  return [], "unsupported_rule"
 
               domain = extract_domain(line)
 
-              return [domain] if domain else []
+              return ([domain], None) if domain else ([], "invalid")
 
           files = sorted(
-              source_dir.glob('*.txt'),
+              source_dir.glob("*.txt"),
               key=lambda path: int(path.stem)
           )
 
@@ -341,17 +394,17 @@ jobs:
               invalid = 0
 
               for line in file.read_text(
-                  encoding='utf-8',
-                  errors='ignore'
+                  encoding="utf-8",
+                  errors="ignore"
               ).splitlines():
 
                   before += 1
                   total_lines += 1
 
-                  parsed = parse_line(line)
+                  parsed, reason = parse_line(line)
 
                   if not parsed:
-                      if line.strip() and not line.strip().startswith(('#', '!', ';')):
+                      if reason not in ("empty", "comment"):
                           invalid += 1
                           invalid_lines += 1
                       continue
@@ -376,15 +429,15 @@ jobs:
 
           sorted_domains = sorted(domains)
 
-          output = Path('files/torrent-list.txt')
+          output = Path("files/torrent-list.txt")
           output.parent.mkdir(parents=True, exist_ok=True)
 
           if not sorted_domains:
               raise SystemExit("ERROR: No valid domains extracted!")
 
           output.write_text(
-              '\n'.join(sorted_domains) + '\n',
-              encoding='utf-8'
+              "\n".join(sorted_domains) + "\n",
+              encoding="utf-8"
           )
 
           print()
@@ -394,15 +447,25 @@ jobs:
           print(f"Invalid lines:      {invalid_lines}")
           print(f"Duplicate domains:  {duplicate_domains}")
           print(f"Unique domains:     {len(sorted_domains)}")
-          print(f"Output:             {output}")
           print("========================================")
+
+          if rejected:
+              print()
+              print("Rejection reasons:")
+
+              for reason, count in sorted(
+                  rejected.items(),
+                  key=lambda item: (-item[1], item[0])
+              ):
+                  print(f"  {reason:<32} {count:>6}")
 
           # Prevent publishing an unexpectedly small list.
           MIN_DOMAINS = 100
 
           if len(sorted_domains) < MIN_DOMAINS:
               raise SystemExit(
-                  f"ERROR: Too few domains ({len(sorted_domains)}/{MIN_DOMAINS})"
+                  f"ERROR: Too few domains "
+                  f"({len(sorted_domains)}/{MIN_DOMAINS})"
               )
           PY
 
@@ -426,8 +489,8 @@ jobs:
 
           domains = [
               line.strip()
-              for line in Path('files/torrent-list.txt').read_text(
-                  encoding='utf-8'
+              for line in Path("files/torrent-list.txt").read_text(
+                  encoding="utf-8"
               ).splitlines()
               if line.strip()
           ]
@@ -444,9 +507,9 @@ jobs:
               ]
           }
 
-          Path('/tmp/torrent-list.json').write_text(
+          Path("/tmp/torrent-list.json").write_text(
               json.dumps(data, ensure_ascii=False, indent=2),
-              encoding='utf-8'
+              encoding="utf-8"
           )
 
           print(f"Domains for SRS: {len(domains)}")
