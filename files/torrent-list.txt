@@ -114,6 +114,7 @@ git.vulnix.sh
 grifon.info
 h4.trakx.nibba.trade
 hdreactor.org
+hidden.torrentonline.cc
 home.yxgz.club
 ht.therarbg.to
 hub.bugout.link
@@ -133,7 +134,6 @@ kolankoalastree.newtrackon.co.nz
 kolanopentracker.airdns.org
 koli.services
 kyu.i2p
-lattice.peerrelay.workers.dev
 learnbits.me
 leet-tracker.moe
 line-net.ru
@@ -229,6 +229,7 @@ shnflac.net
 shubt.net
 siambt.com
 stairs.lat
+su-data.com
 sukebei.tracker.wf
 supertracker.cc.cd
 t.213891.xyz
