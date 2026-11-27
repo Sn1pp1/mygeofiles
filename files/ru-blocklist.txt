@@ -266,12 +266,14 @@ api.home-connect.com
 api.instagram.com
 api.ios-kp.store
 api.ip.sb
+api.ipquery.io
 api.jetbrains.ai
 api.myip.com
 api.openai.com
 api.protonmail.ch
 api.pwnedpasswords.com
 api.radarr.video
+api.seeip.org
 api.service-kp.com
 api.shipbook.io
 api.soi.lat
@@ -1793,6 +1795,7 @@ icd10data.com
 ichef.bbci.co.uk
 id.cisco.com
 idelreal.org
+ident.me
 iditelesombase.org
 idolcomplex.com
 idtech.services
