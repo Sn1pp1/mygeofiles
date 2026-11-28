@@ -755,6 +755,7 @@ faceit.com
 fanatical.com
 fastly-download.epicgames.com
 fastly.cdn.steampipe.steamcontent.com
+fce.gg
 feihuo.com
 ffbuddy.com
 ficgs.com
